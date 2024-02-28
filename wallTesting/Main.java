@@ -1,4 +1,7 @@
-package se;
+package wallTesting;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
@@ -17,10 +20,24 @@ public class Main {
         GamePanel gamePanel = new GamePanel();
         window.add(gamePanel);
 
+
+
+        //window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         window.pack();
 
         window.setLocationRelativeTo(null);
         window.setVisible(true);
+        
+        // Add window listener to handle window closing event
+        window.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+            	System.out.println("Average FPS: " + gamePanel.getFPS());
+                window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                window.dispose(); // Close the window
+                
+            }
+        });
 
 
         // starts game

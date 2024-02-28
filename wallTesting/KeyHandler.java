@@ -7,7 +7,7 @@
  * Used to detect key presses/releases 
  */
 
-package se;
+package wallTesting;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
