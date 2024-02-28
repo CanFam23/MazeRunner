@@ -31,8 +31,8 @@ public class GamePanel extends JPanel implements Runnable {
 	private final List<Wall> wallsList = new ArrayList<Wall>();
 	private final List<Integer> fpsTracker = new ArrayList<Integer>();
 
-	private int playerX = screenWidth / 3;
-	private int playerY = screenHeight / 3;
+	private final int playerX = screenWidth / 3;
+	private final int playerY = screenHeight / 3;
 	private final int PLAYER_WIDTH = 50;
 	private final int PLAYER_HEIGHT = 50;
 	
@@ -89,8 +89,8 @@ public class GamePanel extends JPanel implements Runnable {
 	public void run() {
 
 		long lastime = System.nanoTime();
-		double AmountOfTicks = 60;
-		double ns = 1000000000 / AmountOfTicks;
+		final double AmountOfTicks = 60;
+		final double ns = 1000000000 / AmountOfTicks;
 		double delta = 0;
 		int frames = 0;
 		double time = System.currentTimeMillis();
@@ -122,20 +122,11 @@ public class GamePanel extends JPanel implements Runnable {
 
 		int dx = 0;
 		int dy = 0;
-
-		// Uses key presses to determine where to move walls
-		if (keyH.upPressed) {
-			dy += 5;
-		}
-		if (keyH.downPressed) {
-			dy -= 5;
-		}
-		if (keyH.rightPressed) {
-			dx -= 5;
-		}
-		if (keyH.leftPressed) {
-			dx += 5;
-		}
+		
+		boolean topCollided = false;
+		boolean botCollided = false;
+		boolean rightCollided = false;
+		boolean leftCollided = false;
 
 		for (Wall w : wallsList) {
 			if(w.isVisible()) {
@@ -145,26 +136,56 @@ public class GamePanel extends JPanel implements Runnable {
 					System.out.print("Collision detected from the ");
 					// Handle collision
 	                switch (collisionSide) {
+	                	//Depending on what side is colliding, this changes dx or dy by one to make the player 'bounce off' the wall.
 	                    case 1: // Collided from the left
 	                    	System.out.println("left side");
-	                        dx -= 5;
+	                    	if(!leftCollided) {
+	                    		dx -= 1;
+	                        }
+	                        	
+	                        leftCollided = true;
 	                        break;
 	                    case 2: // Collided from the right
 	                    	System.out.println("right side");
-	                        dx += 5;
+	                    	if(!rightCollided) {
+	                        	dx += 1;
+	                        }
+	                        	
+	                        rightCollided = true;
 	                        break;
 	                    case 3: // Collided from the top
 	                    	System.out.println("top side");
-	                        dy -= 5;
+	                        if(!topCollided) {
+	                        	dy -= 1;
+	                        }
+	                        	
+	                        topCollided = true;
 	                        break;
 	                    case 4: // Collided from the bottom
 	                    	System.out.println("bottom side");
-	                        dy += 5;
+	                    	if(!botCollided) {
+	                        	dy += 1;
+	                        }
+	                    	botCollided = true;
 	                        break;
 	                }
-	                break;
+	                //break;
 				}
 			}
+		}
+		
+		// Uses key presses to determine where to move walls
+		if (keyH.upPressed && !topCollided) {
+			dy += 6;
+		}
+		if (keyH.downPressed && !botCollided) {
+			dy -= 6;
+		}
+		if (keyH.rightPressed && !rightCollided) {
+			dx -= 6;
+		}
+		if (keyH.leftPressed && !leftCollided) {
+			dx += 6;
 		}
 
 		// Update coords of each wall
@@ -177,13 +198,13 @@ public class GamePanel extends JPanel implements Runnable {
 	// Checks for collision between player and wall
 	public int  collision(Wall w) {
 		// Convert 2D array of coords into arrays of x coords and y coords
-        int[][] otherCoords = w.getHitboxCoords();
+        final int[][] otherCoords = w.getHitboxCoords();
 
-        int[] playerXCoords = new int[]{playerX,playerX+PLAYER_WIDTH,playerX+PLAYER_WIDTH,playerX};
-        int[] playerYCoords = new int[]{playerY,playerY,playerY+PLAYER_HEIGHT,playerY+PLAYER_HEIGHT};
+        final int[] playerXCoords = new int[]{playerX,playerX+PLAYER_WIDTH,playerX+PLAYER_WIDTH,playerX};
+        final int[] playerYCoords = new int[]{playerY,playerY,playerY+PLAYER_HEIGHT,playerY+PLAYER_HEIGHT};
         
-        int[] otherXCoords = otherCoords[0];
-        int[] otherYCoords = otherCoords[1];
+        final int[] otherXCoords = otherCoords[0];
+        final int[] otherYCoords = otherCoords[1];
 
         // if player top left x < wall bottom right x
         if (playerXCoords[0] <= otherXCoords[2]
@@ -202,7 +223,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 			// Find the smallest overlap
 			int minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
-
+			
 			// Return the side of the collision
 			if (minOverlap == overlapLeft) {
 				return 1; // Collided from the left
@@ -225,7 +246,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		Graphics2D g2 = (Graphics2D) g;
+		final Graphics2D g2 = (Graphics2D) g;
 
 		// Draw 'player' sqaure
 		g2.setColor(Color.red);

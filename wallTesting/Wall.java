@@ -52,6 +52,8 @@ public class Wall {
 	private static final int SCREEN_HEIGHT = 800;
 	private static final int SCREEN_WIDTH = 1000;
 	
+	private static final int HITBOX_BUFFER_AMOUNT = 6;
+	
 	
 	private int x;
 	private int y;
@@ -82,7 +84,7 @@ public class Wall {
 	//'Hitbox' coords, the dimensions of the square
 	public int[][] getHitboxCoords(){
 							//The order is: top left, top right, bottom right, bottom left
-		return new int[][] {{x,x+width,x+width,x,},{y,y,y+height,y+height}};
+		return new int[][] {{x-HITBOX_BUFFER_AMOUNT,x+width+HITBOX_BUFFER_AMOUNT,x+width+HITBOX_BUFFER_AMOUNT,x-HITBOX_BUFFER_AMOUNT},{y-HITBOX_BUFFER_AMOUNT,y-HITBOX_BUFFER_AMOUNT,y+height+HITBOX_BUFFER_AMOUNT,y+height+HITBOX_BUFFER_AMOUNT}};
 	}
 	
 	public int getWidth() {
