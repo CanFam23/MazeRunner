@@ -38,6 +38,9 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	private final int WALL_WIDTH = screenWidth/5;
 	private final int WALL_HEIGHT = screenHeight/5;
+	
+	private final int displacement = 1;
+	private final int speed = 6;
 
 	public GamePanel() {
 		// this.setPreferredSize(new Dimension(JFrame.MAXIMIZED_HORIZ,
@@ -140,7 +143,7 @@ public class GamePanel extends JPanel implements Runnable {
 	                    case 1: // Collided from the left
 	                    	System.out.println("left side");
 	                    	if(!leftCollided) {
-	                    		dx -= 1;
+	                    		dx -= displacement;
 	                        }
 	                        	
 	                        leftCollided = true;
@@ -148,7 +151,7 @@ public class GamePanel extends JPanel implements Runnable {
 	                    case 2: // Collided from the right
 	                    	System.out.println("right side");
 	                    	if(!rightCollided) {
-	                        	dx += 1;
+	                        	dx += displacement;
 	                        }
 	                        	
 	                        rightCollided = true;
@@ -156,7 +159,7 @@ public class GamePanel extends JPanel implements Runnable {
 	                    case 3: // Collided from the top
 	                    	System.out.println("top side");
 	                        if(!topCollided) {
-	                        	dy -= 1;
+	                        	dy -= displacement;
 	                        }
 	                        	
 	                        topCollided = true;
@@ -164,28 +167,63 @@ public class GamePanel extends JPanel implements Runnable {
 	                    case 4: // Collided from the bottom
 	                    	System.out.println("bottom side");
 	                    	if(!botCollided) {
-	                        	dy += 1;
+	                        	dy += displacement;
 	                        }
 	                    	botCollided = true;
 	                        break;
+	                    case 5: //Collided from right and bottom
+	                    	System.out.println("right and bottom");
+	                    	if(!botCollided && !rightCollided) {
+	                    		dy += displacement*2;
+	                    		dx += displacement;
+	                    	}
+	                    	botCollided = true;
+	                    	rightCollided = true;
+	                    	break;
+	                    case 6: //Collided from left and bottom
+	                    	System.out.println("left and bottom");
+	                    	if(!botCollided && !leftCollided) {
+	                    		dy += displacement*2;
+	                    		dx -= displacement;
+	                    	}
+	                    	botCollided = true;
+	                    	leftCollided = true;
+	                    	break;
+	                    case 7: //Collided from right and top
+	                    	System.out.println("right and top");
+	                    	if(!topCollided && !rightCollided) {
+	                    		dy -= displacement*2;
+	                    		dx += displacement;
+	                    	}
+	                    	rightCollided = true;
+	                    	topCollided = true;
+	                    	break;
+	                    case 8: //Collided from left and top
+	                    	System.out.println("left and top");
+	                    	if(!topCollided && !leftCollided) {
+	                    		dy -= displacement*2;
+	                    		dx -= displacement;
+	                    	}
+	                    	leftCollided = true;
+	                    	topCollided = true;
+	                    	break;
 	                }
-	                //break;
 				}
 			}
 		}
 		
 		// Uses key presses to determine where to move walls
 		if (keyH.upPressed && !topCollided) {
-			dy += 6;
+			dy += speed;
 		}
 		if (keyH.downPressed && !botCollided) {
-			dy -= 6;
+			dy -= speed;
 		}
 		if (keyH.rightPressed && !rightCollided) {
-			dx -= 6;
+			dx -= speed;
 		}
 		if (keyH.leftPressed && !leftCollided) {
-			dx += 6;
+			dx += speed;
 		}
 
 		// Update coords of each wall
@@ -223,6 +261,18 @@ public class GamePanel extends JPanel implements Runnable {
 
 			// Find the smallest overlap
 			int minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
+			
+			//If two sides are colliding at the same time
+			if(overlapRight < 5 && overlapBottom < 5) {
+				return 5;
+			} else if(overlapLeft < 5 && overlapBottom < 5) {
+				return 6;
+			} else if(overlapRight < 5 && overlapTop < 5) {
+				return 7;
+			}else if(overlapLeft < 5 && overlapTop < 5) {
+				return 8;
+			}
+			
 			
 			// Return the side of the collision
 			if (minOverlap == overlapLeft) {
