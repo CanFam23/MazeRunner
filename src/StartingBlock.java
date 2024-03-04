@@ -1,3 +1,11 @@
+/*
+ * StartingBlock.java
+ * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * Date: March 2, 2024
+ * 
+ * Desc:
+ * 'TBD'
+ */
 package src;
 
 import java.awt.Color;

@@ -1,12 +1,11 @@
 /*
  * KeyHandler.java
- * Author: Nick Clouse
- * Date Created: October 29, 2023
+ * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * Date: Febuary 20, 2024
  * 
  * Desc:
- * Used to detect key presses/releases 
+ * 'TBD'
  */
-
 package src;
 
 import java.awt.event.KeyEvent;

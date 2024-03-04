@@ -1,3 +1,11 @@
+/*
+ * Main.java
+ * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * Date: Febuary 20, 2024
+ * 
+ * Desc:
+ * 'TBD'
+ */
 package src;
 
 import java.awt.event.ActionEvent;
