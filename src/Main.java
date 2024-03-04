@@ -1,5 +1,4 @@
-package wallTesting;
-
+package src;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +15,7 @@ public class Main {
     }
 
     public static void runMainCode() {
+
         // Creates window
         JFrame window = new JFrame();
 
@@ -40,6 +40,7 @@ public class Main {
         timer.start();
 
 
+
         //window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         window.pack();
 
@@ -60,7 +61,6 @@ public class Main {
 
         // starts game
         gamePanel.startGameThread();
-
     }
 
 }
