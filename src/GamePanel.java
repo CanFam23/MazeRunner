@@ -1,5 +1,4 @@
-package wallTesting;
-
+package src;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -16,6 +15,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 	private final int screenWidth = 1000;
 	private final int screenHeight = 800;
+	private final ChunkManager cmanager;
 
 	private final KeyHandler keyH = new KeyHandler(); // Uses to detect key presses/releases
 	private Thread gameThread; // Thread is a thread of execution in a program
@@ -41,6 +41,7 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	private final int displacement = 1;
 	private final int speed = 6;
+
 
 	public GamePanel() {
 		// this.setPreferredSize(new Dimension(JFrame.MAXIMIZED_HORIZ,
@@ -77,6 +78,8 @@ public class GamePanel extends JPanel implements Runnable {
 			y += screenHeight / 5;
 		}
 
+		cmanager = new ChunkManager();
+		cmanager.loadLevel(1);
 	}
 
 	// Makes new thread and starts its
@@ -130,7 +133,7 @@ public class GamePanel extends JPanel implements Runnable {
 		boolean botCollided = false;
 		boolean rightCollided = false;
 		boolean leftCollided = false;
-
+/*
 		for (Wall w : wallsList) {
 			if(w.isVisible()) {
 				// Check for collision
@@ -211,6 +214,7 @@ public class GamePanel extends JPanel implements Runnable {
 				}
 			}
 		}
+		*/
 		
 		// Uses key presses to determine where to move walls
 		if (keyH.upPressed && !topCollided) {
@@ -230,11 +234,12 @@ public class GamePanel extends JPanel implements Runnable {
 		for (Wall w : wallsList) {
 			w.updateCoords(dx, dy);
 		}
-
+	
+		cmanager.updateCoords(dx, dy);
 	}
 
 	// Checks for collision between player and wall
-	public int  collision(Wall w) {
+	public int collision(Wall w) {
 		// Convert 2D array of coords into arrays of x coords and y coords
         final int[][] otherCoords = w.getHitboxCoords();
 
@@ -273,7 +278,6 @@ public class GamePanel extends JPanel implements Runnable {
 				return 8;
 			}
 			
-			
 			// Return the side of the collision
 			if (minOverlap == overlapLeft) {
 				return 1; // Collided from the left
@@ -298,16 +302,12 @@ public class GamePanel extends JPanel implements Runnable {
 
 		final Graphics2D g2 = (Graphics2D) g;
 
+		// Draw map
+		cmanager.draw(g2);
+
 		// Draw 'player' sqaure
 		g2.setColor(Color.red);
 		g2.fillRect(playerX, playerY, PLAYER_WIDTH, PLAYER_HEIGHT);
-
-		// Paint all walls
-		for (Wall w : wallsList) {
-			if (w.isVisible()) {
-				w.draw(g2);
-			}
-		}
 
 		// Saves some memory
 		g2.dispose();
