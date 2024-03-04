@@ -1,3 +1,11 @@
+/*
+ * HomeScreen.java
+ * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * Date: February 28, 2024
+ * 
+ * Desc:
+ * 'TBD'
+ */
 package src;
 
 import javax.swing.*;
@@ -11,7 +19,8 @@ import javax.imageio.ImageIO;
 
 public class HomeScreen extends JFrame {
 
-    private BufferedImage backgroundImage;
+	private static final long serialVersionUID = 1L;
+	private BufferedImage backgroundImage;
     private JButton startButton;
 
     public HomeScreen() {
@@ -30,7 +39,7 @@ public class HomeScreen extends JFrame {
     private void loadImage() {
         try {
             // Replace "FinalProject/background.jpg" with the correct path to your image file
-            URL imageUrl = getClass().getResource("HomeScreen2.png");
+            URL imageUrl = getClass().getResource("../data/HomeScreen2.png");
             backgroundImage = ImageIO.read(imageUrl);
         } catch (IOException e) {
             e.printStackTrace();

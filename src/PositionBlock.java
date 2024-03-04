@@ -1,3 +1,11 @@
+/*
+ * PositionBlock.java
+ * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * Date: March 2, 2024
+ * 
+ * Desc:
+ * 'TBD'
+ */
 package src;
 
 import java.awt.Color;
@@ -39,12 +47,6 @@ public class PositionBlock {
 	
 	public int getHeight() {
 		return height;
-	}
-	
-	//Returns true if the wall is within the screen dimensions
-	public boolean isVisible() {
-	//Change this 10 to -width if you want the walls to disppear once they are off the screen
-		return (this.x > 10 && this.x < SCREEN_WIDTH+width) && (this.y > -height && this.y < SCREEN_HEIGHT+height);
 	}
 	
 	public String toString() {
