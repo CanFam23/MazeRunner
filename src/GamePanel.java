@@ -7,6 +7,7 @@
  * 'TBD'
  */
 package src;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -16,35 +17,28 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-public class GamePanel extends JPanel implements Runnable {
+public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private static final long serialVersionUID = 123455L;
 
 	// Screen Settings
 
-	private final int screenWidth = 1000;
-	private final int screenHeight = 800;
 	private final ChunkManager cmanager;
 
 	private final KeyHandler keyH = new KeyHandler(); // Uses to detect key presses/releases
+
+	private final List<Integer> fpsTracker = new ArrayList<Integer>();
+
+	private final int displacement = 1;
+	private final int speed = 6;
+
 	private Thread gameThread; // Thread is a thread of execution in a program
 
 	private boolean isRunning = true;
 
-	private final List<Integer> fpsTracker = new ArrayList<Integer>();
-
-	private final int playerX = screenWidth / 2;
-	private final int playerY = screenHeight / 2;
-	private final int PLAYER_WIDTH = 50;
-	private final int PLAYER_HEIGHT = 50;
-	
-	private final int displacement = 1;
-	private final int speed = 6;
-
-
 	public GamePanel() {
 		// this.setPreferredSize(new Dimension(JFrame.MAXIMIZED_HORIZ,
 		// JFrame.MAXIMIZED_VERT));
-		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+		this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
 		this.setBackground(Color.black);
 		this.setDoubleBuffered(true);
 
@@ -98,98 +92,97 @@ public class GamePanel extends JPanel implements Runnable {
 
 	// Updates contents
 	public void update() {
-		
+
 		cmanager.checkCollision();
 
 		int dx = 0;
 		int dy = 0;
-		
+
 		boolean topCollided = false;
 		boolean botCollided = false;
 		boolean rightCollided = false;
 		boolean leftCollided = false;
-		
-		
+
 		List<Integer> collisions = cmanager.checkCollision();
 
-		
-		if(collisions.size() > 0) {
-			for(Integer collisionNum: collisions) {
+		if (collisions.size() > 0) {
+			for (Integer collisionNum : collisions) {
 				// Handle collision
-                switch (collisionNum) {
-                	//Depending on what side is colliding, this changes dx or dy by one to make the player 'bounce off' the wall.
-                    case 1: // Collided from the left
-                    	//System.out.println("left side");
-                    	if(!leftCollided) {
-                    		dx -= displacement;
-                        }
-                        	
-                        leftCollided = true;
-                        break;
-                    case 2: // Collided from the right
-                    	//System.out.println("right side");
-                    	if(!rightCollided) {
-                        	dx += displacement;
-                        }
-                        	
-                        rightCollided = true;
-                        break;
-                    case 3: // Collided from the top
-                    	//System.out.println("top side");
-                        if(!topCollided) {
-                        	dy -= displacement;
-                        }
-                        	
-                        topCollided = true;
-                        break;
-                    case 4: // Collided from the bottom
-                    	//System.out.println("bottom side");
-                    	if(!botCollided) {
-                        	dy += displacement;
-                        }
-                    	botCollided = true;
-                        break;
-                    case 5: //Collided from right and bottom
-                    	//System.out.println("right and bottom");
-                    	if(!botCollided && !rightCollided) {
-                    		dy += displacement*2;
-                    		dx += displacement;
-                    	}
-                    	botCollided = true;
-                    	rightCollided = true;
-                    	break;
-                    case 6: //Collided from left and bottom
-                    	//System.out.println("left and bottom");
-                    	if(!botCollided && !leftCollided) {
-                    		dy += displacement*2;
-                    		dx -= displacement;
-                    	}
-                    	botCollided = true;
-                    	leftCollided = true;
-                    	break;
-                    case 7: //Collided from right and top
-                    	//System.out.println("right and top");
-                    	if(!topCollided && !rightCollided) {
-                    		dy -= displacement*2;
-                    		dx += displacement;
-                    	}
-                    	rightCollided = true;
-                    	topCollided = true;
-                    	break;
-                    case 8: //Collided from left and top
-                    	//System.out.println("left and top");
-                    	if(!topCollided && !leftCollided) {
-                    		dy -= displacement*2;
-                    		dx -= displacement;
-                    	}
-                    	leftCollided = true;
-                    	topCollided = true;
-                    	break;
-                }
+				switch (collisionNum) {
+				// Depending on what side is colliding, this changes dx or dy by one to make the
+				// player 'bounce off' the wall.
+				case 1: // Collided from the left
+					// System.out.println("left side");
+					if (!leftCollided) {
+						dx -= displacement;
+					}
+
+					leftCollided = true;
+					break;
+				case 2: // Collided from the right
+					// System.out.println("right side");
+					if (!rightCollided) {
+						dx += displacement;
+					}
+
+					rightCollided = true;
+					break;
+				case 3: // Collided from the top
+					// System.out.println("top side");
+					if (!topCollided) {
+						dy -= displacement;
+					}
+
+					topCollided = true;
+					break;
+				case 4: // Collided from the bottom
+					// System.out.println("bottom side");
+					if (!botCollided) {
+						dy += displacement;
+					}
+					botCollided = true;
+					break;
+				case 5: // Collided from right and bottom
+					// System.out.println("right and bottom");
+					if (!botCollided && !rightCollided) {
+						dy += displacement * 2;
+						dx += displacement;
+					}
+					botCollided = true;
+					rightCollided = true;
+					break;
+				case 6: // Collided from left and bottom
+					// System.out.println("left and bottom");
+					if (!botCollided && !leftCollided) {
+						dy += displacement * 2;
+						dx -= displacement;
+					}
+					botCollided = true;
+					leftCollided = true;
+					break;
+				case 7: // Collided from right and top
+					// System.out.println("right and top");
+					if (!topCollided && !rightCollided) {
+						dy -= displacement * 2;
+						dx += displacement;
+					}
+					rightCollided = true;
+					topCollided = true;
+					break;
+				case 8: // Collided from left and top
+					// System.out.println("left and top");
+					if (!topCollided && !leftCollided) {
+						dy -= displacement * 2;
+						dx -= displacement;
+					}
+					leftCollided = true;
+					topCollided = true;
+					break;
+				}
 			}
 
 		}
-		
+
 		// Uses key presses to determine where to move walls
 		if (keyH.upPressed && !topCollided) {
 			dy += speed;
@@ -218,7 +211,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 		// Draw 'player' sqaure
 		g2.setColor(Color.red);
-		g2.fillRect(playerX, playerY, PLAYER_WIDTH, PLAYER_HEIGHT);
+		g2.fillRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 
 		// Saves some memory
 		g2.dispose();
