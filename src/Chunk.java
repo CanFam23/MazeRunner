@@ -1,5 +1,6 @@
 package src;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class Chunk {
@@ -16,8 +17,8 @@ public class Chunk {
 	
 	public Chunk(int xDimension, int yDimension, int xPosition, int yPosition) {
 		blocks = new PositionBlock[yDimension][xDimension];
-		this.xPosition = WALL_WIDTH * xPosition;
-		this.yPosition = WALL_HEIGHT * yPosition;
+		this.xPosition = WALL_WIDTH * xPosition * xDimension;
+		this.yPosition = WALL_HEIGHT * yPosition * yDimension;
 	}
 	
 	public void add(int xPosition, int yPosition, PositionBlock block) {
@@ -35,6 +36,10 @@ public class Chunk {
 				blocks[i][j].draw(g, xPosition, yPosition);
 			}
 		}
+		Color temp = g.getColor();
+		g.setColor(Color.red);
+		g.fillOval(xPosition, yPosition, 10, 10);
+		g.setColor(temp);
 	}
 
 	public String toString() {
