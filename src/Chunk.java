@@ -103,7 +103,7 @@ public class Chunk implements GameVariables {
 			for (int c = 0; c < blocks[0].length; c++) {
 				PositionBlock temp = blocks[r][c];
 				if (temp instanceof Wall) {
-					int collided = collision((Wall) temp);
+					int collided = collision(temp);
 
 					if (collided != 0) {
 						collisions.add(collided);
@@ -117,7 +117,7 @@ public class Chunk implements GameVariables {
 	}
 
 	// Checks for collision between player and wall
-	public int collision(Wall w) {
+	public int collision(PositionBlock w) {
 		// Convert 2D array of coords into arrays of x coords and y coords
 		final int[] otherCoords = w.getCoords();
 		final int x = otherCoords[0] + xPosition;
