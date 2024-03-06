@@ -16,11 +16,6 @@ public class Wall extends PositionBlock {
 		super(x, y, width, height, c);
 	}
 
-	// Returns the top left coordinates of the wall
-	public int[] getCoords() {
-		return new int[] { x, y };
-	}
-
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
