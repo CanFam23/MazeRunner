@@ -19,7 +19,7 @@ import java.util.Scanner;
 
 public class ChunkManager implements GameVariables {
 	// Declare attributes that are always the same
-	static final String FILE_LOCATION = "src/data/";
+	static final String FILE_LOCATION = "data/";
 
 	private final List<Chunk> activeChunks = new ArrayList<>();
 
