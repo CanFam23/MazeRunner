@@ -31,7 +31,7 @@ public class HomeScreen extends JFrame {
 
 	private void initialize() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(632, 665);
+		setSize(1000, 800);
 		setLocationRelativeTo(null);
 		setLayout(new BorderLayout());
 	}
@@ -40,7 +40,7 @@ public class HomeScreen extends JFrame {
 		try {
 			// Replace "FinalProject/background.jpg" with the correct path to your image
 			// file
-			URL imageUrl = getClass().getResource("../data/HomeScreen2.png");
+			URL imageUrl = getClass().getResource("../src/HomeScreen4.png");
 			backgroundImage = ImageIO.read(imageUrl);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -61,6 +61,7 @@ public class HomeScreen extends JFrame {
 		// Create a start button
 		startButton = new JButton("Start Game");
 		startButton.setText("CLICK HERE TO START");
+        startButton.setFont(new Font("Arail", Font.PLAIN,24));
 		startButton.setForeground(Color.BLACK);
 		startButton.setBackground(Color.BLACK); // Why isn't this working!!!!
 
