@@ -28,6 +28,10 @@ public class ChunkManager implements GameVariables {
 
 	private Chunk startChunk;
 	private Chunk endChunk;
+	
+	private StartingBlock startBlock;
+	private int[] startCoords;
+	private EndBlock endBlock;
 
 	// Declare attributes that change
 	public String levelName = "";
@@ -94,10 +98,14 @@ public class ChunkManager implements GameVariables {
 					//Keep track of what chunks are the start and end
 					if (isStartingChunk) {
 						startChunk = chunks[yChunk][xChunk];
+						startCoords = new int[] {xPosition % chunkXDimension * WALL_WIDTH, yPosition % chunkYDimension * WALL_HEIGHT};
+						startBlock = (StartingBlock)pb;
 						isStartingChunk = false;
 					}else if(isEndChunk) {
 						endChunk = chunks[yChunk][xChunk];
+						endBlock = (EndBlock)pb;
 						isEndChunk = false;
+						
 					}
 				}
 				yPosition++;
@@ -132,6 +140,12 @@ public class ChunkManager implements GameVariables {
 				}
 			}
 		}
+		
+		if(activeChunks.contains(startChunk)) {
+			containsPlayer(startChunk,startBlock);
+		}else if(activeChunks.contains(endChunk)) {
+			containsPlayer(endChunk,endBlock);
+		}
 	}
 
 	// Returns true if the player is in the given chunk, same idea used for
@@ -160,6 +174,15 @@ public class ChunkManager implements GameVariables {
 
 		return false;
 	}
+	
+	// Returns true if the player is in the given block, same idea used for
+	// collisions
+	public void containsPlayer(Chunk c,PositionBlock pb) {
+
+		if(c.collision(pb) != 0) {
+			System.out.println(pb);
+		}
+	}
 
 	// Returns true if the given chunk is currently visible on the screen, or close
 	// to being visible
@@ -175,12 +198,21 @@ public class ChunkManager implements GameVariables {
 
 	// Sets the starting location to the start chunk
 	public void setStartLocation() {
-		int dx = startChunk.xPosition;
-		int dy = startChunk.yPosition;
+		//Move all chunks so the start chunk is the first one on the screen
+		int dx = -startChunk.xPosition;
+		int dy = -startChunk.yPosition;
 
-		dx -= WALL_WIDTH * 2;
-		dy -= WALL_HEIGHT * 2;
-		updateCoords(-dx, -dy);
+		System.out.println(dx+" "+dy);
+		System.out.println(startCoords[0] + " " + startCoords[1]);
+		
+		//Put the top left corner of the chunk in the top left corner of the screen
+		dx += WALL_WIDTH * 2;
+		dy += WALL_HEIGHT * 2;
+		
+		//Move the chunks so the player starts on the start block
+		dx -= startCoords[0];
+		dy -= startCoords[1];
+		updateCoords(dx, dy);
 	}
 
 	public void draw(Graphics2D g2d) {
@@ -235,15 +267,15 @@ public class ChunkManager implements GameVariables {
 			System.out.println("At least one case failed! :(");
 		}
 
-		Chunk[][] chunks = chunky.getChunks();
+//		Chunk[][] chunks = chunky.getChunks();
 
-		for (int r = 0; r < chunks.length; r++) {
-			for (int c = 0; c < chunks.length; c++) {
-				System.out.println(chunks[r][c].xPosition + " " + chunks[r][c].yPosition);
-
-			}
-			System.out.println();
-		}
+//		for (int r = 0; r < chunks.length; r++) {
+//			for (int c = 0; c < chunks.length; c++) {
+//				System.out.println(chunks[r][c].xPosition + " " + chunks[r][c].yPosition);
+//
+//			}
+//			System.out.println();
+//		}
 
 //        Chunk c = chunky.getCurrentChunk();
 //        
