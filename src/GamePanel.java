@@ -31,6 +31,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private final int displacement = 1;
 	private final int speed = 6;
 
+	// Create our player. Initialize later to offer player selection of different characters.
+	private Player ourPlayer;
+	
 	private Thread gameThread; // Thread is a thread of execution in a program
 
 	private boolean isRunning = true;
@@ -47,6 +50,11 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		cmanager = new ChunkManager();
 		cmanager.loadLevel(1);
+		
+		// Create our player and load the images
+		ourPlayer = new Player();
+		ourPlayer.load_images("Civilian1(black)");
+		
 	}
 
 	// Makes new thread and starts its
@@ -197,6 +205,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			dx += speed;
 		}
 		cmanager.updateCoords(dx, dy);
+		ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
+		// ourPlayer.updateState(dx, dy);
 	}
 
 	// Paints contents on screen
@@ -210,9 +220,11 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.draw(g2);
 
 		// Draw 'player' sqaure
-		g2.setColor(Color.red);
-		g2.fillRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
+		// g2.setColor(Color.red);
+		// g2.fillRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 
+		ourPlayer.draw(g2);
+		
 		// Saves some memory
 		g2.dispose();
 	}
