@@ -33,8 +33,9 @@ public class ChunkManager implements GameVariables {
 	private int[] startCoords;
 	private EndBlock endBlock;
 
+	// TODO: Refactor private
 	// Declare attributes that change
-	public String levelName = "";
+	public String levelName = ""; // TODO: local refactor
 	public int levelXDimension;
 	public int levelYDimension;
 	public int chunkXDimension;
@@ -48,7 +49,7 @@ public class ChunkManager implements GameVariables {
 			final String[] levelStrings = input.nextLine().split(":")[1].split("x"); // Save the dimension of the chunks
 																						// - example: (x chunks, y
 																						// chunks)
-			levelXDimension = Integer.parseInt(levelStrings[0]);
+			levelXDimension = Integer.parseInt(levelStrings[0]); // TODO: Possibly change the level description loading (redundant)
 			levelYDimension = Integer.parseInt(levelStrings[1]);
 			final String[] chunkStrings = input.nextLine().split(":")[1].split("x"); // Save chunk dimensions - example:
 																						// (x walls, y walls)
@@ -67,18 +68,18 @@ public class ChunkManager implements GameVariables {
 			}
 
 			// Load the level data
+			// TODO: Move variable declarations into loop
 			int yPosition = 0;
 			int yChunk = 0;
 			int xChunk = 0;
 			boolean isStartingChunk = false;
 			boolean isEndChunk = false;
-			PositionBlock pb;
 			while (input.hasNextLine()) {
 				yChunk = yPosition / chunkYDimension;
 				String[] inputData = input.nextLine().split("");
 				for (int xPosition = 0; xPosition < inputData.length; xPosition++) {
 					xChunk = xPosition / chunkXDimension;
-					pb = null;
+					PositionBlock pb = null;
 					if (inputData[xPosition].equals("0")) {
 						pb = new EmptyBlock((xPosition % chunkXDimension) * WALL_WIDTH,
 								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, Color.white);
@@ -116,11 +117,8 @@ public class ChunkManager implements GameVariables {
 			return true;
 		} catch (FileNotFoundException e) {
 			System.err.println("File: '" + FILE_LOCATION + levelName + ".txt" + "' not found");
-			return false;
-		} catch (Exception e) {
-			System.err.println("An unexpected error occured while loading mazes");
-			return false;
-		}
+		} 
+		return false;
 	}
 
 	
@@ -162,17 +160,13 @@ public class ChunkManager implements GameVariables {
 		int[] chunkXCoords = chunkCoords[0];
 		int[] chunkYCoords = chunkCoords[1];
 
-		if (playerXCoords[0] <= chunkXCoords[2]
+		return (playerXCoords[0] <= chunkXCoords[2]
 				// if player bottom right x > chunk top left x
 				&& playerXCoords[2] >= chunkXCoords[0]
 				// if player top left y < chunk bottom right y
 				&& playerYCoords[0] <= chunkYCoords[2]
 				// if player bottom right y > chunk top left y
-				&& playerYCoords[2] >= chunkYCoords[0]) {
-			return true;
-		}
-
-		return false;
+				&& playerYCoords[2] >= chunkYCoords[0]);
 	}
 	
 	// Returns true if the player is in the given block, same idea used for
@@ -188,12 +182,8 @@ public class ChunkManager implements GameVariables {
 	// to being visible
 	public boolean isVisible(Chunk chunk) {
 
-		if (chunk.xPosition >= -chunkWidth && chunk.xPosition <= chunkWidth && chunk.yPosition >= -chunkHeight
-				&& chunk.yPosition <= chunkHeight) {
-			return true;
-		}
-
-		return false;
+		return (chunk.xPosition >= -chunkWidth && chunk.xPosition <= chunkWidth && chunk.yPosition >= -chunkHeight
+				&& chunk.yPosition <= chunkHeight);
 	}
 
 	// Sets the starting location to the start chunk

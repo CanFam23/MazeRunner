@@ -36,6 +36,7 @@ public class Main {
     }
 
     public static void runMainCode() {
+    	
 
         // Creates window
         JFrame window = new JFrame();

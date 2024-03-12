@@ -16,6 +16,8 @@ public class Player implements GameVariables {
 	
 	private static final String FILE_LOCATION = "images/";
 	
+	private int drawCount = 0;
+	
 	public State currentState = State.Idle;
 	public Facing currentFacing = Facing.N;
 	
@@ -63,29 +65,103 @@ public class Player implements GameVariables {
             		// Read and resize image
             		// Read image
             		BufferedImage subImage = spriteSheet.getSubimage(x * width / xDim, y * height / yDim, width / xDim, height / yDim);
-            		// Resize image
-            		BufferedImage resizedImage = new BufferedImage(PLAYER_WIDTH, PLAYER_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-                    Graphics2D graphics2D = resizedImage.createGraphics();
+            		// Now that we have the image split from the other part, let's remove the whitespace
+            		BufferedImage finalImage = subImage.getSubimage(width / xDim / 3, height / yDim / 3, width / xDim / 3, height / yDim / 3);
                     
-                    graphics2D.drawImage(subImage.getScaledInstance(PLAYER_WIDTH, PLAYER_HEIGHT, Image.SCALE_SMOOTH), 0, 0, null);
-                    graphics2D.dispose();
-                    
-            		images.get(playerState).get(direction).add(resizedImage);
+            		images.get(playerState).get(direction).add(finalImage);
             		
-            		if (count % framesPerAnim == 0) { 
-            			System.out.println(count);
-            			
+            		count++;
+            		if (count % framesPerAnim == 0 && count != xDim * yDim) {
             			direction = Facing.values()[count / framesPerAnim];
             			images.get(playerState).put(direction, new LinkedList<BufferedImage>());
             		}
-            		 count++;
             	}
             }
         }
 	}
 	
-	public void draw(Graphics2D g) {
-		g.drawImage(image, 0, 0, PLAYER_WIDTH, PLAYER_HEIGHT, null);
+	public void updateState(boolean up, boolean down, boolean right, boolean left) {
+		// Set the player state (idle or move)
+		if (up == false && down == false && right == false && left == false) {
+			currentState = State.Idle;
+			return;
+		} else {
+			currentState = State.Move;
+		}
+		// Set the direction headed
+		String dir = "";
+		if (up && !down)
+			dir += "N";
+		else if (down && !up)
+			dir += "S";
+		
+		if (left && !right)
+			dir += "W";
+		else if (right && !left)
+			dir += "E";
+		
+		if (!dir.equals(""))
+			currentFacing = Facing.valueOf(dir);
+	}
+	
+	public void updateState(int dx, int dy) {
+		if (dx == 0 && dy == 0) {
+			currentState = State.Idle;
+			return;
+		} else {
+			currentState = State.Move;
+		}
+		if (dy > 0) { // Moving up
+			if (dx < 0) {
+				currentFacing = Facing.NE;
+			} else if (dx == 0) {
+				currentFacing = Facing.N;
+			} else {
+				currentFacing = Facing.NW;
+			}
+		} else if (dy < 0) { // Moving down
+			if (dx < 0) {
+				currentFacing = Facing.SE;
+			} else if (dx == 0) {
+				currentFacing = Facing.S;
+			} else {
+				currentFacing = Facing.SW;
+			}
+		} else if (dy == 0) { // Check that should always be true (not moving up or down)
+			if (dx > 0) {
+				currentFacing = Facing.W;
+			} else {
+				currentFacing = Facing.E;
+			}
+		}
+	}
+	
+	// Change the direction the player is facing
+	public void setFacing(Facing direction) {
+		currentFacing = direction;
+	}
+	
+	// Change the state of the player
+	public void setState(State playerState) {
+		currentState = playerState;
+	}
+	
+	// Draw our player
+	public void draw(Graphics2D g) { 
+		if (drawCount < 5) { // For x ticks of the game loop, draw the same image.
+			g.drawImage(images.get(currentState).get(currentFacing).get(0), PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT, null);
+			g.setColor(Color.RED);
+			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
+			drawCount++;
+		} else { // Then, switch the image to the next one in the sequence.
+			BufferedImage img = images.get(currentState).get(currentFacing).remove(0);
+			g.drawImage(img, PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT, null);
+			images.get(currentState).get(currentFacing).add(img);
+			g.setColor(Color.RED);
+			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
+			drawCount = 0;
+		}
+		
 	}
 	
 	
@@ -132,20 +208,22 @@ public class Player implements GameVariables {
 		p1.load_images("Civilian1(black)");
 		
 		initializeGUI();
+				
 		
 		// Change these two variables to modify the animations tested
-		String playerState = "Move"; // Test the player state images (Move, Idle, etc.)
+		State playerState = State.Idle; // Test the player state images (Move, Idle, etc.)
+		Facing direction = Facing.S; // Test the direction the player is facing
 		int speed = (int) (0.1 * 1000); // Set seconds (first number) between each image.
 		
-//		while (true) {
-//			BufferedImage img = p1.images.get(playerState).remove(0);
-//			displayImage(img);
-//			try {
-//				Thread.sleep(speed);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//			p1.images.get(playerState).add(img);
-//		}
+		while (true) {
+			BufferedImage img = p1.images.get(playerState).get(direction).remove(0);
+			displayImage(img);
+			try {
+				Thread.sleep(speed);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			p1.images.get(playerState).get(direction).add(img);
+		}
 		}
 }
