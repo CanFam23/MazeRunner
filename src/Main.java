@@ -1,7 +1,6 @@
 package src;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,14 +10,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JWindow;
 import javax.swing.Timer;
 import java.io.File;
 import java.awt.Font;
@@ -113,9 +109,9 @@ public class Main {
 	private static void gameOver() {
 		// Load the image
         try {
-            backgroundImage = ImageIO.read(new File("src/src/GameOver2.png"));
+            backgroundImage = ImageIO.read(new File("GameOver2.png"));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to load game over image!");
         }  
         
         JFrame frame = new JFrame("Game Over");
@@ -124,7 +120,10 @@ public class Main {
         
         
 		JPanel panel = new JPanel() {
-            @Override
+ 
+			private static final long serialVersionUID = -1223912485132542944L;
+
+			@Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
