@@ -24,8 +24,6 @@ import java.io.File;
 import java.awt.Font;
 
 
-
-
 public class Main {
 	
 	private static BufferedImage backgroundImage;
