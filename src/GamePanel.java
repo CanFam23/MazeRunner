@@ -57,15 +57,19 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		
 	}
 
-	// Makes new thread and starts its
+	/**
+	 * Initializes new thread and starts it
+	 */
 	public void startGameThread() {
 
 		gameThread = new Thread(this);
 		gameThread.start();
 	}
 
-	// When we start the gameThread, this function is ran
-	// This is the same game loop Minecraft uses
+	/**
+	 *When we start the gameThread, this function is ran
+	 *Updates and repaints contents every frame
+	 */
 	@Override
 	public void run() {
 
@@ -89,7 +93,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				frames++;
 				delta--;
 				if (System.currentTimeMillis() - time >= 1000) {
-					System.out.println("fps:" + frames);
 					fpsTracker.add(frames);
 					time += 1000;
 					frames = 0;
@@ -98,10 +101,11 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 	}
 
-	// Updates contents
-	public void update() {
 
-		cmanager.checkCollision();
+	/**
+	 * Updates location of walls based on key presses and collisions
+	 */
+	public void update() {
 
 		int dx = 0;
 		int dy = 0;
@@ -111,47 +115,43 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		boolean rightCollided = false;
 		boolean leftCollided = false;
 
-		List<Integer> collisions = cmanager.checkCollision();
+		List<Collision> collisions = cmanager.checkCollision();
 
+		//If theres at least one collision
 		if (collisions.size() > 0) {
-			for (Integer collisionNum : collisions) {
+			for (Collision collisionNum : collisions) {
 				// Handle collision
 				switch (collisionNum) {
 				// Depending on what side is colliding, this changes dx or dy by one to make the
 				// player 'bounce off' the wall.
-				case 1: // Collided from the left
-					// System.out.println("left side");
+				case LEFT_SIDE: // Collided from the left
 					if (!leftCollided) {
 						dx -= displacement;
 					}
 
 					leftCollided = true;
 					break;
-				case 2: // Collided from the right
-					// System.out.println("right side");
+				case RIGHT_SIDE: // Collided from the right
 					if (!rightCollided) {
 						dx += displacement;
 					}
 
 					rightCollided = true;
 					break;
-				case 3: // Collided from the top
-					// System.out.println("top side");
+				case TOP_SIDE: // Collided from the top
 					if (!topCollided) {
 						dy -= displacement;
 					}
 
 					topCollided = true;
 					break;
-				case 4: // Collided from the bottom
-					// System.out.println("bottom side");
+				case BOTTOM_SIDE: // Collided from the bottom
 					if (!botCollided) {
 						dy += displacement;
 					}
 					botCollided = true;
 					break;
-				case 5: // Collided from right and bottom
-					// System.out.println("right and bottom");
+				case BOTTOM_RIGHT_CORNER: // Collided from right and bottom
 					if (!botCollided && !rightCollided) {
 						dy += displacement * 2;
 						dx += displacement;
@@ -159,8 +159,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 					botCollided = true;
 					rightCollided = true;
 					break;
-				case 6: // Collided from left and bottom
-					// System.out.println("left and bottom");
+				case BOTTOM_LEFT_CORNER: // Collided from left and bottom
 					if (!botCollided && !leftCollided) {
 						dy += displacement * 2;
 						dx -= displacement;
@@ -168,8 +167,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 					botCollided = true;
 					leftCollided = true;
 					break;
-				case 7: // Collided from right and top
-					// System.out.println("right and top");
+				case TOP_RIGHT_CORNER: // Collided from right and top
 					if (!topCollided && !rightCollided) {
 						dy -= displacement * 2;
 						dx += displacement;
@@ -177,14 +175,15 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 					rightCollided = true;
 					topCollided = true;
 					break;
-				case 8: // Collided from left and top
-					// System.out.println("left and top");
+				case TOP_LEFT_CORNER: // Collided from left and top
 					if (!topCollided && !leftCollided) {
 						dy -= displacement * 2;
 						dx -= displacement;
 					}
 					leftCollided = true;
 					topCollided = true;
+					break;
+				default:
 					break;
 				}
 			}
@@ -206,10 +205,12 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 		cmanager.updateCoords(dx, dy);
 		ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
-		// ourPlayer.updateState(dx, dy);
+
 	}
 
-	// Paints contents on screen
+	/**
+	 * Paints all elements on screen
+	 */
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -219,16 +220,15 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// Draw map
 		cmanager.draw(g2);
 
-		// Draw 'player' sqaure
-		// g2.setColor(Color.red);
-		// g2.fillRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
-
 		ourPlayer.draw(g2);
 		
 		// Saves some memory
 		g2.dispose();
 	}
 
+	/**
+	 * @return double the average FPS count during the programs duration
+	 */
 	public double getFPS() {
 		int sum = 0;
 		for (Integer n : fpsTracker) {
@@ -236,6 +236,111 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 
 		return sum / (double) fpsTracker.size();
+	}
+	
+	/**
+	 * Stops the game loop
+	 */
+	public void stopLoop() {
+		isRunning = false;
+	}
+	
+	/**
+	 * Continues the game loop
+	 */
+	public void continueLoop() {
+		isRunning = true;
+	}
+	
+	/**
+	 * @return boolean if the game loop is running
+	 */
+	public boolean isRunning() {
+		return isRunning;
+	}
+	
+
+	/**
+	 * Checks if thread has started
+	 * 
+	 * @return boolean if thread has started or not
+	 */
+	public boolean threadStarted() {
+		if(gameThread == null) {
+			return false;
+		}
+		return gameThread.isAlive();
+	}
+	
+	public static void main(String[] args) {
+		
+		boolean allPassed = true;
+		
+		GamePanel gp = new GamePanel();
+		
+		
+		//Making sure game thread hasn't started yet
+		if(gp.threadStarted() == true) {
+			allPassed = false;
+			System.err.println("gameThread started when it shouldn't have!");
+		}
+		
+		gp.startGameThread();
+		
+		//Testing if game thread correctly started
+		if(gp.threadStarted() != true) {
+			allPassed = false;
+			System.err.println("Failed to start gameThread!");
+		}
+
+		//Testing if gameLoop is running
+		if(gp.isRunning() != true) {
+			allPassed = false;
+			System.err.println("Game loop isn't running, when it should be!");
+		}
+		
+		gp.stopLoop();
+		//Testing if gameLoop is paused when it should be
+		if(gp.isRunning() == true) {
+			allPassed = false;
+			System.err.println("Game loop is running, when it should be stopped!");
+		}
+		
+		gp.continueLoop();
+
+		//Testing if gameLoop starts again correctly
+		if(gp.isRunning() != true) {
+			allPassed = false;
+			System.err.println("Game loop isn't running, when it should be!");
+		}
+		
+
+		//Sleep main thread for 10 seconds, so the game thread still runs to test FPS tracking
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			System.err.println("Error when sleeping main thread!");
+		}
+		
+		int avgFPS = (int)gp.getFPS();
+		//Testing if game is running at 60 FPS
+		
+		if(avgFPS != 60) {
+			allPassed = false;
+			System.err.format("Game should be running at 60 FPS, but it averaged %s FPS!\n",avgFPS);
+		}
+		
+		
+		
+		if(allPassed) {
+			System.out.println("All cases passed!");
+		}else {
+			System.out.println("At least 1 case failed!");
+		}
+		
+		System.exit(0);
+		
+		
 	}
 
 }

@@ -11,6 +11,19 @@
 package src;
 
 public interface GameVariables {
+	enum Collision {
+        LEFT_SIDE,
+        RIGHT_SIDE,
+        TOP_SIDE,
+        BOTTOM_SIDE,
+        BOTTOM_LEFT_CORNER,
+        TOP_LEFT_CORNER,
+        TOP_RIGHT_CORNER,
+        BOTTOM_RIGHT_CORNER,
+        FULL_COLLISION,
+        NO_COLLISION
+    }
+	
 	final int SCREEN_WIDTH = 1000;
 	final int SCREEN_HEIGHT = 800;
 

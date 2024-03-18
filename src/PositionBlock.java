@@ -91,15 +91,14 @@ public class PositionBlock implements GameVariables {
 	private static void gameOver() {
 		// Load the image
         try {
-            backgroundImage = ImageIO.read(new File("src/src/YouWin.png"));
+            backgroundImage = ImageIO.read(new File("src/YouWin.png"));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to load you win image!");
         }  
         
         JFrame frame = new JFrame("YOU WON!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 800); 
-        
         
 		JPanel panel = new JPanel() {
             @Override
