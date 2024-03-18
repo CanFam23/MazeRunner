@@ -17,6 +17,8 @@ import java.util.List;
 public class Chunk implements GameVariables {
 	
 	private final int HITBOX_BUFFER_AMOUNT = 6;
+	private static final int COLLISION_INT = 5;
+	private static final int FULL_COLLISION_INT = 75;
 
 	private PositionBlock[][] blocks;
 
@@ -91,95 +93,104 @@ public class Chunk implements GameVariables {
 	}
 
 	// Returns a List of integers, which represent what side of the player is
-	// colliding with a wall
-	public List<Integer> checkCollision() {
+		// colliding with a wall
+		public List<Collision> checkCollision() {
 
-		List<Integer> collisions = new ArrayList<>();
+			List<Collision> Collisions = new ArrayList<>();
 
-		// Check each wall in the chunk, if a wall chunk and colliding, add it's
-		// returned int value to list
-		for (int r = 0; r < blocks.length; r++) {
-			for (int c = 0; c < blocks[0].length; c++) {
-				PositionBlock temp = blocks[r][c];
-				if (temp instanceof Wall) {
-					int collided = collision(temp);
+			// Check each wall in the chunk, if a wall chunk and colliding, add it's
+			// returned int value to list
+			for (int r = 0; r < blocks.length; r++) {
+				for (int c = 0; c < blocks[0].length; c++) {
+					PositionBlock temp = blocks[r][c];
+					if (temp instanceof Wall) {
+						Collision collided = collision(temp);
 
-					if (collided != 0) {
-						collisions.add(collided);
+						if (collided != Collision.NO_COLLISION) {
+							Collisions.add(collided);
+						}
+
 					}
-
 				}
 			}
+
+			return Collisions;
 		}
 
-		return collisions;
-	}
+		// Checks for collision between player and wall
+		public Collision collision(PositionBlock w) {
+			// Convert 2D array of coords into arrays of x coords and y coords
+			final int[] otherCoords = w.getCoords();
+			final int x = otherCoords[0] + xPosition;
+			final int y = otherCoords[1] + yPosition;
 
-	// Checks for collision between player and wall
-	public int collision(PositionBlock w) {
-		// Convert 2D array of coords into arrays of x coords and y coords
-		final int[] otherCoords = w.getCoords();
-		final int x = otherCoords[0] + xPosition;
-		final int y = otherCoords[1] + yPosition;
+			final int[] playerXCoords = new int[] { PLAYER_X, PLAYER_X + PLAYER_WIDTH, PLAYER_X + PLAYER_WIDTH, PLAYER_X };
+			final int[] playerYCoords = new int[] { PLAYER_Y, PLAYER_Y, PLAYER_Y + PLAYER_HEIGHT,
+					PLAYER_Y + PLAYER_HEIGHT };
 
-		final int[] playerXCoords = new int[] { PLAYER_X, PLAYER_X + PLAYER_WIDTH, PLAYER_X + PLAYER_WIDTH, PLAYER_X };
-		final int[] playerYCoords = new int[] { PLAYER_Y, PLAYER_Y, PLAYER_Y + PLAYER_HEIGHT,
-				PLAYER_Y + PLAYER_HEIGHT };
+			final int[] otherXCoords = new int[] { x - HITBOX_BUFFER_AMOUNT, x + WALL_WIDTH + HITBOX_BUFFER_AMOUNT,
+					x + WALL_WIDTH + HITBOX_BUFFER_AMOUNT, x - HITBOX_BUFFER_AMOUNT };
+			final int[] otherYCoords = new int[] { y - HITBOX_BUFFER_AMOUNT, y - HITBOX_BUFFER_AMOUNT,
+					y + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT, y + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT };
 
-		final int[] otherXCoords = new int[] { x - HITBOX_BUFFER_AMOUNT, x + WALL_WIDTH + HITBOX_BUFFER_AMOUNT,
-				x + WALL_WIDTH + HITBOX_BUFFER_AMOUNT, x - HITBOX_BUFFER_AMOUNT };
-		final int[] otherYCoords = new int[] { y - HITBOX_BUFFER_AMOUNT, y - HITBOX_BUFFER_AMOUNT,
-				y + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT, y + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT };
+			// if player top left x < wall bottom right x
+			if (playerXCoords[0] <= otherXCoords[2]
+					// if player bottom right x > wall top left x
+					&& playerXCoords[2] >= otherXCoords[0]
+					// if player top left y < wall bottom right y
+					&& playerYCoords[0] <= otherYCoords[2]
+					// if player bottom right y > wall top left y
+					&& playerYCoords[2] >= otherYCoords[0]) {
 
-		// if player top left x < wall bottom right x
-		if (playerXCoords[0] <= otherXCoords[2]
-				// if player bottom right x > wall top left x
-				&& playerXCoords[2] >= otherXCoords[0]
-				// if player top left y < wall bottom right y
-				&& playerYCoords[0] <= otherYCoords[2]
-				// if player bottom right y > wall top left y
-				&& playerYCoords[2] >= otherYCoords[0]) {
+				// find which side of the player is touching a wall
+				int overlapLeft = otherXCoords[1] - playerXCoords[0];
+				int overlapRight = playerXCoords[1] - otherXCoords[0];
+				int overlapTop = otherYCoords[2] - playerYCoords[0];
+				int overlapBottom = playerYCoords[2] - otherYCoords[1];
 
-			// find which side of the player is touching a wall
-			int overlapLeft = otherXCoords[1] - playerXCoords[0];
-			int overlapRight = playerXCoords[1] - otherXCoords[0];
-			int overlapTop = otherYCoords[2] - playerYCoords[0];
-			int overlapBottom = playerYCoords[2] - otherYCoords[1];
+				// Find the smallest overlap
+				int minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
 
-			// Find the smallest overlap
-			int minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
+				
+				//If the block being checked is the end block, we want to check if the user is fully on the block or not
+				//this checks if the user is in the general center of the block, aka a 'full collision'
+				if(w instanceof EndBlock) {
+					if(overlapLeft > FULL_COLLISION_INT && overlapRight > FULL_COLLISION_INT && overlapTop > FULL_COLLISION_INT && overlapBottom > FULL_COLLISION_INT) {
+						return Collision.FULL_COLLISION;
+					}
+				}
+				
+				// If two sides are colliding at the same time
+				// Bottom right corner
+				if (overlapRight < COLLISION_INT && overlapBottom < COLLISION_INT) {
+					return Collision.BOTTOM_RIGHT_CORNER;
+					// Bottom left corner
+				} else if (overlapLeft < COLLISION_INT && overlapBottom < COLLISION_INT) {
+					return Collision.BOTTOM_LEFT_CORNER;
+					// Top Right corner
+				} else if (overlapRight < COLLISION_INT && overlapTop < COLLISION_INT) {
+					return Collision.TOP_RIGHT_CORNER;
+					// Top left corner
+				} else if (overlapLeft < COLLISION_INT && overlapTop < COLLISION_INT) {
+					return Collision.TOP_LEFT_CORNER;
+				}
 
-			// If two sides are colliding at the same time
-			// Bottom right corner
-			if (overlapRight < 5 && overlapBottom < 5) {
-				return 5;
-				// Bottom left corner
-			} else if (overlapLeft < 5 && overlapBottom < 5) {
-				return 6;
-				// Top Right corner
-			} else if (overlapRight < 5 && overlapTop < 5) {
-				return 7;
-				// Top left corner
-			} else if (overlapLeft < 5 && overlapTop < 5) {
-				return 8;
-			}
-
-			// Return the side of the collision
-			if (minOverlap == overlapLeft) {
-				return 1; // Collided from the left
-			} else if (minOverlap == overlapRight) {
-				return 2; // Collided from the right
-			} else if (minOverlap == overlapTop) {
-				return 3; // Collided from the top
+				// Return the side of the collision
+				if (minOverlap == overlapLeft) {
+					return Collision.LEFT_SIDE; // Collided from the left
+				} else if (minOverlap == overlapRight) {
+					return Collision.RIGHT_SIDE; // Collided from the right
+				} else if (minOverlap == overlapTop) {
+					return Collision.TOP_SIDE; // Collided from the top
+				} else {
+					return Collision.BOTTOM_SIDE; // Collided from the bottom
+				}
 			} else {
-				return 4; // Collided from the bottom
+				// no collision
+				return Collision.NO_COLLISION;
 			}
-		} else {
-			// no collision
-			return 0;
-		}
 
-	}
+		}
 
 	public String toString() {
 		String ret = "";

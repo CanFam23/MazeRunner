@@ -179,7 +179,9 @@ public class Player implements GameVariables {
         frame.setBounds(10, 10, 400, 400);
 
         panel = new JPanel() {
-            @Override
+			private static final long serialVersionUID = 1L;
+
+			@Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 // Draw the current image, if not null

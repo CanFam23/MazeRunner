@@ -173,7 +173,7 @@ public class ChunkManager implements GameVariables {
 	// collisions
 	public void containsPlayer(Chunk c,PositionBlock pb) {
 
-		if(c.collision(pb) != 0) {
+		if(c.collision(pb) == Collision.FULL_COLLISION) {
 			System.out.println(pb);
 		}
 	}
@@ -192,8 +192,6 @@ public class ChunkManager implements GameVariables {
 		int dx = -startChunk.xPosition;
 		int dy = -startChunk.yPosition;
 
-		System.out.println(dx+" "+dy);
-		System.out.println(startCoords[0] + " " + startCoords[1]);
 		
 		//Put the top left corner of the chunk in the top left corner of the screen
 		dx += WALL_WIDTH * 2;
@@ -218,8 +216,8 @@ public class ChunkManager implements GameVariables {
 	 * a list of integers which represent what side of the player is colliding, if
 	 * any
 	 */
-	public List<Integer> checkCollision() {
-		List<Integer> collisions = new ArrayList<>();
+	public List<Collision> checkCollision() {
+		List<Collision> collisions = new ArrayList<>();
 
 		// Adds any Integers returned from each chunk to the list
 		for (Chunk c : activeChunks) {
