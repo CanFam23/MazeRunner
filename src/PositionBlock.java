@@ -62,8 +62,7 @@ public class PositionBlock implements GameVariables {
 
 	public String toString() {
         if (gameIsOver) {
-            // If the game is already over, return an indicator (e.g., "GameOver")
-            return "GameOver";
+            return "";
         } else if (this instanceof EmptyBlock)
             return "empt";
         else if (this instanceof Wall)
@@ -73,7 +72,8 @@ public class PositionBlock implements GameVariables {
         else if (this instanceof EndBlock) {
             // Set the flag to true and call gameOver only once
         	gameIsOver = true;
-            gameOver();
+            GameOverWIN.GameOverWIN();
+        	Main.closeMainWindow();
             return "EndB";
         } else
             return "????";
@@ -87,50 +87,4 @@ public class PositionBlock implements GameVariables {
 
 		g.setColor(temp);
 	}
-	
-	private static void gameOver() {
-		// Load the image
-        try {
-            backgroundImage = ImageIO.read(new File("src/YouWin.png"));
-        } catch (IOException e) {
-            System.err.println("Failed to load you win image!");
-        }  
-        
-        JFrame frame = new JFrame("YOU WON!");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 800); 
-        
-		JPanel panel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-            }
-        };
-        
-        JButton endGame = new JButton("EXIT");
-        endGame.setFont(new Font("Arail", Font.PLAIN,24));
-        endGame.addActionListener ( e -> {
-        	System.exit(0);
-        });
-        
-        JButton playAgain = new JButton("NEXT LEVEL");
-        playAgain.setFont(new Font("Arail", Font.PLAIN,24));
-        playAgain.addActionListener(e -> {
-        	Main.runMainCode();
-        });
-        
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(playAgain);
-        buttonPanel.add(endGame);
-           
-        
-        // Set up the frame
-        frame.add(buttonPanel,BorderLayout.SOUTH);
-        frame.add(panel);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);     
-		
-	}
-
 }
