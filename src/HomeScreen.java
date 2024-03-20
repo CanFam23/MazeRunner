@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
@@ -38,10 +39,7 @@ public class HomeScreen extends JFrame {
 
 	private void loadImage() {
 		try {
-			// Replace "FinalProject/background.jpg" with the correct path to your image
-			// file
-			URL imageUrl = getClass().getResource("../src/HomeScreen4.png");
-			backgroundImage = ImageIO.read(imageUrl);
+            backgroundImage = ImageIO.read(new File("images/HomeScreen4.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -63,7 +61,7 @@ public class HomeScreen extends JFrame {
 		startButton.setText("CLICK HERE TO START");
         startButton.setFont(new Font("Arail", Font.PLAIN,24));
 		startButton.setForeground(Color.BLACK);
-		startButton.setBackground(Color.BLACK); // Why isn't this working!!!!
+		startButton.setBackground(Color.BLACK); 
 
 		startButton.setMargin(new Insets(10, 20, 10, 20)); // top, left, bottom, right
 		startButton.addActionListener(new ActionListener() {
@@ -71,8 +69,8 @@ public class HomeScreen extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// Add your code to start the game here
 				JOptionPane.showMessageDialog(HomeScreen.this,
-						"Get ready for this race against time.\nReach the end of the maze before time runs up to go to the next level!\nClick 'OK' when your ready");
-				Main.runMainCode();
+					"Get ready for this race against time.\nReach the end of the maze before time runs up to go to the next level!\nClick 'OK' when your ready");
+				HomeScreen.this.dispose();
 			}
 		});
 
@@ -98,6 +96,7 @@ public class HomeScreen extends JFrame {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
+				HomeScreen homeScreen = new HomeScreen();
 				new HomeScreen().setVisible(true);
 			}
 		});

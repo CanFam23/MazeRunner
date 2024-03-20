@@ -15,27 +15,37 @@ import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import java.io.File;
 import java.awt.Font;
-
-
-
 
 public class Main {
 	
 	private static BufferedImage backgroundImage;
 	private static Timer timer;
+	private static JFrame window;
 
-    public static void main(String[] args) {
-    	runMainCode();
-    }
+
+	public static void main(String[] args) {
+	    SwingUtilities.invokeLater(new Runnable() {
+	        @Override
+	        public void run() {
+	            HomeScreen homeScreen = new HomeScreen();
+	            homeScreen.addWindowListener(new WindowAdapter() {
+	                @Override
+	                public void windowClosed(WindowEvent e) {
+	                    runMainCode();
+	                }
+	            });
+	            homeScreen.setVisible(true);
+	        }
+	    });
+	}
 
     public static void runMainCode() {
-    	
-
         // Creates window
-        JFrame window = new JFrame();
+    	window = new JFrame();
 
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setTitle("Maze Runner - Use Arrows to start time");
@@ -58,8 +68,8 @@ public class Main {
 
                 if (seconds_left <= 0) {
                 	timer.stop();
-                	gameOver();
-                	window.dispose();
+                	GameOverLOSE.GameOver();
+                	closeMainWindow();
                 }
                 	
                 window.setTitle("Maze Runner - Time Left: " + seconds_left + " seconds");
@@ -107,54 +117,8 @@ public class Main {
         // starts game
         gamePanel.startGameThread();
     }
-
-	private static void gameOver() {
-		// Load the image
-        try {
-            backgroundImage = ImageIO.read(new File("GameOver2.png"));
-        } catch (IOException e) {
-            System.err.println("Failed to load game over image!");
-        }  
-        
-        JFrame frame = new JFrame("Game Over");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 800); 
-        
-        
-		JPanel panel = new JPanel() {
- 
-			private static final long serialVersionUID = -1223912485132542944L;
-
-			@Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-            }
-        };
-        
-        JButton endGame = new JButton("EXIT");
-        endGame.setFont(new Font("Arail", Font.PLAIN,24));
-        endGame.addActionListener ( e -> {
-        	System.exit(0);
-        });
-        
-        JButton playAgain = new JButton("PLAY AGAIN");
-        playAgain.setFont(new Font("Arail", Font.PLAIN,24));
-        playAgain.addActionListener(e -> {
-        	Main.runMainCode();
-        });
-        
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(playAgain);
-        buttonPanel.add(endGame);
-           
-        
-        // Set up the frame
-        frame.add(buttonPanel,BorderLayout.SOUTH);
-        frame.add(panel);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);     
-		
-	}
-
+    
+    public static void closeMainWindow() {
+		window.dispose();
+    }
 }

@@ -205,7 +205,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 		cmanager.updateCoords(dx, dy);
 		ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
-
 	}
 
 	/**
