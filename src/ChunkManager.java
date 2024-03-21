@@ -28,10 +28,12 @@ public class ChunkManager implements GameVariables {
 
 	private Chunk startChunk;
 	private Chunk endChunk;
-	
+
 	private StartingBlock startBlock;
 	private int[] startCoords;
 	private EndBlock endBlock;
+
+	private boolean endFound = false;
 
 	// TODO: Refactor private
 	// Declare attributes that change
@@ -49,7 +51,8 @@ public class ChunkManager implements GameVariables {
 			final String[] levelStrings = input.nextLine().split(":")[1].split("x"); // Save the dimension of the chunks
 																						// - example: (x chunks, y
 																						// chunks)
-			levelXDimension = Integer.parseInt(levelStrings[0]); // TODO: Possibly change the level description loading (redundant)
+			levelXDimension = Integer.parseInt(levelStrings[0]); // TODO: Possibly change the level description loading
+																	// (redundant)
 			levelYDimension = Integer.parseInt(levelStrings[1]);
 			final String[] chunkStrings = input.nextLine().split(":")[1].split("x"); // Save chunk dimensions - example:
 																						// (x walls, y walls)
@@ -96,17 +99,18 @@ public class ChunkManager implements GameVariables {
 						isEndChunk = true;
 					}
 					chunks[yChunk][xChunk].add(xPosition % chunkXDimension, yPosition % chunkYDimension, pb);
-					//Keep track of what chunks are the start and end
+					// Keep track of what chunks are the start and end
 					if (isStartingChunk) {
 						startChunk = chunks[yChunk][xChunk];
-						startCoords = new int[] {xPosition % chunkXDimension * WALL_WIDTH, yPosition % chunkYDimension * WALL_HEIGHT};
-						startBlock = (StartingBlock)pb;
+						startCoords = new int[] { xPosition % chunkXDimension * WALL_WIDTH,
+								yPosition % chunkYDimension * WALL_HEIGHT };
+						startBlock = (StartingBlock) pb;
 						isStartingChunk = false;
-					}else if(isEndChunk) {
+					} else if (isEndChunk) {
 						endChunk = chunks[yChunk][xChunk];
-						endBlock = (EndBlock)pb;
+						endBlock = (EndBlock) pb;
 						isEndChunk = false;
-						
+
 					}
 				}
 				yPosition++;
@@ -117,12 +121,11 @@ public class ChunkManager implements GameVariables {
 			return true;
 		} catch (FileNotFoundException e) {
 			System.err.println("File: '" + FILE_LOCATION + levelName + ".txt" + "' not found");
-		} 
+		}
 		return false;
 	}
 
-	
-	//Update coords of all chunks, if the chunk is visible, add to active chunks
+	// Update coords of all chunks, if the chunk is visible, add to active chunks
 	public void updateCoords(int dx, int dy) {
 		for (int x = 0; x < chunks.length; x++) {
 			for (int y = 0; y < chunks[0].length; y++) {
@@ -138,12 +141,18 @@ public class ChunkManager implements GameVariables {
 				}
 			}
 		}
-		
-		if(activeChunks.contains(startChunk)) {
-			containsPlayer(startChunk,startBlock);
-		}else if(activeChunks.contains(endChunk)) {
-			containsPlayer(endChunk,endBlock);
+
+		if (activeChunks.contains(startChunk)) {
+			containsPlayer(startChunk, startBlock);
+		} else if (activeChunks.contains(endChunk)) {
+			if (containsPlayer(endChunk, endBlock)) {
+				endFound = true;
+			}
 		}
+	}
+
+	public boolean endFound() {
+		return endFound;
 	}
 
 	// Returns true if the player is in the given chunk, same idea used for
@@ -168,14 +177,15 @@ public class ChunkManager implements GameVariables {
 				// if player bottom right y > chunk top left y
 				&& playerYCoords[2] >= chunkYCoords[0]);
 	}
-	
+
 	// Returns true if the player is in the given block, same idea used for
 	// collisions
-	public void containsPlayer(Chunk c,PositionBlock pb) {
+	public boolean containsPlayer(Chunk c, PositionBlock pb) {
 
-		if(c.collision(pb) == Collision.FULL_COLLISION) {
-			System.out.println(pb);
+		if (c.collision(pb) == Collision.FULL_COLLISION) {
+			return true;
 		}
+		return false;
 	}
 
 	// Returns true if the given chunk is currently visible on the screen, or close
@@ -188,16 +198,15 @@ public class ChunkManager implements GameVariables {
 
 	// Sets the starting location to the start chunk
 	public void setStartLocation() {
-		//Move all chunks so the start chunk is the first one on the screen
+		// Move all chunks so the start chunk is the first one on the screen
 		int dx = -startChunk.xPosition;
 		int dy = -startChunk.yPosition;
 
-		
-		//Put the top left corner of the chunk in the top left corner of the screen
+		// Put the top left corner of the chunk in the top left corner of the screen
 		dx += WALL_WIDTH * 2;
 		dy += WALL_HEIGHT * 2;
-		
-		//Move the chunks so the player starts on the start block
+
+		// Move the chunks so the player starts on the start block
 		dx -= startCoords[0];
 		dy -= startCoords[1];
 		updateCoords(dx, dy);
