@@ -4,7 +4,7 @@
  * Date: March 2, 2024
  * 
  * Desc:
- * 'TBD'
+ * Chunk holds an nxn array of PositionBlocks and stores the x and y position of the entire array. draw() draws all position blocks in the array. 
  */
 
 package src;
@@ -16,14 +16,14 @@ import java.util.List;
 
 public class Chunk implements GameVariables {
 	
-	private final int HITBOX_BUFFER_AMOUNT = 6;
-	private static final int COLLISION_INT = 5;
+	// Set collision variables
+	private final int HITBOX_BUFFER_AMOUNT = 6; // How close is close enough to register a collision?
+	private static final int COLLISION_INT = 5; 
 	private static final int FULL_COLLISION_INT = 75;
 
 	private PositionBlock[][] blocks;
 
-	private int ChunkNumber;
-
+	// This is how large the chunk appears on the screen and is used for collision detection
 	private int chunkWidth;
 	private int chunkHeight;
 
@@ -42,6 +42,12 @@ public class Chunk implements GameVariables {
 		this.chunkHeight = yDimension * WALL_HEIGHT;
 	}
 
+	/**
+	 * Adds a position block to the chunk with position xPosition and yPosition
+	 * @param xPosition is the x position that the block appears in the chunk
+	 * @param yPosition is the y position that the block appears in the chunk
+	 * @param block can be any of the PositionBlock types (EmptyBlock, EndBlock, Wall, etc.)
+	 */
 	public void add(int xPosition, int yPosition, PositionBlock block) {
 		blocks[yPosition][xPosition] = block;
 
@@ -53,11 +59,20 @@ public class Chunk implements GameVariables {
 		}
 	}
 
+	/**
+	 * Update the coordinates of the chunk
+	 * @param dx is the change in the x direction to the position of the chunk
+	 * @param dy is the change in the y direction to the position of the chunk
+	 */
 	public void updateCoords(int dx, int dy) {
 		xPosition += dx;
 		yPosition += dy;
 	}
 
+	/**
+	 * Draw every PositionBlock in the chunk
+	 * @param g is the Graphics2D object that will be drawn with.
+	 */
 	public void draw(Graphics2D g) {
 		for (int i = 0; i < blocks.length; i++) {
 			for (int j = 0; j < blocks[i].length; j++) {
@@ -72,10 +87,6 @@ public class Chunk implements GameVariables {
 //		g.fillOval(xPosition, yPosition, 10, 10);
 //		
 //		g.setColor(temp);
-	}
-
-	public int getChunkNumber() {
-		return ChunkNumber;
 	}
 
 	public boolean isStartChunk() {

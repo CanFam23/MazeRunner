@@ -3,8 +3,8 @@
  * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
  * Date: March 2, 2024
  * 
- * Desc:
- * 'TBD'
+ * Desc: ChunkManager.java loads and holds the chunks that will be used in the game. The chunks are basically building blocks of the level.
+ * 		
  */
 
 package src;
@@ -28,7 +28,7 @@ public class ChunkManager implements GameVariables {
 
 	private Chunk startChunk;
 	private Chunk endChunk;
-	
+
 	private StartingBlock startBlock;
 	private int[] startCoords;
 	private EndBlock endBlock;
@@ -47,12 +47,13 @@ public class ChunkManager implements GameVariables {
 		try (final Scanner input = new Scanner(new File(FILE_LOCATION + levelName + ".txt"))) {
 			input.nextLine(); // Discard data description
 			final String[] levelStrings = input.nextLine().split(":")[1].split("x"); // Save the dimension of the chunks
-																						// - example: (x chunks, y
-																						// chunks)
-			levelXDimension = Integer.parseInt(levelStrings[0]); // TODO: Possibly change the level description loading (redundant)
+			                                                                         // - example: (x chunks, y
+			                                                                         // chunks)
+			levelXDimension = Integer.parseInt(levelStrings[0]); // TODO: Possibly change the level description loading
+			                                                     // (redundant)
 			levelYDimension = Integer.parseInt(levelStrings[1]);
 			final String[] chunkStrings = input.nextLine().split(":")[1].split("x"); // Save chunk dimensions - example:
-																						// (x walls, y walls)
+			                                                                         // (x walls, y walls)
 			chunkXDimension = Integer.parseInt(chunkStrings[0]);
 			chunkYDimension = Integer.parseInt(chunkStrings[1]);
 
@@ -68,45 +69,43 @@ public class ChunkManager implements GameVariables {
 			}
 
 			// Load the level data
-			// TODO: Move variable declarations into loop
 			int yPosition = 0;
-			int yChunk = 0;
-			int xChunk = 0;
 			boolean isStartingChunk = false;
 			boolean isEndChunk = false;
 			while (input.hasNextLine()) {
-				yChunk = yPosition / chunkYDimension;
+				int yChunk = yPosition / chunkYDimension;
 				String[] inputData = input.nextLine().split("");
 				for (int xPosition = 0; xPosition < inputData.length; xPosition++) {
-					xChunk = xPosition / chunkXDimension;
+					int xChunk = xPosition / chunkXDimension;
 					PositionBlock pb = null;
 					if (inputData[xPosition].equals("0")) {
 						pb = new EmptyBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, Color.white);
+						        (yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, Color.white);
 					} else if (inputData[xPosition].equals("1")) {
 						pb = new Wall((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, Color.black);
+						        (yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, Color.black);
 					} else if (inputData[xPosition].equals("2")) {
 						pb = new StartingBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, Color.blue);
+						        (yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, Color.blue);
 						isStartingChunk = true;
 					} else if (inputData[xPosition].equals("3")) {
 						pb = new EndBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, Color.green);
+						        (yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, Color.green);
 						isEndChunk = true;
 					}
 					chunks[yChunk][xChunk].add(xPosition % chunkXDimension, yPosition % chunkYDimension, pb);
-					//Keep track of what chunks are the start and end
+					// Keep track of what chunks are the start and end
 					if (isStartingChunk) {
 						startChunk = chunks[yChunk][xChunk];
-						startCoords = new int[] {xPosition % chunkXDimension * WALL_WIDTH, yPosition % chunkYDimension * WALL_HEIGHT};
-						startBlock = (StartingBlock)pb;
+						startCoords = new int[] { xPosition % chunkXDimension * WALL_WIDTH,
+						        yPosition % chunkYDimension * WALL_HEIGHT };
+						startBlock = (StartingBlock) pb;
 						isStartingChunk = false;
-					}else if(isEndChunk) {
+					} else if (isEndChunk) {
 						endChunk = chunks[yChunk][xChunk];
-						endBlock = (EndBlock)pb;
+						endBlock = (EndBlock) pb;
 						isEndChunk = false;
-						
+
 					}
 				}
 				yPosition++;
@@ -117,12 +116,11 @@ public class ChunkManager implements GameVariables {
 			return true;
 		} catch (FileNotFoundException e) {
 			System.err.println("File: '" + FILE_LOCATION + levelName + ".txt" + "' not found");
-		} 
+		}
 		return false;
 	}
 
-	
-	//Update coords of all chunks, if the chunk is visible, add to active chunks
+	// Update coords of all chunks, if the chunk is visible, add to active chunks
 	public void updateCoords(int dx, int dy) {
 		for (int x = 0; x < chunks.length; x++) {
 			for (int y = 0; y < chunks[0].length; y++) {
@@ -138,11 +136,11 @@ public class ChunkManager implements GameVariables {
 				}
 			}
 		}
-		
-		if(activeChunks.contains(startChunk)) {
-			containsPlayer(startChunk,startBlock);
-		}else if(activeChunks.contains(endChunk)) {
-			containsPlayer(endChunk,endBlock);
+
+		if (activeChunks.contains(startChunk)) {
+			containsPlayer(startChunk, startBlock);
+		} else if (activeChunks.contains(endChunk)) {
+			containsPlayer(endChunk, endBlock);
 		}
 	}
 
@@ -151,9 +149,9 @@ public class ChunkManager implements GameVariables {
 	public boolean containsPlayer(Chunk chunk) {
 
 		final int[] playerXCoords = new int[] { SCREEN_WIDTH / 2, SCREEN_WIDTH / 2 + PLAYER_WIDTH,
-				SCREEN_WIDTH / 2 + PLAYER_WIDTH, SCREEN_WIDTH / 2 };
+		        SCREEN_WIDTH / 2 + PLAYER_WIDTH, SCREEN_WIDTH / 2 };
 		final int[] playerYCoords = new int[] { SCREEN_HEIGHT / 2, SCREEN_HEIGHT / 2, SCREEN_HEIGHT / 2 + PLAYER_WIDTH,
-				SCREEN_HEIGHT / 2 + PLAYER_WIDTH };
+		        SCREEN_HEIGHT / 2 + PLAYER_WIDTH };
 
 		int[][] chunkCoords = chunk.getCoords();
 
@@ -161,19 +159,18 @@ public class ChunkManager implements GameVariables {
 		int[] chunkYCoords = chunkCoords[1];
 
 		return (playerXCoords[0] <= chunkXCoords[2]
-				// if player bottom right x > chunk top left x
-				&& playerXCoords[2] >= chunkXCoords[0]
+		        // if player bottom right x > chunk top left x
+		        && playerXCoords[2] >= chunkXCoords[0]
 				// if player top left y < chunk bottom right y
-				&& playerYCoords[0] <= chunkYCoords[2]
+		        && playerYCoords[0] <= chunkYCoords[2]
 				// if player bottom right y > chunk top left y
-				&& playerYCoords[2] >= chunkYCoords[0]);
+		        && playerYCoords[2] >= chunkYCoords[0]);
 	}
-	
+
 	// Returns true if the player is in the given block, same idea used for
 	// collisions
-	public void containsPlayer(Chunk c,PositionBlock pb) {
-
-		if(c.collision(pb) == Collision.FULL_COLLISION) {
+	public void containsPlayer(Chunk c, PositionBlock pb) {
+		if (c.collision(pb) == Collision.FULL_COLLISION) {
 			System.out.println(pb);
 		}
 	}
@@ -181,23 +178,21 @@ public class ChunkManager implements GameVariables {
 	// Returns true if the given chunk is currently visible on the screen, or close
 	// to being visible
 	public boolean isVisible(Chunk chunk) {
-
 		return (chunk.xPosition >= -chunkWidth && chunk.xPosition <= chunkWidth && chunk.yPosition >= -chunkHeight
-				&& chunk.yPosition <= chunkHeight);
+		        && chunk.yPosition <= chunkHeight);
 	}
 
 	// Sets the starting location to the start chunk
 	public void setStartLocation() {
-		//Move all chunks so the start chunk is the first one on the screen
+		// Move all chunks so the start chunk is the first one on the screen
 		int dx = -startChunk.xPosition;
 		int dy = -startChunk.yPosition;
 
-		
-		//Put the top left corner of the chunk in the top left corner of the screen
+		// Put the top left corner of the chunk in the top left corner of the screen
 		dx += WALL_WIDTH * 2;
 		dy += WALL_HEIGHT * 2;
-		
-		//Move the chunks so the player starts on the start block
+
+		// Move the chunks so the player starts on the start block
 		dx -= startCoords[0];
 		dy -= startCoords[1];
 		updateCoords(dx, dy);
@@ -236,6 +231,7 @@ public class ChunkManager implements GameVariables {
 	}
 
 	public static void main(String[] args) {
+		// Create a chunk manager and load the level data.
 		ChunkManager chunky = new ChunkManager();
 		chunky.loadLevel(1);
 
@@ -249,26 +245,32 @@ public class ChunkManager implements GameVariables {
 			System.out.println("The X Chunk size was not 10");
 			all_passed = false;
 		}
+		if (chunky.getActiveChunks().size() != 4) {
+			System.out.println("Originally, there should be four visible chunks");
+			all_passed = false;
+		}
+		// Move our player to the left border of the screen, now only two chunks should be visible
+		chunky.updateCoords(-4000, 0);
+		if (chunky.getActiveChunks().size() != 2) {
+			System.out.println("The player has been moved to the left border of the maze, only two chunks should be visible");
+			all_passed = false;
+		}
+		// Move our player to the top left corner of the screen, now only one chunk should be visible
+		chunky.updateCoords(0, -3200);
+		if (chunky.getActiveChunks().size() != 1) {
+			System.out.println("The player has been moved to the top left border of the maze, only one chunk should be visible");
+			all_passed = false;
+		}
+		// Move our player way off the map, no chunks should be visible
+		chunky.updateCoords(-20000, 0);
+		if (chunky.getActiveChunks().size() != 0) {
+			System.out.println("The player has been moved way off the screen, no chunks should be visible.");
+			all_passed = false;
+		}
 		if (all_passed == true) {
 			System.out.println("All cases passed! :)");
 		} else {
 			System.out.println("At least one case failed! :(");
 		}
-
-//		Chunk[][] chunks = chunky.getChunks();
-
-//		for (int r = 0; r < chunks.length; r++) {
-//			for (int c = 0; c < chunks.length; c++) {
-//				System.out.println(chunks[r][c].xPosition + " " + chunks[r][c].yPosition);
-//
-//			}
-//			System.out.println();
-//		}
-
-//        Chunk c = chunky.getCurrentChunk();
-//        
-//        System.out.println(c.xPosition + " " + c.yPosition + " " + c.getChunkNumber());
-//        
-
 	}
 }

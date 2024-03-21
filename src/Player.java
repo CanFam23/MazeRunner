@@ -1,3 +1,10 @@
+/**
+ * Player.java
+ * Authors: Andrew Denegar, Nick Clouse, Molly O'Connor
+ * Date: 2024-03-20
+ * Description: Player.java 
+ */
+
 package src;
 
 import java.awt.image.BufferedImage;
@@ -18,10 +25,10 @@ public class Player implements GameVariables {
 	
 	private int drawCount = 0;
 	
-	public State currentState = State.Idle;
-	public Facing currentFacing = Facing.N;
+	private State currentState = State.Idle;
+	private Facing currentFacing = Facing.N;
 	
-	public Map<State, Map<Facing, List<BufferedImage>>> images = new HashMap<>();
+	private Map<State, Map<Facing, List<BufferedImage>>> images = new HashMap<>();
 	
 	public enum State {
 		Idle,
@@ -80,6 +87,13 @@ public class Player implements GameVariables {
         }
 	}
 	
+	/**
+	 * Update the direction that our player is facing
+	 * @param up: The up arrow key is pressed
+	 * @param down: The down arrow key is pressed 
+	 * @param right: The right arrow key is pressed
+	 * @param left: The left arrow key is pressed
+	 */
 	public void updateState(boolean up, boolean down, boolean right, boolean left) {
 		// Set the player state (idle or move)
 		if (up == false && down == false && right == false && left == false) {
@@ -104,36 +118,12 @@ public class Player implements GameVariables {
 			currentFacing = Facing.valueOf(dir);
 	}
 	
-	public void updateState(int dx, int dy) {
-		if (dx == 0 && dy == 0) {
-			currentState = State.Idle;
-			return;
-		} else {
-			currentState = State.Move;
-		}
-		if (dy > 0) { // Moving up
-			if (dx < 0) {
-				currentFacing = Facing.NE;
-			} else if (dx == 0) {
-				currentFacing = Facing.N;
-			} else {
-				currentFacing = Facing.NW;
-			}
-		} else if (dy < 0) { // Moving down
-			if (dx < 0) {
-				currentFacing = Facing.SE;
-			} else if (dx == 0) {
-				currentFacing = Facing.S;
-			} else {
-				currentFacing = Facing.SW;
-			}
-		} else if (dy == 0) { // Check that should always be true (not moving up or down)
-			if (dx > 0) {
-				currentFacing = Facing.W;
-			} else {
-				currentFacing = Facing.E;
-			}
-		}
+	public String getState() {
+		return currentState.toString();
+	}
+	
+	public String getFacing() {
+		return currentFacing.toString();
 	}
 	
 	// Change the direction the player is facing
@@ -164,7 +154,7 @@ public class Player implements GameVariables {
 		
 	}
 	
-	
+	///////////////// BELOW CODE IS USED JUST FOR TESTING PURPOSES //////////////////
 	/**
 	 * Player code below is used for testing image loading. 
 	 * This code is all at the bottom because it shouldn't be used besides testing
