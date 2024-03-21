@@ -8,22 +8,10 @@
  */
 package src;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 public class PositionBlock implements GameVariables {
-	private static BufferedImage backgroundImage;
 
 	protected int x;
 	protected int y;
@@ -32,8 +20,6 @@ public class PositionBlock implements GameVariables {
 	protected int height;
 
 	private Color c;
-    private static boolean gameIsOver = false;
-
 
 	public PositionBlock(int x, int y, int width, int height, Color c) {
 		this.x = x;
@@ -61,23 +47,17 @@ public class PositionBlock implements GameVariables {
 	}
 
 	public String toString() {
-        if (gameIsOver) {
-            return "";
-        } else if (this instanceof EmptyBlock)
-            return "empt";
-        else if (this instanceof Wall)
-            return "wall";
-        else if (this instanceof StartingBlock)
-            return "strt";
-        else if (this instanceof EndBlock) {
-            // Set the flag to true and call gameOver only once
-        	gameIsOver = true;
-            GameOverWIN.GameOverWIN();
-        	Main.closeMainWindow();
-            return "EndB";
-        } else
-            return "????";
-    }
+		if (this instanceof EmptyBlock)
+			return "empt";
+		else if (this instanceof Wall)
+			return "wall";
+		else if (this instanceof StartingBlock)
+			return "strt";
+		else if (this instanceof EndBlock) {
+			return "EndB";
+		} else
+			return "????";
+	}
 
 	public void draw(Graphics2D g, int chunkXPosition, int chunkYPosition) {
 		Color temp = g.getColor();
