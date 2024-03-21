@@ -33,6 +33,8 @@ public class ChunkManager implements GameVariables {
 	private int[] startCoords;
 	private EndBlock endBlock;
 
+	private boolean endFound = false;
+
 	// TODO: Refactor private
 	// Declare attributes that change
 	public String levelName = ""; // TODO: local refactor
@@ -47,10 +49,10 @@ public class ChunkManager implements GameVariables {
 		try (final Scanner input = new Scanner(new File(FILE_LOCATION + levelName + ".txt"))) {
 			input.nextLine(); // Discard data description
 			final String[] levelStrings = input.nextLine().split(":")[1].split("x"); // Save the dimension of the chunks
-			                                                                         // - example: (x chunks, y
-			                                                                         // chunks)
+																						// - example: (x chunks, y
+																						// chunks)
 			levelXDimension = Integer.parseInt(levelStrings[0]); // TODO: Possibly change the level description loading
-			                                                     // (redundant)
+																	// (redundant)
 			levelYDimension = Integer.parseInt(levelStrings[1]);
 			final String[] chunkStrings = input.nextLine().split(":")[1].split("x"); // Save chunk dimensions - example:
 			                                                                         // (x walls, y walls)
@@ -98,7 +100,7 @@ public class ChunkManager implements GameVariables {
 					if (isStartingChunk) {
 						startChunk = chunks[yChunk][xChunk];
 						startCoords = new int[] { xPosition % chunkXDimension * WALL_WIDTH,
-						        yPosition % chunkYDimension * WALL_HEIGHT };
+								yPosition % chunkYDimension * WALL_HEIGHT };
 						startBlock = (StartingBlock) pb;
 						isStartingChunk = false;
 					} else if (isEndChunk) {
@@ -140,8 +142,14 @@ public class ChunkManager implements GameVariables {
 		if (activeChunks.contains(startChunk)) {
 			containsPlayer(startChunk, startBlock);
 		} else if (activeChunks.contains(endChunk)) {
-			containsPlayer(endChunk, endBlock);
+			if (containsPlayer(endChunk, endBlock)) {
+				endFound = true;
+			}
 		}
+	}
+
+	public boolean endFound() {
+		return endFound;
 	}
 
 	// Returns true if the player is in the given chunk, same idea used for
@@ -169,10 +177,12 @@ public class ChunkManager implements GameVariables {
 
 	// Returns true if the player is in the given block, same idea used for
 	// collisions
-	public void containsPlayer(Chunk c, PositionBlock pb) {
+	public boolean containsPlayer(Chunk c, PositionBlock pb) {
+
 		if (c.collision(pb) == Collision.FULL_COLLISION) {
-			System.out.println(pb);
+			return true;
 		}
+		return false;
 	}
 
 	// Returns true if the given chunk is currently visible on the screen, or close
