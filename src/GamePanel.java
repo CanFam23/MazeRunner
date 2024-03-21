@@ -4,7 +4,8 @@
  * Date: February 24, 2024
  * 
  * Desc:
- * 'TBD'
+ * This Java class handles creating the screen, and has the main game loop in it. 
+ * It also handles the top level updating and rendering of all objects on the screen
  */
 package src;
 
@@ -31,9 +32,10 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private final int displacement = 1;
 	private final int speed = 6;
 
-	// Create our player. Initialize later to offer player selection of different characters.
+	// Create our player. Initialize later to offer player selection of different
+	// characters.
 	private Player ourPlayer;
-	
+
 	private Thread gameThread; // Thread is a thread of execution in a program
 
 	private boolean isRunning = true;
@@ -50,11 +52,11 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		cmanager = new ChunkManager();
 		cmanager.loadLevel(1);
-		
+
 		// Create our player and load the images
 		ourPlayer = new Player();
 		ourPlayer.load_images("Civilian1(black)");
-		
+
 	}
 
 	/**
@@ -67,8 +69,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	}
 
 	/**
-	 *When we start the gameThread, this function is ran
-	 *Updates and repaints contents every frame
+	 * When we start the gameThread, this function is ran Updates and repaints
+	 * contents every frame
 	 */
 	@Override
 	public void run() {
@@ -101,11 +103,17 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 	}
 
-
 	/**
 	 * Updates location of walls based on key presses and collisions
 	 */
 	public void update() {
+		// If the end is found, stop game loop and display win screen
+		if (cmanager.endFound()) {
+			new GameOverWIN();
+			Main.closeMainWindow();
+			isRunning = false;
+			return;
+		}
 
 		int dx = 0;
 		int dy = 0;
@@ -117,7 +125,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		List<Collision> collisions = cmanager.checkCollision();
 
-		//If theres at least one collision
+		// If theres at least one collision
 		if (collisions.size() > 0) {
 			for (Collision collisionNum : collisions) {
 				// Handle collision
@@ -205,7 +213,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 		cmanager.updateCoords(dx, dy);
 		ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
-
 	}
 
 	/**
@@ -221,7 +228,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.draw(g2);
 
 		ourPlayer.draw(g2);
-		
+
 		// Saves some memory
 		g2.dispose();
 	}
@@ -237,28 +244,27 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		return sum / (double) fpsTracker.size();
 	}
-	
+
 	/**
 	 * Stops the game loop
 	 */
 	public void stopLoop() {
 		isRunning = false;
 	}
-	
+
 	/**
 	 * Continues the game loop
 	 */
 	public void continueLoop() {
 		isRunning = true;
 	}
-	
+
 	/**
 	 * @return boolean if the game loop is running
 	 */
 	public boolean isRunning() {
 		return isRunning;
 	}
-	
 
 	/**
 	 * Checks if thread has started
@@ -266,81 +272,77 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 * @return boolean if thread has started or not
 	 */
 	public boolean threadStarted() {
-		if(gameThread == null) {
+		if (gameThread == null) {
 			return false;
 		}
 		return gameThread.isAlive();
 	}
-	
+
 	public static void main(String[] args) {
-		
+
 		boolean allPassed = true;
-		
+
 		GamePanel gp = new GamePanel();
-		
-		
-		//Making sure game thread hasn't started yet
-		if(gp.threadStarted() == true) {
+
+		// Making sure game thread hasn't started yet
+		if (gp.threadStarted() == true) {
 			allPassed = false;
 			System.err.println("gameThread started when it shouldn't have!");
 		}
-		
+
 		gp.startGameThread();
-		
-		//Testing if game thread correctly started
-		if(gp.threadStarted() != true) {
+
+		// Testing if game thread correctly started
+		if (gp.threadStarted() != true) {
 			allPassed = false;
 			System.err.println("Failed to start gameThread!");
 		}
 
-		//Testing if gameLoop is running
-		if(gp.isRunning() != true) {
+		// Testing if gameLoop is running
+		if (gp.isRunning() != true) {
 			allPassed = false;
 			System.err.println("Game loop isn't running, when it should be!");
 		}
-		
+
 		gp.stopLoop();
-		//Testing if gameLoop is paused when it should be
-		if(gp.isRunning() == true) {
+		// Testing if gameLoop is paused when it should be
+		if (gp.isRunning() == true) {
 			allPassed = false;
 			System.err.println("Game loop is running, when it should be stopped!");
 		}
-		
+
 		gp.continueLoop();
 
-		//Testing if gameLoop starts again correctly
-		if(gp.isRunning() != true) {
+		// Testing if gameLoop starts again correctly
+		if (gp.isRunning() != true) {
 			allPassed = false;
 			System.err.println("Game loop isn't running, when it should be!");
 		}
-		
 
-		//Sleep main thread for 10 seconds, so the game thread still runs to test FPS tracking
+		// Sleep main thread for 10 seconds, so the game thread still runs to test FPS
+		// tracking
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			System.err.println("Error when sleeping main thread!");
 		}
-		
-		int avgFPS = (int)gp.getFPS();
-		//Testing if game is running at 60 FPS
-		
-		if(avgFPS != 60) {
+
+		int avgFPS = (int) gp.getFPS();
+		// Testing if game is running at 60 FPS
+
+		if (avgFPS != 60) {
 			allPassed = false;
-			System.err.format("Game should be running at 60 FPS, but it averaged %s FPS!\n",avgFPS);
+			System.err.format("Game should be running at 60 FPS, but it averaged %s FPS!\n", avgFPS);
 		}
-		
-		
-		
-		if(allPassed) {
+
+		if (allPassed) {
 			System.out.println("All cases passed!");
-		}else {
+		} else {
 			System.out.println("At least 1 case failed!");
 		}
-		
+
 		System.exit(0);
-		
-		
+
 	}
 
 }

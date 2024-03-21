@@ -13,8 +13,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import javax.imageio.ImageIO;
 
 public class HomeScreen extends JFrame {
@@ -38,18 +38,18 @@ public class HomeScreen extends JFrame {
 
 	private void loadImage() {
 		try {
-			// Replace "FinalProject/background.jpg" with the correct path to your image
-			// file
-			URL imageUrl = getClass().getResource("../src/HomeScreen4.png");
-			backgroundImage = ImageIO.read(imageUrl);
+			backgroundImage = ImageIO.read(new File("images/HomeScreen4.png"));
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Failed to load home screen background image!");
+
 		}
 	}
 
 	private void createComponents() {
 		// Create a transparent JPanel to overlay on top of the background image
 		JPanel panel = new JPanel() {
+			private static final long serialVersionUID = 3736745325593940536L;
+
 			@Override
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
@@ -61,9 +61,9 @@ public class HomeScreen extends JFrame {
 		// Create a start button
 		startButton = new JButton("Start Game");
 		startButton.setText("CLICK HERE TO START");
-        startButton.setFont(new Font("Arail", Font.PLAIN,24));
+		startButton.setFont(new Font("Arail", Font.PLAIN, 24));
 		startButton.setForeground(Color.BLACK);
-		startButton.setBackground(Color.BLACK); // Why isn't this working!!!!
+		startButton.setBackground(Color.BLACK);
 
 		startButton.setMargin(new Insets(10, 20, 10, 20)); // top, left, bottom, right
 		startButton.addActionListener(new ActionListener() {
@@ -72,7 +72,7 @@ public class HomeScreen extends JFrame {
 				// Add your code to start the game here
 				JOptionPane.showMessageDialog(HomeScreen.this,
 						"Get ready for this race against time.\nReach the end of the maze before time runs up to go to the next level!\nClick 'OK' when your ready");
-				Main.runMainCode();
+				HomeScreen.this.dispose();
 			}
 		});
 
@@ -98,7 +98,8 @@ public class HomeScreen extends JFrame {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				new HomeScreen().setVisible(true);
+				HomeScreen homeScreen = new HomeScreen();
+				homeScreen.setVisible(true);
 			}
 		});
 	}
