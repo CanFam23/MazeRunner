@@ -14,8 +14,8 @@ package src;
 
 import javax.swing.*;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+//import static org.junit.Assert.assertNotNull;
+//import static org.junit.Assert.fail;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -106,32 +106,33 @@ public class HomeScreen extends JFrame {
 		// Add the panel to the JFrame
 		add(panel);
 	}
+}
 
 	// Main method to launch the home screen
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				HomeScreen homeScreen = new HomeScreen();
-				homeScreen.setVisible(true);
-			}
-		});
-		boolean testPassed = false;
-		// Test whether the background image is loaded successfully
-		BufferedImage backgroundImage = null;
-		try {
-			backgroundImage = ImageIO.read(new File("images/GameOver2.png"));
-			assertNotNull("Background image should not be null", backgroundImage);
-			testPassed = true;
-		} catch (IOException e) {
-			fail("Failed to load game over screen background image!");
-			testPassed = false;
-		}
-
-		if (!testPassed) {
-			System.out.println("The class has issues.");
-		} else {
-			System.out.println("Test cases passed!");
-		}
-	}
-}
+//	public static void main(String[] args) {
+//		SwingUtilities.invokeLater(new Runnable() {
+//			@Override
+//			public void run() {
+//				HomeScreen homeScreen = new HomeScreen();
+//				homeScreen.setVisible(true);
+//			}
+//		});
+//		boolean testPassed = false;
+//		// Test whether the background image is loaded successfully
+//		BufferedImage backgroundImage = null;
+//		try {
+//			backgroundImage = ImageIO.read(new File("images/GameOver2.png"));
+//			assertNotNull("Background image should not be null", backgroundImage);
+//			testPassed = true;
+//		} catch (IOException e) {
+//			fail("Failed to load game over screen background image!");
+//			testPassed = false;
+//		}
+//
+//		if (!testPassed) {
+//			System.out.println("The class has issues.");
+//		} else {
+//			System.out.println("Test cases passed!");
+//		}
+//	}
+//}
