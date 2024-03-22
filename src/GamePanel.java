@@ -282,7 +282,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		boolean allPassed = true;
 
-		final GamePanel gp = new GamePanel();
+		GamePanel gp = new GamePanel();
 
 		// Making sure game thread hasn't started yet
 		if (gp.threadStarted() == true) {
@@ -327,7 +327,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			System.err.println("Error when sleeping main thread!");
 		}
 
-		final int avgFPS = (int) gp.getFPS();
+		int avgFPS = (int) gp.getFPS();
 		// Testing if game is running at 60 FPS
 
 		if (avgFPS != 60) {
