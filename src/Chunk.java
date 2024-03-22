@@ -4,12 +4,8 @@
  * Date: March 2, 2024
  * 
  * Desc:
-<<<<<<< HEAD
  * Chunk holds an nxn array of PositionBlocks and stores the x and y position of the entire array. draw() draws all position blocks in the array. 
-=======
- * This class builds a 'chunk' of the maze, where each chunk is a x*y collection of PositionBlocks
  * It handles collision detection of each block in itself, and keeps track of its x and y position, and if it's a starting or ending chunk
->>>>>>> main
  */
 
 package src;
@@ -62,18 +58,11 @@ public class Chunk implements GameVariables {
 	}
 
 	/**
-<<<<<<< HEAD
 	 * Adds a position block to the chunk with position xPosition and yPosition
 	 * @param xPosition is the x position that the block appears in the chunk
 	 * @param yPosition is the y position that the block appears in the chunk
 	 * @param block can be any of the PositionBlock types (EmptyBlock, EndBlock, Wall, etc.)
-=======
 	 * Add block in given x and y spots
-	 * 
-	 * @param int           xPosition x position of block
-	 * @param int           yPosition y position of block
-	 * @param PositionBlock block the block to add
->>>>>>> main
 	 */
 	public void add(int xPosition, int yPosition, PositionBlock block) {
 		blocks[yPosition][xPosition] = block;
@@ -87,16 +76,9 @@ public class Chunk implements GameVariables {
 	}
 
 	/**
-<<<<<<< HEAD
 	 * Update the coordinates of the chunk
 	 * @param dx is the change in the x direction to the position of the chunk
 	 * @param dy is the change in the y direction to the position of the chunk
-=======
-	 * Updates coords of chunk
-	 * 
-	 * @param int dx, int to update x by
-	 * @param int dy, int to update y by
->>>>>>> main
 	 */
 	public void updateCoords(int dx, int dy) {
 		xPosition += dx;
@@ -104,14 +86,8 @@ public class Chunk implements GameVariables {
 	}
 
 	/**
-<<<<<<< HEAD
 	 * Draw every PositionBlock in the chunk
 	 * @param g is the Graphics2D object that will be drawn with.
-=======
-	 * Draws all blocks in the chunk
-	 * 
-	 * @param Graphics2D the graphics to draw on
->>>>>>> main
 	 */
 	public void draw(Graphics2D g) {
 		for (int i = 0; i < blocks.length; i++) {
