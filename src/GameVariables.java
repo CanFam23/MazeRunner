@@ -1,9 +1,11 @@
 /*
  * GameVariables.java
+ * 
  * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * 
  * Date: March 5, 2024
  * 
- * Desc:
+ * Description
  * This interface is used to store constant variables that multiple classes need. 
  * Insetad of storing a copy of each variable in each class, they can just implement this interface
  * and have access to all the variables.

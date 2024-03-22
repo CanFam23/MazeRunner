@@ -1,9 +1,11 @@
 /*
  * EmptyBlock.java
+ * 
  * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * 
  * Date: March 2, 2024
  * 
- * Desc:
+ * Description:
  * EmptyBlock class represents a empty space in the maze
  * It extends the PositionBlock class.
  */

@@ -1,9 +1,11 @@
 /*
  * Chunk.java
+ * 
  * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * 
  * Date: March 2, 2024
  * 
- * Desc:
+ * Description:
  * Chunk holds an nxn array of PositionBlocks and stores the x and y position of the entire array. draw() draws all position blocks in the array. 
  * It handles collision detection of each block in itself, and keeps track of its x and y position, and if it's a starting or ending chunk
  */

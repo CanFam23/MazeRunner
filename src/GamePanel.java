@@ -1,9 +1,11 @@
 /*
  * GamePanel.java
+ * 
  * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * 
  * Date: February 24, 2024
  * 
- * Desc:
+ * Description:
  * This Java class handles creating the screen, and has the main game loop in it. 
  * It also handles the top level updating and rendering of all objects on the screen
  */

@@ -1,9 +1,11 @@
 /*
  * EndBlock.java
+ * 
  * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * 
  * Date: March 2, 2024
  * 
- * Desc:
+ * Description:
  * EndBlock class represents the ending location of the maze
  * It extends the PositionBlock class.
  */
