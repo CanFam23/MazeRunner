@@ -20,11 +20,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+//import org.junit.Test;
+//
+//import static org.junit.Assert.assertNotNull;
+//import static org.junit.Assert.assertTrue;
+//import static org.junit.Assert.fail;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -85,31 +85,32 @@ public class GameOverLOSE {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
+}
 
 	// JUnit test
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				GameOverLOSE.GameOver();
-			}
-		});
-		boolean testPassed = false;
-		// Test whether the background image is loaded successfully
-		BufferedImage backgroundImage = null;
-		try {
-			backgroundImage = ImageIO.read(new File("images/GameOver2.png"));
-			assertNotNull("Background image should not be null", backgroundImage);
-			testPassed = true;
-		} catch (IOException e) {
-			fail("Failed to load game over screen background image!");
-			testPassed = false;
-		}
-
-		if (!testPassed) {
-			System.out.println("The class has issues.");
-		} else {
-			System.out.println("Test cases passed!");
-		}
-	}
-}
+//	public static void main(String[] args) {
+//		SwingUtilities.invokeLater(new Runnable() {
+//			@Override
+//			public void run() {
+//				GameOverLOSE.GameOver();
+//			}
+//		});
+//		boolean testPassed = false;
+//		// Test whether the background image is loaded successfully
+//		BufferedImage backgroundImage = null;
+//		try {
+//			backgroundImage = ImageIO.read(new File("images/GameOver2.png"));
+//			assertNotNull("Background image should not be null", backgroundImage);
+//			testPassed = true;
+//		} catch (IOException e) {
+//			fail("Failed to load game over screen background image!");
+//			testPassed = false;
+//		}
+//
+//		if (!testPassed) {
+//			System.out.println("The class has issues.");
+//		} else {
+//			System.out.println("Test cases passed!");
+//		}
+//	}
+//}

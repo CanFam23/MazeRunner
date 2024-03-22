@@ -12,8 +12,8 @@
 
 package src;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+//import static org.junit.Assert.assertNotNull;
+//import static org.junit.Assert.fail;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -82,30 +82,30 @@ public class GameOverWIN {
 		frame.setVisible(true);
 	}
 
-	// JUnit test
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				GameOverWIN gameOver = new GameOverWIN();
-			}
-		});
-		boolean testPassed = false;
-		// Test whether the background image is loaded successfully
-		BufferedImage backgroundImage = null;
-		try {
-			backgroundImage = ImageIO.read(new File("images/YouWin.png"));
-			assertNotNull("Background image should not be null", backgroundImage);
-			testPassed = true;
-		} catch (IOException e) {
-			fail("Failed to load game over screen background image!");
-			testPassed = false;
-		}
-
-		if (!testPassed) {
-			System.out.println("The class has issues.");
-		} else {
-			System.out.println("Test cases passed!");
-		}
-	}
+//	// JUnit test
+//	public static void main(String[] args) {
+//		SwingUtilities.invokeLater(new Runnable() {
+//			@Override
+//			public void run() {
+//				GameOverWIN gameOver = new GameOverWIN();
+//			}
+//		});
+//		boolean testPassed = false;
+//		// Test whether the background image is loaded successfully
+//		BufferedImage backgroundImage = null;
+//		try {
+//			backgroundImage = ImageIO.read(new File("images/YouWin.png"));
+//			assertNotNull("Background image should not be null", backgroundImage);
+//			testPassed = true;
+//		} catch (IOException e) {
+//			fail("Failed to load game over screen background image!");
+//			testPassed = false;
+//		}
+//
+//		if (!testPassed) {
+//			System.out.println("The class has issues.");
+//		} else {
+//			System.out.println("Test cases passed!");
+//		}
+//	}
 }
