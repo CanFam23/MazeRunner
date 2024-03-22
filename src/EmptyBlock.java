@@ -4,8 +4,7 @@
  * Date: March 2, 2024
  * 
  * Desc:
- * EmptyBlock class represents a empty space in the maze
- * It extends the PositionBlock class.
+ * 'TBD'
  */
 package src;
 
@@ -13,15 +12,6 @@ import java.awt.Color;
 
 public class EmptyBlock extends PositionBlock {
 
-	/**
-	 * Constructor
-	 * 
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @param c
-	 */
 	public EmptyBlock(int x, int y, int width, int height, Color c) {
 		super(x, y, width, height, c);
 	}
