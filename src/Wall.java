@@ -1,9 +1,11 @@
 /*
  * Wall.java
+ * 
  * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * 
  * Date: February 20, 2024
  * 
- * Desc:
+ * Description:
  * Wall class represents a wall in the maze
  * It extends the PositionBlock class.
  */

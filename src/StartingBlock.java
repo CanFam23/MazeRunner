@@ -1,9 +1,11 @@
 /*
  * StartingBlock.java
+ * 
  * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * 
  * Date: March 2, 2024
  * 
- * Desc:
+ * Description:
  * StartingBlock class represents the starting block of the player
  * It extends the PositionBlock class.
  * 

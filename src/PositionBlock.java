@@ -1,9 +1,11 @@
 /*
  * PositionBlock.java
+ * 
  * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * 
  * Date: March 2, 2024
  * 
- * Desc:
+ * Description:
  * This class creates a individual block of the maze, which could be a wall, empty space, start block, or end block
  */
 package src;

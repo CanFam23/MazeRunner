@@ -1,3 +1,13 @@
+/*
+ * Main.java
+ * 
+ * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * 
+ * Date: February 20, 2024
+ * 
+ * Description:
+ * Serves as the main file for our game. This is the file you should run to play our game.
+ */
 package src;
 
 import java.awt.event.ActionEvent;
@@ -32,6 +42,9 @@ public class Main {
 		});
 	}
 
+	/**
+	 * Creates window and starts game
+	 */
 	public static void runMainCode() {
 		// Creates window
 		window = new JFrame();
@@ -103,6 +116,9 @@ public class Main {
 		gamePanel.startGameThread();
 	}
 
+	/**
+	 * Closes window
+	 */
 	public static void closeMainWindow() {
 		window.dispose();
 	}

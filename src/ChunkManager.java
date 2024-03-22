@@ -1,9 +1,13 @@
 /*
  * ChunkManager.java
+ * 
  * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * 
  * Date: March 2, 2024
  * 
- * Desc: ChunkManager.java loads and holds the chunks that will be used in the game. The chunks are basically building blocks of the level.
+ * Description: 
+ * ChunkManager.java loads and holds the chunks that will be used in the game.
+ * The chunks are basically building blocks of the level.
  * 		
  */
 
@@ -46,6 +50,12 @@ public class ChunkManager implements GameVariables {
 	private int chunkYDimension;
 	private Chunk[][] chunks;
 
+	/**
+	 * Loads level from levelNum and creates a 2D array of chunks, which represent each chunk of the maze
+	 * 
+	 * @param levelNum the level to load
+	 * @return if level was loaded correctly
+	 */
 	public boolean loadLevel(int levelNum) {
 		levelName = "level_" + levelNum;
 		try (final Scanner input = new Scanner(new File(FILE_LOCATION + levelName + ".txt"))) {
@@ -124,7 +134,12 @@ public class ChunkManager implements GameVariables {
 		return false;
 	}
 
-	// Update coords of all chunks, if the chunk is visible, add to active chunks
+	/**
+	 * Update coords of all chunks, if the chunk is visible, add to active chunks
+	 * 
+	 * @param dx int to change x by
+	 * @param dy int to change y by
+	 */
 	public void updateCoords(int dx, int dy) {
 		for (int x = 0; x < chunks.length; x++) {
 			for (int y = 0; y < chunks[0].length; y++) {
@@ -152,12 +167,20 @@ public class ChunkManager implements GameVariables {
 		}
 	}
 
+	/**
+	 * @return if end has been found
+	 */
 	public boolean endFound() {
 		return endFound;
 	}
 
-	// Returns true if the player is in the given block, same idea used for
-	// collisions
+	/**
+	 * Returns true if the player is in the given block, same idea used forcollisions
+	 * 
+	 * @param c Chunk to check for collision
+	 * @param pb PositionBlock to check for collision
+	 * @return if there is a full collision
+	 */
 	public boolean containsPlayer(Chunk c, PositionBlock pb) {
 
 		if (c.collision(pb) == Collision.FULL_COLLISION) {
@@ -168,7 +191,7 @@ public class ChunkManager implements GameVariables {
 
 	/**
 	 * Tell each chunk to draw itself
-	 * @param g2d
+	 * @param g2d 2D graphics to draw on
 	 */
 	public void draw(Graphics2D g2d) {
 		for (int i = 0; i < chunks.length; i++) {
@@ -182,6 +205,7 @@ public class ChunkManager implements GameVariables {
 	 * Checks all active chunks for collision between walls and the player, returns
 	 * a list of collisions which represent what side of the player is colliding, if
 	 * any
+	 * 
 	 * @return list of collisions that denote the direction of the collision or NO_COLLISION
 	 */
 	public List<Collision> checkCollision() {
@@ -211,14 +235,18 @@ public class ChunkManager implements GameVariables {
 		return activeChunks;
 	}
 
-	// Returns true if the given chunk is currently visible on the screen, or close
-	// to being visible
+	/**
+	 * @param chunk chunk to check
+	 * @return if chunk is currently visible on screen
+	 */
 	private boolean isVisible(Chunk chunk) {
 		return (chunk.xPosition >= -chunkWidth && chunk.xPosition <= chunkWidth && chunk.yPosition >= -chunkHeight
 		        && chunk.yPosition <= chunkHeight);
 	}
 
-	// Sets the starting location to the start chunk
+	/**
+	 * Sets the starting location to the start chunk
+	 */
 	private void setStartLocation() {
 		// Move all chunks so the start chunk is the first one on the screen
 		int dx = -startChunk.xPosition;

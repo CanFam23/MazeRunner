@@ -1,9 +1,13 @@
 /**
  * Player.java
+ * 
  * Authors: Andrew Denegar, Nick Clouse, Molly O'Connor
- * Date: 2024-03-20
- * Description: Player.java holds character attributes including images, state (Idle, Move...), facing (N, NE, E...) 
- * 	and methods including loading images, updating state, and drawing. 
+ * 
+ * Date: March 20, 2024
+ * 
+ * Description: 
+ * Player.java holds character attributes including images, state (Idle, Move...), facing (N, NE, E...) 
+ * and methods including loading images, updating state, and drawing. 
  */
 
 package src;

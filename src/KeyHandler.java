@@ -1,10 +1,12 @@
 /*
  * KeyHandler.java
+ * 
  * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
+ * 
  * Date: Febuary 20, 2024
  * 
  * Desc:
- * 'TBD'
+ * This program handles key events
  */
 package src;
 
@@ -15,8 +17,12 @@ public class KeyHandler implements KeyListener {
 
 	public boolean upPressed, downPressed, leftPressed, rightPressed, pPressed;
 
+	/**
+	 * Checks for key presses
+	 * 
+	 *@param e the KeyEvent to use
+	 */
 	@Override
-	// Checks for key presses
 	public void keyPressed(KeyEvent e) {
 
 		int code = e.getKeyCode();
@@ -47,7 +53,11 @@ public class KeyHandler implements KeyListener {
 	}
 
 	@Override
-	// Checks for key releases
+	/**
+	 * Checks for key releases
+	 * 
+	 *@param e the KeyEvent to use
+	 */
 	public void keyReleased(KeyEvent e) {
 		int code = e.getKeyCode();
 		// If any of these keys are released, the corresponding boolean is set to false
@@ -67,8 +77,10 @@ public class KeyHandler implements KeyListener {
 	}
 
 	@Override
+	/**
+	 * Not used
+	 */
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
 	}
 
 }
