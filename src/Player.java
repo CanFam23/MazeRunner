@@ -28,23 +28,33 @@ public class Player implements GameVariables {
 	
 	private static final String FILE_LOCATION = "images/";
 	
+	
+	/**
+	 * Player States
+	 */
 	public enum State {
 		Idle, Move
 	}
 
-	// The direction the player is currently facing.
+	/**
+	 * The direction the player is currently facing.
+	 */
 	public enum Facing {
 		S, SE, E, NE, N, NW, W, SW
 	}
 
-	// draw count is used
+	/**
+	 * draw count is used
+	 */
 	private int drawCount = 0;
 
 	// Set initial player attributes
 	private State currentState = State.Idle;
 	private Facing currentFacing = Facing.N;
 
-	// A map of images that can be accessed by first specifying the player state and direction faced
+	/**
+	 * 	A map of images that can be accessed by first specifying the player state and direction faced
+	 */
 	private Map<State, Map<Facing, List<BufferedImage>>> images = new HashMap<>();
 	
 	/**
@@ -154,21 +164,36 @@ public class Player implements GameVariables {
 			currentFacing = Facing.valueOf(dir);
 	}
 	
+	/**
+	 * @return currentState in string format
+	 */
 	public String getState() {
 		return currentState.toString();
 	}
 	
+	
+	/**
+	 * @return currentFacing in string format
+	 */
 	public String getFacing() {
 		return currentFacing.toString();
 
 	}
 
-	// Change the direction the player is facing
+	/**
+	 * Change the direction the player is facing
+	 * 
+	 * @param direction to set
+	 */
 	public void setFacing(Facing direction) {
 		currentFacing = direction;
 	}
 
-	// Change the state of the player
+	/**
+	 * Change the state of the player
+	 * 
+	 * @param playerState to set
+	 */
 	public void setState(State playerState) {
 		currentState = playerState;
 	}
@@ -191,6 +216,11 @@ public class Player implements GameVariables {
 
 	}
 	
+	public void reset() {
+		setState(State.Idle);
+		setFacing(Facing.N);
+	}
+	
 	///////////////// BELOW CODE IS USED JUST FOR TESTING PURPOSES //////////////////
 	/**
 	 * Player code below is used for testing image loading. This code is all at the
@@ -200,6 +230,9 @@ public class Player implements GameVariables {
 	private static JPanel panel;
 	private static BufferedImage image;
 
+	/**
+	 * Initialize a basic GUI for testing
+	 */
 	public static void initializeGUI() {
 		frame = new JFrame("Image Display");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -223,6 +256,11 @@ public class Player implements GameVariables {
 		frame.setVisible(true);
 	}
 
+	/**
+	 * Displayed given image
+	 * 
+	 * @param newImage image to draw
+	 */
 	public static void displayImage(BufferedImage newImage) {
 		image = newImage;
 		panel.repaint(); // This will trigger paintComponent to redraw the image

@@ -36,7 +36,6 @@ public class ChunkManager implements GameVariables {
 	private Chunk startChunk;
 	private Chunk endChunk;
 	
-	private StartingBlock startBlock;
 	private EndBlock endBlock;
 	
 	private int[] startCoords;
@@ -49,7 +48,14 @@ public class ChunkManager implements GameVariables {
 	private int chunkXDimension;
 	private int chunkYDimension;
 	private Chunk[][] chunks;
-
+	
+	/**
+	 * Resets ChunkManager
+	 */
+	public void reset() {
+		endFound = false;
+	}
+	
 	/**
 	 * Loads level from levelNum and creates a 2D array of chunks, which represent each chunk of the maze
 	 * 
@@ -113,7 +119,6 @@ public class ChunkManager implements GameVariables {
 						startChunk = chunks[yChunk][xChunk];
 						startCoords = new int[] { xPosition % chunkXDimension * WALL_WIDTH,
 						        yPosition % chunkYDimension * WALL_HEIGHT };
-						startBlock = (StartingBlock) pb;
 						isStartingChunk = false;
 					} else if (isEndChunk) {
 						endChunk = chunks[yChunk][xChunk];
@@ -157,10 +162,8 @@ public class ChunkManager implements GameVariables {
 			}
 		}
 
-		// Now, check if we are in the starting or ending chunk
-		if (activeChunks.contains(startChunk)) {
-			containsPlayer(startChunk, startBlock);
-		} else if (activeChunks.contains(endChunk)) {
+		// Now, check if we are in the  ending chunk
+		if (activeChunks.contains(endChunk)) {
 			if (containsPlayer(endChunk, endBlock)) {
 				endFound = true;
 			}
@@ -303,6 +306,7 @@ public class ChunkManager implements GameVariables {
 			System.out.println("The player has been moved way off the screen, no chunks should be visible.");
 			all_passed = false;
 		}
+		
 		if (all_passed == true) {
 			System.out.println("All cases passed! :)");
 		} else {
