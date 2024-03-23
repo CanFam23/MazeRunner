@@ -1,0 +1,13 @@
+Description: 1x1 chunks, where each chunks is a 10x3 sequence of zeros(empty) or ones(wall)
+dimension:1x1
+chunk_size:10x10
+1111111111
+1200000031
+1111111111
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000

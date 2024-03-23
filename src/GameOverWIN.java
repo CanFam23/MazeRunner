@@ -11,8 +11,11 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class GameOverWIN {
+public class GameOverWIN extends JFrame{
+	private static final long serialVersionUID = 8986657739517647875L;
 	private BufferedImage backgroundImage;
+	
+	private boolean nextLevel = true; 
 
 	public GameOverWIN() {
 		// Load the image
@@ -22,9 +25,9 @@ public class GameOverWIN {
 			System.err.println("Failed to load win screen background image!");
 		}
 
-		JFrame frame = new JFrame("YOU WON!");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(1000, 800);
+		setTitle("YOU WON!");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(1000, 800);
 
 		JPanel panel = new JPanel() {
 			private static final long serialVersionUID = 2200499920275111737L;
@@ -45,8 +48,8 @@ public class GameOverWIN {
 		JButton playAgain = new JButton("NEXT LEVEL");
 		playAgain.setFont(new Font("Arail", Font.PLAIN, 24));
 		playAgain.addActionListener(e -> {
-			Main.runMainCode();
-			frame.dispose();
+			nextLevel = true;
+			dispose();
 		});
 
 		JPanel buttonPanel = new JPanel();
@@ -54,10 +57,18 @@ public class GameOverWIN {
 		buttonPanel.add(endGame);
 
 		// Set up the frame
-		frame.add(buttonPanel, BorderLayout.SOUTH);
-		frame.add(panel);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
+		add(buttonPanel, BorderLayout.SOUTH);
+		add(panel);
+		setLocationRelativeTo(null);
+		setVisible(true);
 
+	}
+	
+	public boolean loadNextLevel() {
+		return nextLevel;
+	}
+	
+	public static void main(String[] args) {
+		GameOverWIN w = new GameOverWIN();
 	}
 }

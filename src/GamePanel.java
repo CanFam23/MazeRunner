@@ -18,6 +18,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel implements Runnable, GameVariables {
@@ -25,7 +26,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 	// Screen Settings
 
-	private final ChunkManager cmanager;
+	private ChunkManager cmanager;
 
 	private final KeyHandler keyH = new KeyHandler(); // Uses to detect key presses/releases
 
@@ -33,6 +34,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 	private final int displacement = 1;
 	private final int speed = 6;
+	
+	private final int NUM_LEVELS = 3;
+	private int current_level = 0;
 
 	// Create our player. Initialize later to offer player selection of different
 	// characters.
@@ -53,7 +57,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		this.setFocusable(true);
 
 		cmanager = new ChunkManager();
-		cmanager.loadLevel(1);
+		cmanager.loadLevel(current_level);
 
 		// Create our player and load the images
 		ourPlayer = new Player();
@@ -109,113 +113,149 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 * Updates location of walls based on key presses and collisions
 	 */
 	public void update() {
-		// If the end is found, stop game loop and display win screen
+		// If the end is found, go to the next level
 		if (cmanager.endFound()) {
-			new GameOverWIN();
-			Main.closeMainWindow();
-			isRunning = false;
-			return;
-		}
-
-		int dx = 0;
-		int dy = 0;
-
-		boolean topCollided = false;
-		boolean botCollided = false;
-		boolean rightCollided = false;
-		boolean leftCollided = false;
-
-		List<Collision> collisions = cmanager.checkCollision();
-
-		// If theres at least one collision
-		if (collisions.size() > 0) {
-			for (Collision collisionNum : collisions) {
-				// Handle collision
-				switch (collisionNum) {
-				// Depending on what side is colliding, this changes dx or dy by one to make the
-				// player 'bounce off' the wall.
-				case LEFT_SIDE: // Collided from the left
-					if (!leftCollided) {
-						dx -= displacement;
-					}
-
-					leftCollided = true;
-					break;
-				case RIGHT_SIDE: // Collided from the right
-					if (!rightCollided) {
-						dx += displacement;
-					}
-
-					rightCollided = true;
-					break;
-				case TOP_SIDE: // Collided from the top
-					if (!topCollided) {
-						dy -= displacement;
-					}
-
-					topCollided = true;
-					break;
-				case BOTTOM_SIDE: // Collided from the bottom
-					if (!botCollided) {
-						dy += displacement;
-					}
-					botCollided = true;
-					break;
-				case BOTTOM_RIGHT_CORNER: // Collided from right and bottom
-					if (!botCollided && !rightCollided) {
-						dy += displacement * 2;
-						dx += displacement;
-					}
-					botCollided = true;
-					rightCollided = true;
-					break;
-				case BOTTOM_LEFT_CORNER: // Collided from left and bottom
-					if (!botCollided && !leftCollided) {
-						dy += displacement * 2;
-						dx -= displacement;
-					}
-					botCollided = true;
-					leftCollided = true;
-					break;
-				case TOP_RIGHT_CORNER: // Collided from right and top
-					if (!topCollided && !rightCollided) {
-						dy -= displacement * 2;
-						dx += displacement;
-					}
-					rightCollided = true;
-					topCollided = true;
-					break;
-				case TOP_LEFT_CORNER: // Collided from left and top
-					if (!topCollided && !leftCollided) {
-						dy -= displacement * 2;
-						dx -= displacement;
-					}
-					leftCollided = true;
-					topCollided = true;
-					break;
-				default:
-					break;
-				}
+			if(current_level == NUM_LEVELS) {
+				JOptionPane.showMessageDialog(null, "Game Over, you win! (Placeholder)");	
+				System.exit(0);
+			}else {
+				System.out.println("New Level");
+				ourPlayer.reset();
+				cmanager.reset();
+				
+				current_level++;
+				
+				cmanager.loadLevel(current_level);
 			}
-
+				
+			//Some code I tried to implement, feel free to delete or use/change
+			
+//			currentlyPlaying = false;
+//			
+//			System.out.println("found");
+//			
+//			endFound = true;
+//			
+//			GameOverWIN gameOver = new GameOverWIN();
+//			
+//			if(gameOver.loadNextLevel()) {
+//				if(current_level == NUM_LEVELS) {
+//					JOptionPane.showMessageDialog(null, "Game Over, you win! (Placeholder)");	
+//					System.exit(0);
+//				}else {
+//					current_level++;
+//					cmanager = new ChunkManager();
+//					cmanager.loadLevel(current_level);
+//					System.out.println("New level");
+//					currentlyPlaying = true;
+//				}
+//			}else {
+//				Main.closeMainWindow();
+//				isRunning = false;
+//				return;
+//			}
 		}
 
-		// Uses key presses to determine where to move walls
-		if (keyH.upPressed && !topCollided) {
-			dy += speed;
+			int dx = 0;
+			int dy = 0;
+	
+			boolean topCollided = false;
+			boolean botCollided = false;
+			boolean rightCollided = false;
+			boolean leftCollided = false;
+	
+			List<Collision> collisions = cmanager.checkCollision();
+	
+			// If theres at least one collision
+			if (collisions.size() > 0) {
+				for (Collision collisionNum : collisions) {
+					// Handle collision
+					switch (collisionNum) {
+					// Depending on what side is colliding, this changes dx or dy by one to make the
+					// player 'bounce off' the wall.
+					case LEFT_SIDE: // Collided from the left
+						if (!leftCollided) {
+							dx -= displacement;
+						}
+	
+						leftCollided = true;
+						break;
+					case RIGHT_SIDE: // Collided from the right
+						if (!rightCollided) {
+							dx += displacement;
+						}
+	
+						rightCollided = true;
+						break;
+					case TOP_SIDE: // Collided from the top
+						if (!topCollided) {
+							dy -= displacement;
+						}
+	
+						topCollided = true;
+						break;
+					case BOTTOM_SIDE: // Collided from the bottom
+						if (!botCollided) {
+							dy += displacement;
+						}
+						botCollided = true;
+						break;
+					case BOTTOM_RIGHT_CORNER: // Collided from right and bottom
+						if (!botCollided && !rightCollided) {
+							dy += displacement * 2;
+							dx += displacement;
+						}
+						botCollided = true;
+						rightCollided = true;
+						break;
+					case BOTTOM_LEFT_CORNER: // Collided from left and bottom
+						if (!botCollided && !leftCollided) {
+							dy += displacement * 2;
+							dx -= displacement;
+						}
+						botCollided = true;
+						leftCollided = true;
+						break;
+					case TOP_RIGHT_CORNER: // Collided from right and top
+						if (!topCollided && !rightCollided) {
+							dy -= displacement * 2;
+							dx += displacement;
+						}
+						rightCollided = true;
+						topCollided = true;
+						break;
+					case TOP_LEFT_CORNER: // Collided from left and top
+						if (!topCollided && !leftCollided) {
+							dy -= displacement * 2;
+							dx -= displacement;
+						}
+						leftCollided = true;
+						topCollided = true;
+						break;
+					default:
+						break;
+					}
+				}
+	
+			}
+	
+			// Uses key presses to determine where to move walls
+			if (keyH.upPressed && !topCollided) {
+				dy += speed;
+			}
+			if (keyH.downPressed && !botCollided) {
+				dy -= speed;
+			}
+			if (keyH.rightPressed && !rightCollided) {
+				dx -= speed;
+			}
+			if (keyH.leftPressed && !leftCollided) {
+				dx += speed;
+			}
+			cmanager.updateCoords(dx, dy);
+			ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
 		}
-		if (keyH.downPressed && !botCollided) {
-			dy -= speed;
-		}
-		if (keyH.rightPressed && !rightCollided) {
-			dx -= speed;
-		}
-		if (keyH.leftPressed && !leftCollided) {
-			dx += speed;
-		}
-		cmanager.updateCoords(dx, dy);
-		ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
-	}
+	
 
 	/**
 	 * Paints all elements on screen
@@ -236,7 +276,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	}
 
 	/**
-	 * @return double the average FPS count during the programs duration
+	 * @return the average FPS count during the programs duration
 	 */
 	public double getFPS() {
 		int sum = 0;
@@ -262,7 +302,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	}
 
 	/**
-	 * @return boolean if the game loop is running
+	 * @return if the game loop is running
 	 */
 	public boolean isRunning() {
 		return isRunning;
@@ -271,7 +311,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	/**
 	 * Checks if thread has started
 	 * 
-	 * @return boolean if thread has started or not
+	 * @return if thread has started
 	 */
 	public boolean threadStarted() {
 		if (gameThread == null) {
