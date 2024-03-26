@@ -22,35 +22,41 @@ import java.util.List;
  * @see PositionBlock
  */
 public class Chunk implements GameVariables {
-	
-	/** Used to make the block hitboxes slightly bigger then their dimensions.*/
+
+	/** Used to make the block hitboxes slightly bigger then their dimensions. */
 	private static final int HITBOX_BUFFER_AMOUNT = 6; // TODO How close is close enough to register a collision?
-	
-	/** Used to check if the collision overlap is close enough for collision, mainly multiple sides colliding at once.*/
+
+	/**
+	 * Used to check if the collision overlap is close enough for collision, mainly
+	 * multiple sides colliding at once.
+	 */
 	private static final int COLLISION_INT = 5;
-	
-	/** Used to check if a full collision is occurring, when all four sides of the object are overlapping by this amount or less. */
+
+	/**
+	 * Used to check if a full collision is occurring, when all four sides of the
+	 * object are overlapping by this amount or less.
+	 */
 	private static final int FULL_COLLISION_INT = 75;
 
-	/** The group of blocks the chunk keeps track of.*/
+	/** The group of blocks the chunk keeps track of. */
 	private PositionBlock[][] blocks;
 
-	/** Width of the chunk.*/
+	/** Width of the chunk. */
 	private int chunkWidth;
-	
-	/** Height of the chunk.*/
+
+	/** Height of the chunk. */
 	private int chunkHeight;
 
-	/** If the chunk contains the start block.*/
+	/** If the chunk contains the start block. */
 	private boolean isStartChunk = false;
-	
-	/** If the chunk contains the end block.*/
+
+	/** If the chunk contains the end block. */
 	private boolean isEndChunk = false;
 
-	/** X position of the top left corner of the chunk.*/
+	/** X position of the top left corner of the chunk. */
 	public int xPosition;
-	
-	/** Y position of the top left corner of the chunk.*/
+
+	/** Y position of the top left corner of the chunk. */
 	public int yPosition;
 
 	/**
@@ -58,8 +64,8 @@ public class Chunk implements GameVariables {
 	 * 
 	 * @param xDimension number of rows in chunk.
 	 * @param yDimension number of columns in chunk.
-	 * @param xPosition the top left x of the chunk relative to all other chunks.
-	 * @param yPosition the top left y of the chunk relative to all other chunks.
+	 * @param xPosition  the top left x of the chunk relative to all other chunks.
+	 * @param yPosition  the top left y of the chunk relative to all other chunks.
 	 */
 	public Chunk(int xDimension, int yDimension, int xPosition, int yPosition) {
 		blocks = new PositionBlock[yDimension][xDimension];
@@ -75,7 +81,8 @@ public class Chunk implements GameVariables {
 	 * 
 	 * @param xPosition is the x position that the block appears in the chunk.
 	 * @param yPosition is the y position that the block appears in the chunk.
-	 * @param Block can be any of the PositionBlock types (EmptyBlock, EndBlock, Wall, etc.).
+	 * @param Block     can be any of the PositionBlock types (EmptyBlock, EndBlock,
+	 *                  Wall, etc.).
 	 */
 	public void add(int xPosition, int yPosition, PositionBlock block) {
 		blocks[yPosition][xPosition] = block;
@@ -90,6 +97,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Update the coordinates of the chunk.
+	 * 
 	 * @param dx is the change in the x direction to the position of the chunk.
 	 * @param dy is the change in the y direction to the position of the chunk.
 	 */
@@ -100,6 +108,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Draw every PositionBlock in the chunk.
+	 * 
 	 * @param g is the Graphics2D object that will be drawn with.
 	 */
 	public void draw(Graphics2D g) {
@@ -197,7 +206,8 @@ public class Chunk implements GameVariables {
 			// Find the smallest overlap
 			final int minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
 
-			// this checks if the user is in the general center of the block, a 'full collision'
+			// this checks if the user is in the general center of the block, a 'full
+			// collision'
 			if (overlapLeft > FULL_COLLISION_INT && overlapRight > FULL_COLLISION_INT && overlapTop > FULL_COLLISION_INT
 					&& overlapBottom > FULL_COLLISION_INT) {
 				return Collision.FULL_COLLISION;

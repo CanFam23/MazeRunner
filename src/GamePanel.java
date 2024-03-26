@@ -35,37 +35,40 @@ import javax.swing.JPanel;
 public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private static final long serialVersionUID = 123455L;
 
-	/** ChunkManager object.*/
+	/** ChunkManager object. */
 	private ChunkManager cmanager;
 
-	/** KeyHandler object used to detect key presses/releases.*/
+	/** KeyHandler object used to detect key presses/releases. */
 	private final KeyHandler keyH = new KeyHandler();
 
-	/** ArrayList used to track average fps.*/
+	/** ArrayList used to track average fps. */
 	private final List<Integer> fpsTracker = new ArrayList<Integer>();
 
-	/** Number to displace character by when needed.*/
+	/** Number to displace character by when needed. */
 	private final int displacement = 1;
-	
-	/** Speed of player.*/
+
+	/** Speed of player. */
 	private final int speed = 6;
-	
-	/** Number of levels in game.*/
+
+	/** Number of levels in game. */
 	private final int NUM_LEVELS = 3;
-	
-	/** Current level the player is on.*/
+
+	/** Current level the player is on. */
 	private int current_level = 0;
 
-	/** Create our player. Initialize later to offer player selection of different characters.*/
+	/**
+	 * Create our player. Initialize later to offer player selection of different
+	 * characters.
+	 */
 	private Player ourPlayer;
-	
-	/** Visibility object, used to change visibility as time goes on.*/
+
+	/** Visibility object, used to change visibility as time goes on. */
 	private Visibility v = new Visibility();
 
 	/** Thread used for our game */
 	private Thread gameThread;
 
-	/** Keeps track of game state (Running vs not running).*/
+	/** Keeps track of game state (Running vs not running). */
 	private boolean isRunning = true;
 
 	/**
@@ -85,7 +88,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// Create our player and load the images
 		ourPlayer = new Player();
 		ourPlayer.load_images("Civilian1(black)");
-		
+
 		v.startTimer();
 
 	}
@@ -113,7 +116,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		int frames = 0;
 		double time = System.currentTimeMillis();
 
-		//Game loop
+		// Game loop
 		while (isRunning == true) {
 			long now = System.nanoTime();
 			delta += (now - lastime) / ns;
@@ -141,124 +144,124 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	public void update() {
 		// If the end is found, go to the next level
 		if (cmanager.endFound()) {
-			if(current_level == NUM_LEVELS) {
-				JOptionPane.showMessageDialog(null, "Game Over, you win! (Placeholder)");	
+			if (current_level == NUM_LEVELS) {
+				JOptionPane.showMessageDialog(null, "Game Over, you win! (Placeholder)");
 				System.exit(0);
-			}else {
+			} else {
 				System.out.println("New Level");
 				reset();
-				
+
 				current_level++;
-				
+
 				cmanager.loadLevel(current_level);
 			}
-				
+
 		}
 
-			int dx = 0;
-			int dy = 0;
-	
-			boolean topCollided = false;
-			boolean botCollided = false;
-			boolean rightCollided = false;
-			boolean leftCollided = false;
-	
-			List<Collision> collisions = cmanager.checkCollision();
-	
-			// If theres at least one collision
-			if (collisions.size() > 0) {
-				for (Collision collisionNum : collisions) {
-					// Handle collision
-					switch (collisionNum) {
-					// Depending on what side is colliding, this changes dx or dy by one to make the
-					// player 'bounce off' the wall.
-					case LEFT_SIDE: // Collided from the left
-						if (!leftCollided) {
-							dx -= displacement;
-						}
-	
-						leftCollided = true;
-						break;
-					case RIGHT_SIDE: // Collided from the right
-						if (!rightCollided) {
-							dx += displacement;
-						}
-	
-						rightCollided = true;
-						break;
-					case TOP_SIDE: // Collided from the top
-						if (!topCollided) {
-							dy -= displacement;
-						}
-	
-						topCollided = true;
-						break;
-					case BOTTOM_SIDE: // Collided from the bottom
-						if (!botCollided) {
-							dy += displacement;
-						}
-						botCollided = true;
-						break;
-					case BOTTOM_RIGHT_CORNER: // Collided from right and bottom
-						if (!botCollided && !rightCollided) {
-							dy += displacement * 2;
-							dx += displacement;
-						}
-						botCollided = true;
-						rightCollided = true;
-						break;
-					case BOTTOM_LEFT_CORNER: // Collided from left and bottom
-						if (!botCollided && !leftCollided) {
-							dy += displacement * 2;
-							dx -= displacement;
-						}
-						botCollided = true;
-						leftCollided = true;
-						break;
-					case TOP_RIGHT_CORNER: // Collided from right and top
-						if (!topCollided && !rightCollided) {
-							dy -= displacement * 2;
-							dx += displacement;
-						}
-						rightCollided = true;
-						topCollided = true;
-						break;
-					case TOP_LEFT_CORNER: // Collided from left and top
-						if (!topCollided && !leftCollided) {
-							dy -= displacement * 2;
-							dx -= displacement;
-						}
-						leftCollided = true;
-						topCollided = true;
-						break;
-					default:
-						break;
+		int dx = 0;
+		int dy = 0;
+
+		boolean topCollided = false;
+		boolean botCollided = false;
+		boolean rightCollided = false;
+		boolean leftCollided = false;
+
+		List<Collision> collisions = cmanager.checkCollision();
+
+		// If theres at least one collision
+		if (collisions.size() > 0) {
+			for (Collision collisionNum : collisions) {
+				// Handle collision
+				switch (collisionNum) {
+				// Depending on what side is colliding, this changes dx or dy by one to make the
+				// player 'bounce off' the wall.
+				case LEFT_SIDE: // Collided from the left
+					if (!leftCollided) {
+						dx -= displacement;
 					}
+
+					leftCollided = true;
+					break;
+				case RIGHT_SIDE: // Collided from the right
+					if (!rightCollided) {
+						dx += displacement;
+					}
+
+					rightCollided = true;
+					break;
+				case TOP_SIDE: // Collided from the top
+					if (!topCollided) {
+						dy -= displacement;
+					}
+
+					topCollided = true;
+					break;
+				case BOTTOM_SIDE: // Collided from the bottom
+					if (!botCollided) {
+						dy += displacement;
+					}
+					botCollided = true;
+					break;
+				case BOTTOM_RIGHT_CORNER: // Collided from right and bottom
+					if (!botCollided && !rightCollided) {
+						dy += displacement * 2;
+						dx += displacement;
+					}
+					botCollided = true;
+					rightCollided = true;
+					break;
+				case BOTTOM_LEFT_CORNER: // Collided from left and bottom
+					if (!botCollided && !leftCollided) {
+						dy += displacement * 2;
+						dx -= displacement;
+					}
+					botCollided = true;
+					leftCollided = true;
+					break;
+				case TOP_RIGHT_CORNER: // Collided from right and top
+					if (!topCollided && !rightCollided) {
+						dy -= displacement * 2;
+						dx += displacement;
+					}
+					rightCollided = true;
+					topCollided = true;
+					break;
+				case TOP_LEFT_CORNER: // Collided from left and top
+					if (!topCollided && !leftCollided) {
+						dy -= displacement * 2;
+						dx -= displacement;
+					}
+					leftCollided = true;
+					topCollided = true;
+					break;
+				default:
+					break;
 				}
-	
 			}
-	
-			// Uses key presses to determine where to move walls
-			if (keyH.upPressed && !topCollided) {
-				dy += speed;
-			}
-			if (keyH.downPressed && !botCollided) {
-				dy -= speed;
-			}
-			if (keyH.rightPressed && !rightCollided) {
-				dx -= speed;
-			}
-			if (keyH.leftPressed && !leftCollided) {
-				dx += speed;
-			}
-			cmanager.updateCoords(dx, dy);
-			ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
+
 		}
-	
+
+		// Uses key presses to determine where to move walls
+		if (keyH.upPressed && !topCollided) {
+			dy += speed;
+		}
+		if (keyH.downPressed && !botCollided) {
+			dy -= speed;
+		}
+		if (keyH.rightPressed && !rightCollided) {
+			dx -= speed;
+		}
+		if (keyH.leftPressed && !leftCollided) {
+			dx += speed;
+		}
+		cmanager.updateCoords(dx, dy);
+		ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
+	}
+
 	/**
 	 * Resets several objects in this class.
 	 */
-	public void reset() { //TODO add testing?
+	public void reset() { // TODO add testing?
 		ourPlayer.reset();
 		cmanager.reset();
 		v.restartTimer();
@@ -279,7 +282,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.draw(g2);
 
 		ourPlayer.draw(g2);
-		
+
 		v.drawVision(g2);
 
 		// Saves some memory
