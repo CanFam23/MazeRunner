@@ -9,16 +9,16 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * <h1>ChunkManager.java</h1>
+ * ChunkManager loads and holds the chunks that will be used in the game. The
+ * chunks are basically building blocks of the level.
  * 
- * <p>ChunkManager loads and holds the chunks that will be used in the game.
- * The chunks are basically building blocks of the level.</p>
- * 
- * @author Nick Clouse, Andrew Denegar, Molly O'Connor
+ * @author Nick Clouse
+ * @author Andrew Denegar
+ * @author Molly O'Connor
  * 
  * @since March 2, 2024
  * 
- * @see {@link Chunk}
+ * @see Chunk
  */
 public class ChunkManager implements GameVariables {
 	/** File location, should always be in data folder.*/

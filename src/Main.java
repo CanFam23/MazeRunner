@@ -11,23 +11,38 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 /**
- * <h1>Main.java</h1>
+ * <p>
+ * Serves as the main file for our game. This is the file you should run to play
+ * our game.
+ * </p>
  * 
- * <p>Serves as the main file for our game. This is the file you should run to play our game.</p>
- * 
- * @author Nick Clouse, Andrew Denegar, Molly O'Connor
+ * @author Nick Clouse
+ * @author Andrew Denegar
+ * @author Molly O'Connor
  * 
  * @since February 20, 2024
  * 
- * @see {@link JFrame}
- * @see {@link HomeScreen}
- * @see {@link GamePanel}
+ * @see JFrame
+ * @see HomeScreen
+ * @see GamePanel
  */
 public class Main {
 
+	/**
+	 * Timer object used for timing how long the player has
+	 */
 	private static Timer timer;
+
+	/**
+	 * Window used to display game
+	 */
 	private static JFrame window;
 
+	/**
+	 * Main method
+	 * 
+	 * @param args arguements passed
+	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -108,7 +123,6 @@ public class Main {
 		gamePanel.setFocusable(true);
 		gamePanel.requestFocusInWindow();
 
-		// window.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		window.pack();
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);

@@ -1,11 +1,3 @@
-/*
- * HomeScreen.java
- * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
- * Date: February 28, 2024
- * 
- * Desc:
- * 'TBD'
- */
 package src;
 
 import javax.swing.*;
@@ -17,25 +9,55 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class HomeScreen extends JFrame {
+/**
+ * <p>
+ * HomeScreen creates the home screen.
+ * </p>
+ * 
+ * @author Nick Clouse
+ * @author Andrew Denegar
+ * @author Molly O'Connor
+ * 
+ * @since February 28, 2024
+ */
+public class HomeScreen extends JFrame implements GameVariables {
 
+	/**
+	 * Serial Version UID.
+	 */
 	private static final long serialVersionUID = 1L;
+	/**
+	 * Background image to use.
+	 */
+
 	private BufferedImage backgroundImage;
+	/**
+	 * Start button
+	 */
 	private JButton startButton;
 
+	/**
+	 * Constructs new HomeScreen
+	 */
 	public HomeScreen() {
 		initialize();
 		loadImage();
 		createComponents();
 	}
 
+	/**
+	 * Sets some default settings
+	 */
 	private void initialize() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1000, 800);
+		setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		setLocationRelativeTo(null);
 		setLayout(new BorderLayout());
 	}
 
+	/**
+	 * Loads background image.
+	 */
 	private void loadImage() {
 		try {
 			backgroundImage = ImageIO.read(new File("images/HomeScreen4.png"));
@@ -45,6 +67,9 @@ public class HomeScreen extends JFrame {
 		}
 	}
 
+	/**
+	 * Creates components and adds them to screen.
+	 */
 	private void createComponents() {
 		// Create a transparent JPanel to overlay on top of the background image
 		JPanel panel = new JPanel() {
@@ -94,6 +119,11 @@ public class HomeScreen extends JFrame {
 		add(panel);
 	}
 
+	/**
+	 * Main method
+	 * 
+	 * @param args arguements passed
+	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
