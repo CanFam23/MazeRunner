@@ -4,25 +4,29 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 /**
- * <h1>KeyHandler.java</h1>
+ * <p>
+ * This class handles key events. Implements KeyListener
+ * </p>
  * 
- * <p>This class handles key events. Implements KeyListener</p>
- * 
- * @author Nick Clouse, Andrew Denegar, Molly O'Connor
+ * @author Nick Clouse
+ * @author Andrew Denegar
+ * @author Molly O'Connor
  * 
  * @since Febuary 20, 2024
  * 
- * @see {@link KeyListener}
+ * @see KeyListener
  */
 public class KeyHandler implements KeyListener {
 
-	/** Boolean used to check if corresponding key is being pressed or is released.*/
+	/**
+	 * Boolean used to check if corresponding key is being pressed or is released.
+	 */
 	public boolean upPressed, downPressed, leftPressed, rightPressed;
 
 	/**
 	 * Checks for key presses.
 	 * 
-	 *@param e the KeyEvent to process.
+	 * @param e the KeyEvent to process.
 	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -47,7 +51,7 @@ public class KeyHandler implements KeyListener {
 	/**
 	 * Checks for key releases.
 	 * 
-	 *@param e the KeyEvent to process.
+	 * @param e the KeyEvent to process.
 	 */
 	@Override
 	public void keyReleased(KeyEvent e) {

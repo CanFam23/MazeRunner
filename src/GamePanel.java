@@ -11,18 +11,26 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- * <h1>GamePanel.java</h1>
+ * <p>
+ * GamePanel handles creating the screen and contains the main game loop. It
+ * also manages the top-level updating and rendering of all objects on the
+ * screen.
+ * </p>
  * 
- * <p>GamePanel handles creating the screen, and has the main game loop in it. 
- * It also handles the top level updating and rendering of all objects on the screen.</p>
+ * <p>
+ * This class extends {@link JPanel} and implements {@link Runnable} and
+ * {@link GameVariables}.
+ * </p>
  * 
- * @author Nick Clouse, Andrew Denegar, Molly O'Connor
+ * @author Nick Clouse
+ * @author Andrew Denegar
+ * @author Molly O'Connor
  * 
  * @since February 24, 2024
  * 
- * @see {@link JPanel}
- * @see {@link Runnable}
- * @see {@link GameVariables}
+ * @see JPanel
+ * @see Runnable
+ * @see GameVariables
  */
 public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private static final long serialVersionUID = 123455L;

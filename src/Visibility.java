@@ -8,8 +8,6 @@ import java.util.TimerTask;
 import java.util.Timer;
 
 /**
- * <h1>Visibility.java</h1>
- * 
  * <p>
  * This class handles drawing the visibility of the player in our game. The
  * player has a circle around themselves which is what they can see. As time
@@ -18,10 +16,12 @@ import java.util.Timer;
  * </p>
  * 
  * @author Nick Clouse
+ * @author Andrew Denegar
+ * @author Molly O'Connor
  * 
  * @since March 25, 2024
  * 
- * @see {@link GameVariables}
+ * @see GameVariables
  */
 public class Visibility implements GameVariables {
 
@@ -176,6 +176,11 @@ public class Visibility implements GameVariables {
 		g2d.fill(leftSide);
 	}
 
+	/**
+	 * Main method
+	 * 
+	 * @param args arguements passed
+	 */
 	public static void main(String[] args) {
 		// TODO add testing
 	}

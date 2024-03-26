@@ -3,27 +3,31 @@ package src;
 import java.awt.Color;
 
 /**
- * <h1>EndBlock.java</h1>
+ * <p>
+ * EmptyBlock represents the end location of the Maze.
+ * </p>
+ * <p>
+ * It extends the {@link PositionBlock} class.
+ * </p>
  * 
- * <p>EmptyBlock represents the end location of the Maze.
- * It extends the PositionBlock class.</p>
- * 
- * @author Nick Clouse, Andrew Denegar, Molly O'Connor
+ * @author Nick Clouse
+ * @author Andrew Denegar
+ * @author Molly O'Connor
  * 
  * @since March 2, 2024
- * 
- * @see {@link PositionBlock}
  */
 public class EndBlock extends PositionBlock {
 
 	/**
-	 * Constructs a new EmptyBlock with given parameters.
+	 * Constructs a new EndBlock with the given parameters.
 	 * 
-	 * @param x coordinate relative to the top left coordinate of the chunk.
-	 * @param y coordinate relative to the top left coordinate of the chunk.
-	 * @param width of the block.
-	 * @param height of the block.
-	 * @param c color of the block.
+	 * @param x      The x-coordinate relative to the top-left coordinate of the
+	 *               chunk.
+	 * @param y      The y-coordinate relative to the top-left coordinate of the
+	 *               chunk.
+	 * @param width  The width of the block.
+	 * @param height The height of the block.
+	 * @param c      The color of the block.
 	 */
 	public EndBlock(int x, int y, int width, int height, Color c) {
 		super(x, y, width, height, c);

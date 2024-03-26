@@ -11,9 +11,27 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+/**
+ * <p>
+ * GameOverLOSE creates the game over screen when the user fails to find the end
+ * of the maze.
+ * </p>
+ * 
+ * @author Nick Clouse
+ * @author Andrew Denegar
+ * @author Molly O'Connor
+ * 
+ * @since February 28, 2024
+ */
 public class GameOverLOSE {
+	/**
+	 * Image to use for background.
+	 */
 	private static BufferedImage backgroundImage;
 
+	/**
+	 * Creates JFrame and adds components.
+	 */
 	public static void GameOver() {
 		// Load the image
 		try {
