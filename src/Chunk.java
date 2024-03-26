@@ -22,52 +22,44 @@ import java.util.List;
  * @see PositionBlock
  */
 public class Chunk implements GameVariables {
-
-	/**
-	 * Used to make the block hitboxes slightly bigger than their dimensions.
-	 */
+	
+	/** Used to make the block hitboxes slightly bigger then their dimensions.*/
 	private static final int HITBOX_BUFFER_AMOUNT = 6; // TODO How close is close enough to register a collision?
-
-	/**
-	 * Used to check if the collision overlap is close enough for collision, mainly
-	 * multiple sides colliding at once.
-	 */
+	
+	/** Used to check if the collision overlap is close enough for collision, mainly multiple sides colliding at once.*/
 	private static final int COLLISION_INT = 5;
-
-	/**
-	 * Used to check if a full collision is occurring, when all four sides of the
-	 * object are overlapping by this amount or less.
-	 */
+	
+	/** Used to check if a full collision is occurring, when all four sides of the object are overlapping by this amount or less. */
 	private static final int FULL_COLLISION_INT = 75;
 
-	/** The group of blocks the chunk keeps track of. */
+	/** The group of blocks the chunk keeps track of.*/
 	private PositionBlock[][] blocks;
 
-	/** Width of the chunk. */
+	/** Width of the chunk.*/
 	private int chunkWidth;
-
-	/** Height of the chunk. */
+	
+	/** Height of the chunk.*/
 	private int chunkHeight;
 
-	/** If the chunk contains the start block. */
+	/** If the chunk contains the start block.*/
 	private boolean isStartChunk = false;
-
-	/** If the chunk contains the end block. */
+	
+	/** If the chunk contains the end block.*/
 	private boolean isEndChunk = false;
 
-	/** X position of the top left corner of the chunk. */
+	/** X position of the top left corner of the chunk.*/
 	public int xPosition;
-
-	/** Y position of the top left corner of the chunk. */
+	
+	/** Y position of the top left corner of the chunk.*/
 	public int yPosition;
 
 	/**
 	 * Constructs a new Chunk with given dimensions and coordinates.
 	 * 
-	 * @param xDimension number of columns in chunk.
-	 * @param yDimension number of rows in chunk.
-	 * @param xPosition  the top-left x-coordinate of the chunk.
-	 * @param yPosition  the top-left y-coordinate of the chunk.
+	 * @param xDimension number of rows in chunk.
+	 * @param yDimension number of columns in chunk.
+	 * @param xPosition the top left x of the chunk relative to all other chunks.
+	 * @param yPosition the top left y of the chunk relative to all other chunks.
 	 */
 	public Chunk(int xDimension, int yDimension, int xPosition, int yPosition) {
 		blocks = new PositionBlock[yDimension][xDimension];
@@ -79,11 +71,11 @@ public class Chunk implements GameVariables {
 	}
 
 	/**
-	 * Adds a position block to the chunk with position (xPosition, yPosition).
+	 * Adds a position block to the chunk with position xPosition and yPosition.
 	 * 
-	 * @param xPosition the x-coordinate of the block within the chunk.
-	 * @param yPosition the y-coordinate of the block within the chunk.
-	 * @param block     the PositionBlock to add.
+	 * @param xPosition is the x position that the block appears in the chunk.
+	 * @param yPosition is the y position that the block appears in the chunk.
+	 * @param Block can be any of the PositionBlock types (EmptyBlock, EndBlock, Wall, etc.).
 	 */
 	public void add(int xPosition, int yPosition, PositionBlock block) {
 		blocks[yPosition][xPosition] = block;
@@ -98,9 +90,8 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Update the coordinates of the chunk.
-	 * 
-	 * @param dx the change in the x-direction of the chunk's position.
-	 * @param dy the change in the y-direction of the chunk's position.
+	 * @param dx is the change in the x direction to the position of the chunk.
+	 * @param dy is the change in the y direction to the position of the chunk.
 	 */
 	public void updateCoords(int dx, int dy) {
 		xPosition += dx;
@@ -109,35 +100,33 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Draw every PositionBlock in the chunk.
-	 * 
-	 * @param g the Graphics2D object used for drawing.
+	 * @param g is the Graphics2D object that will be drawn with.
 	 */
 	public void draw(Graphics2D g) {
 		for (int i = 0; i < blocks.length; i++) {
 			for (int j = 0; j < blocks[i].length; j++) {
-				if (blocks[i][j] != null) {
-					blocks[i][j].draw(g, xPosition + (j * WALL_WIDTH), yPosition + (i * WALL_HEIGHT));
-				}
+				blocks[i][j].draw(g, xPosition, yPosition);
 			}
 		}
+
 	}
 
 	/**
-	 * @return true if this chunk is the start chunk.
+	 * @return true if chunk is start chunk.
 	 */
 	public boolean isStartChunk() {
 		return isStartChunk;
 	}
 
 	/**
-	 * @return true if this chunk is the end chunk.
+	 * @return true if chunk is end chunk.
 	 */
 	public boolean isEndChunk() {
 		return isEndChunk;
 	}
 
 	/**
-	 * @return 2D array of integers representing each 'corner' of this chunk.
+	 * @return 2D array of integers, which represent each 'corner' of a chunk.
 	 */
 	public int[][] getCoords() {
 		return new int[][] { { xPosition, xPosition + chunkWidth, xPosition + chunkWidth, xPosition },
@@ -145,16 +134,17 @@ public class Chunk implements GameVariables {
 	}
 
 	/**
-	 * Returns a List of Collision enumerators, which represent what side of the
-	 * player is colliding with a wall.
-	 *
+	 * Returns a List of enumerators, which represent what side of the player is
+	 * colliding with a wall.
+	 * 
 	 * @return ArrayList of Collision enumerators.
 	 */
 	public List<Collision> checkCollision() {
+
 		final List<Collision> Collisions = new ArrayList<>();
 
-		// Check each wall in the chunk, if a wall chunk and colliding, add its returned
-		// int value to list
+		// Check each wall in the chunk, if a wall chunk and colliding, add it's
+		// returned int value to list
 		for (int r = 0; r < blocks.length; r++) {
 			for (int c = 0; c < blocks[0].length; c++) {
 				final PositionBlock temp = blocks[r][c];
@@ -173,9 +163,9 @@ public class Chunk implements GameVariables {
 	}
 
 	/**
-	 * Checks for collision between player and a wall.
-	 *
-	 * @param w the block to check for collision.
+	 * Checks for collision between player and wall.
+	 * 
+	 * @param PositionBlock w the block to check for collision.
 	 * @return The corresponding collision.
 	 */
 	public Collision collision(PositionBlock w) {
@@ -207,8 +197,7 @@ public class Chunk implements GameVariables {
 			// Find the smallest overlap
 			final int minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
 
-			// this checks if the user is in the general center of the block, a 'full
-			// collision'
+			// this checks if the user is in the general center of the block, a 'full collision'
 			if (overlapLeft > FULL_COLLISION_INT && overlapRight > FULL_COLLISION_INT && overlapTop > FULL_COLLISION_INT
 					&& overlapBottom > FULL_COLLISION_INT) {
 				return Collision.FULL_COLLISION;
@@ -243,49 +232,44 @@ public class Chunk implements GameVariables {
 			// no collision
 			return Collision.NO_COLLISION;
 		}
+
 	}
 
 	/**
-	 * @return The 2D array of PositionBlocks in this chunk.
+	 * @return The 2D array of blocks.
 	 */
 	public PositionBlock[][] getBlocks() {
 		return blocks;
 	}
 
 	/**
-	 * @return The width of this chunk.
+	 * @return chunkWidth.
 	 */
 	public int getChunkWidth() {
 		return chunkWidth;
 	}
 
 	/**
-	 * @return The height of this chunk.
+	 * @return chunkHeight.
 	 */
 	public int getChunkHeight() {
 		return chunkHeight;
 	}
 
 	/**
-	 * @return String representation of this chunk.
+	 * @return String format of chunk.
 	 */
-	@Override
 	public String toString() {
-		StringBuilder ret = new StringBuilder();
-		for (PositionBlock[] row : blocks) {
-			for (PositionBlock block : row) {
-				ret.append(block.toString());
+		String ret = "";
+		for (int y = 0; y < blocks.length; y++) {
+			for (int x = 0; x < blocks[y].length; x++) {
+				ret += blocks[y][x].toString();
 			}
-			ret.append("\n");
+			ret += "\n";
 		}
-		return ret.toString();
+		return ret;
 	}
 
-	/**
-	 * Main method
-	 * 
-	 * @param args arguements passed
-	 */
 	public static void main(String[] args) {
 		boolean allPassed = true;
 
