@@ -1,15 +1,3 @@
-/**
- * Player.java
- * 
- * Authors: Andrew Denegar, Nick Clouse, Molly O'Connor
- * 
- * Date: March 20, 2024
- * 
- * Description: 
- * Player.java holds character attributes including images, state (Idle, Move...), facing (N, NE, E...) 
- * and methods including loading images, updating state, and drawing. 
- */
-
 package src;
 
 import java.awt.image.BufferedImage;
@@ -24,60 +12,97 @@ import java.awt.*;
 
 import javax.imageio.ImageIO;
 
+/**
+ * <p>
+ * Player holds character attributes including images, state (Idle, Move...),
+ * facing (N, NE, E...) and methods including loading images, updating state,
+ * and drawing.
+ * </p>
+ * 
+ * @author Andrew Denegar, Nick Clouse, Molly O'Connor
+ * 
+ * @since March 20, 2024
+ * 
+ * @see GameVariables
+ */
 public class Player implements GameVariables {
-	
+	/** location of player sprites. */
 	private static final String FILE_LOCATION = "images/";
-	
-	
+
 	/**
-	 * Player States
+	 * Player States.
 	 */
 	public enum State {
-		Idle, Move
+		/** Constant for when player is idle. */
+		Idle,
+		/** Constant for when player is moving. */
+		Move
 	}
 
 	/**
 	 * The direction the player is currently facing.
 	 */
 	public enum Facing {
-		S, SE, E, NE, N, NW, W, SW
+		/** Constant for the player facing south. */
+		S,
+		/** Constant for the player facing southeast. */
+		SE,
+		/** Constant for the player facing east. */
+		E,
+		/** Constant for the player facing northeast. */
+		NE,
+		/** Constant for the player facing north. */
+		N,
+		/** Constant for the player facing northwest. */
+		NW,
+		/** Constant for the player facing west. */
+		W,
+		/** Constant for the player facing southwest. */
+		SW
 	}
 
 	/**
-	 * draw count is used
+	 * Draw count is used.
 	 */
 	private int drawCount = 0;
 
-	// Set initial player attributes
+	/** Set initial player state. */
 	private State currentState = State.Idle;
+
+	/** Set initial player direction. */
 	private Facing currentFacing = Facing.N;
 
 	/**
-	 * 	A map of images that can be accessed by first specifying the player state and direction faced
+	 * A map of images that can be accessed by first specifying the player state and
+	 * direction faced.
 	 */
 	private Map<State, Map<Facing, List<BufferedImage>>> images = new HashMap<>();
-	
+
 	/**
-	 * Load images for each player state
-	 * @param character_name: the name of the player file to be selected (Civilian1, Civilian2, Civilian1(black), etc)
+	 * Load images for each player state.
+	 * 
+	 * @param character_name the name of the player file to be selected (Civilian1,
+	 *                       Civilian2, Civilian1(black), etc).
 	 */
 	public void load_images(String character_name) {
 		// Declare spritesheet dimensions
 		final int SPRITESHEET_WIDTH = 4;
 		final int SPRITESHEET_IDLE_HEIGHT = 2;
 		final int SPRITESHEET_MOVE_HEIGHT = 8;
-		
+
 		// Load a spritesheet for each player state
 		load_spritesheet(character_name, State.Idle, SPRITESHEET_WIDTH, SPRITESHEET_IDLE_HEIGHT);
 		load_spritesheet(character_name, State.Move, SPRITESHEET_WIDTH, SPRITESHEET_MOVE_HEIGHT);
 	}
 
 	/**
-	 * Load an individual spritesheet
-	 * @param character_name: the name of the player file to be selected (Civilian1, Civilian2, Civilian1(black), etc)
-	 * @param playerState: The player state that is to be loaded
-	 * @param xDim: The x dimension of the spritesheet
-	 * @param yDim: The y dimension of the spritesheet
+	 * Load an individual spritesheet.
+	 * 
+	 * @param character_name the name of the player file to be selected (Civilian1,
+	 *                       Civilian2, Civilian1(black), etc).
+	 * @param playerState    the player state that is to be loaded.
+	 * @param xDim           the x dimension of the spritesheet.
+	 * @param yDim           the y dimension of the spritesheet.
 	 */
 	private void load_spritesheet(String character_name, State playerState, int xDim, int yDim) {
 		BufferedImage spriteSheet = null;
@@ -105,7 +130,8 @@ public class Player implements GameVariables {
 			final double HEIGHT_POSITION_ADJUSTMENT = 3.2;
 			final double WIDTH_SIZE_ADJUSTMENT = 4;
 			final double HEIGHT_SIZE_ADJUSTMENT = 2.7;
-			// Count and direction will be changed based on the number of the image being loaded.
+			// Count and direction will be changed based on the number of the image being
+			// loaded.
 			int count = 0;
 			Facing direction = Facing.values()[count];
 			// Create the first list for the original state-facing pair.
@@ -118,8 +144,10 @@ public class Player implements GameVariables {
 							height / yDim);
 					// Now that we have the image split from the other part, let's remove the
 					// whitespace
-					BufferedImage finalImage = subImage.getSubimage((int) (width / xDim / WIDTH_POSITION_ADJUSTMENT), (int) (height / yDim / HEIGHT_POSITION_ADJUSTMENT),
-							(int) (width / xDim / WIDTH_SIZE_ADJUSTMENT), (int) (height / yDim / HEIGHT_SIZE_ADJUSTMENT));
+					BufferedImage finalImage = subImage.getSubimage((int) (width / xDim / WIDTH_POSITION_ADJUSTMENT),
+							(int) (height / yDim / HEIGHT_POSITION_ADJUSTMENT),
+							(int) (width / xDim / WIDTH_SIZE_ADJUSTMENT),
+							(int) (height / yDim / HEIGHT_SIZE_ADJUSTMENT));
 
 					images.get(playerState).get(direction).add(finalImage);
 
@@ -132,13 +160,14 @@ public class Player implements GameVariables {
 			}
 		}
 	}
-	
+
 	/**
-	 * Update the direction that our player is facing
-	 * @param up: The up arrow key is pressed
-	 * @param down: The down arrow key is pressed 
-	 * @param right: The right arrow key is pressed
-	 * @param left: The left arrow key is pressed
+	 * Update the direction that our player is facing.
+	 * 
+	 * @param up    The up arrow key is pressed.
+	 * @param down  The down arrow key is pressed.
+	 * @param right The right arrow key is pressed.
+	 * @param left  The left arrow key is pressed.
 	 */
 	public void updateState(boolean up, boolean down, boolean right, boolean left) {
 		// Set the player state (idle or move)
@@ -163,17 +192,16 @@ public class Player implements GameVariables {
 		if (!dir.equals(""))
 			currentFacing = Facing.valueOf(dir);
 	}
-	
+
 	/**
-	 * @return currentState in string format
+	 * @return currentState in string format.
 	 */
 	public String getState() {
 		return currentState.toString();
 	}
-	
-	
+
 	/**
-	 * @return currentFacing in string format
+	 * @return currentFacing in string format.
 	 */
 	public String getFacing() {
 		return currentFacing.toString();
@@ -181,26 +209,28 @@ public class Player implements GameVariables {
 	}
 
 	/**
-	 * Change the direction the player is facing
+	 * Change the direction the player is facing.
 	 * 
-	 * @param direction to set
+	 * @param direction to set.
 	 */
 	public void setFacing(Facing direction) {
 		currentFacing = direction;
 	}
 
 	/**
-	 * Change the state of the player
+	 * Change the state of the player.
 	 * 
-	 * @param playerState to set
+	 * @param playerState to set.
 	 */
 	public void setState(State playerState) {
 		currentState = playerState;
 	}
 
 	/**
-	 * Draw our player. Draw handles the switching from one image in a sequence to the next. 
-	 * @param g
+	 * Draw our player. Draw handles the switching from one image in a sequence to
+	 * the next.
+	 * 
+	 * @param g 2Dgraphics to draw on
 	 */
 	public void draw(Graphics2D g) {
 		if (drawCount < 5) { // For x ticks of the game loop, draw the same image.
@@ -215,13 +245,17 @@ public class Player implements GameVariables {
 		}
 
 	}
-	
-	public void reset() {
+
+	/**
+	 * Reset player state and direction
+	 */
+	public void reset() { // TODO add testing?
 		setState(State.Idle);
 		setFacing(Facing.N);
 	}
-	
-	///////////////// BELOW CODE IS USED JUST FOR TESTING PURPOSES //////////////////
+
+	///////////////// BELOW CODE IS USED JUST FOR TESTING PURPOSES
+	///////////////// //////////////////
 	/**
 	 * Player code below is used for testing image loading. This code is all at the
 	 * bottom because it shouldn't be used besides testing
@@ -231,7 +265,7 @@ public class Player implements GameVariables {
 	private static BufferedImage image;
 
 	/**
-	 * Initialize a basic GUI for testing
+	 * Initialize a basic GUI for testing.
 	 */
 	public static void initializeGUI() {
 		frame = new JFrame("Image Display");
@@ -241,6 +275,11 @@ public class Player implements GameVariables {
 		panel = new JPanel() {
 			private static final long serialVersionUID = 1L;
 
+			/**
+			 * Paint component.
+			 *
+			 * @param g graphics to draw on.
+			 */
 			@Override
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
@@ -257,15 +296,20 @@ public class Player implements GameVariables {
 	}
 
 	/**
-	 * Displayed given image
+	 * Displayed given image.
 	 * 
-	 * @param newImage image to draw
+	 * @param newImage image to draw.
 	 */
 	public static void displayImage(BufferedImage newImage) {
 		image = newImage;
 		panel.repaint(); // This will trigger paintComponent to redraw the image
 	}
 
+	/**
+	 * Main method
+	 * 
+	 * @param args arguements passed
+	 */
 	public static void main(String[] args) {
 
 		Player p1 = new Player();
@@ -303,10 +347,10 @@ public class Player implements GameVariables {
 		} else {
 			System.out.println("At least one case failed");
 		}
-				
+
 		// Start: Image testing
 		initializeGUI();
-		
+
 		// Change these two variables to modify the animations tested
 		State playerState = State.Move; // Test the player state images (Move, Idle, etc.)
 		Facing direction = Facing.S; // Test the direction the player is facing
