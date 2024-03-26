@@ -1,16 +1,3 @@
-/*
- * ChunkManager.java
- * 
- * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
- * 
- * Date: March 2, 2024
- * 
- * Description: 
- * ChunkManager.java loads and holds the chunks that will be used in the game.
- * The chunks are basically building blocks of the level.
- * 		
- */
-
 package src;
 
 import java.awt.Color;
@@ -21,46 +8,69 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * <h1>ChunkManager.java</h1>
+ * 
+ * <p>ChunkManager loads and holds the chunks that will be used in the game.
+ * The chunks are basically building blocks of the level.</p>
+ * 
+ * @author Nick Clouse, Andrew Denegar, Molly O'Connor
+ * 
+ * @since March 2, 2024
+ * 
+ * @see {@link Chunk}
+ */
 public class ChunkManager implements GameVariables {
-	// Declare attributes that are always the same
-	static final String FILE_LOCATION = "data/";
+	/** File location, should always be in data folder.*/
+	private static final String FILE_LOCATION = "data/";
 
+	/** List of chunks currently visible on the screen.*/
 	private final List<Chunk> activeChunks = new ArrayList<>();
 
+	/** Width of each chunk.*/
 	private int chunkWidth;
+	
+	/** Height of each chunk.*/
 	private int chunkHeight;
 
-	// Declare attributes that change
-
-	// Starting and ending info
+	/** Keeps track of chunk with start block in it.*/
 	private Chunk startChunk;
+	
+	/** Keeps track of chunk with end block in it.*/
 	private Chunk endChunk;
 	
+	/** The end block. */
 	private EndBlock endBlock;
 	
+	/** Coordinates of start block.*/
 	private int[] startCoords;
+	
+	/** Keeps track if end has been found.*/
 	private boolean endFound = false;
 	
-	// Level variables
+	/** Name of level. */
 	private String levelName = ""; 
+	
+	/** Number of rows of chunks.*/
 	private int levelXDimension;
+	
+	/** Number of columns of chunks.*/
 	private int levelYDimension;
+	
+	/** Number of chunks per row.*/
 	private int chunkXDimension;
+	
+	/** Number of chunks per column.*/
 	private int chunkYDimension;
+	
+	/** 2D array of all chunks.*/
 	private Chunk[][] chunks;
 	
 	/**
-	 * Resets ChunkManager
-	 */
-	public void reset() {
-		endFound = false;
-	}
-	
-	/**
-	 * Loads level from levelNum and creates a 2D array of chunks, which represent each chunk of the maze
+	 * Loads level from levelNum and creates a 2D array of chunks, which represent each chunk of the maze.
 	 * 
-	 * @param levelNum the level to load
-	 * @return if level was loaded correctly
+	 * @param levelNum the level to load.
+	 * @return true If level was loaded correctly.
 	 */
 	public boolean loadLevel(int levelNum) {
 		levelName = "level_" + levelNum;
@@ -70,7 +80,7 @@ public class ChunkManager implements GameVariables {
 			                                                                         // - example: (x chunks, y
 			                                                                         // chunks)
 			levelXDimension = Integer.parseInt(levelStrings[0]); // TODO: Possibly change the level description loading
-			                                                     // (redundant)
+
 			levelYDimension = Integer.parseInt(levelStrings[1]);
 			final String[] chunkStrings = input.nextLine().split(":")[1].split("x"); // Save chunk dimensions - example:
 			                                                                         // (x walls, y walls)
@@ -138,12 +148,19 @@ public class ChunkManager implements GameVariables {
 		}
 		return false;
 	}
+	
+	/**
+	 * Resets ChunkManager.
+	 */
+	public void reset() { //TODO Add testing?
+		endFound = false;
+	}
 
 	/**
-	 * Update coords of all chunks, if the chunk is visible, add to active chunks
+	 * Update coordinates of all chunks, if the chunk is visible, add to active chunks.
 	 * 
-	 * @param dx int to change x by
-	 * @param dy int to change y by
+	 * @param dx integer to change x by.
+	 * @param dy integer to change y by.
 	 */
 	public void updateCoords(int dx, int dy) {
 		for (int x = 0; x < chunks.length; x++) {
@@ -171,18 +188,20 @@ public class ChunkManager implements GameVariables {
 	}
 
 	/**
-	 * @return if end has been found
+	 * @return true if end has been found.
 	 */
-	public boolean endFound() {
+	public boolean endFound() { //TODO add testing?
 		return endFound;
 	}
 
 	/**
-	 * Returns true if the player is in the given block, same idea used forcollisions
+	 * Returns true if the player is in the given block, same idea used for collisions.
 	 * 
-	 * @param c Chunk to check for collision
-	 * @param pb PositionBlock to check for collision
-	 * @return if there is a full collision
+	 * @param c Chunk to check for collision.
+	 * @param pb PositionBlock to check for collision.
+	 * @return true if there is a full collision.
+	 * 
+	 * @see {@link Chunk#collision(PositionBlock)}
 	 */
 	public boolean containsPlayer(Chunk c, PositionBlock pb) {
 
@@ -193,10 +212,12 @@ public class ChunkManager implements GameVariables {
 	}
 
 	/**
-	 * Tell each chunk to draw itself
-	 * @param g2d 2D graphics to draw on
+	 * Calls each chunk to draw itself.
+	 * 
+	 * @param g2d 2D graphics to draw on.
 	 */
 	public void draw(Graphics2D g2d) {
+		//Loop through all chunks
 		for (int i = 0; i < chunks.length; i++) {
 			for (int j = 0; j < chunks[i].length; j++) {
 				chunks[i][j].draw(g2d);
@@ -207,9 +228,9 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * Checks all active chunks for collision between walls and the player, returns
 	 * a list of collisions which represent what side of the player is colliding, if
-	 * any
+	 * any.
 	 * 
-	 * @return list of collisions that denote the direction of the collision or NO_COLLISION
+	 * @return list of collisions that denote the direction of the collision or NO_COLLISION.
 	 */
 	public List<Collision> checkCollision() {
 		List<Collision> collisions = new ArrayList<>();
@@ -223,24 +244,24 @@ public class ChunkManager implements GameVariables {
 	}
 
 	/**
-	 * @return All chunks in the level
+	 * @return All chunks in the level.
 	 */
 	public Chunk[][] getChunks() {
 		return chunks;
 	}
 
 	/**
-	 * Return a list of the chunks that appear on the screen
+	 * Return a list of the chunks that appear on the screen.
 	 * 
-	 * @return the list of chunks that are visible on the screen
+	 * @return the list of chunks that are visible on the screen.
 	 */
 	public List<Chunk> getActiveChunks() {
 		return activeChunks;
 	}
 
 	/**
-	 * @param chunk chunk to check
-	 * @return if chunk is currently visible on screen
+	 * @param chunk the chunk to check.
+	 * @return If chunk is currently visible on screen.
 	 */
 	private boolean isVisible(Chunk chunk) {
 		return (chunk.xPosition >= -chunkWidth && chunk.xPosition <= chunkWidth && chunk.yPosition >= -chunkHeight
@@ -248,7 +269,7 @@ public class ChunkManager implements GameVariables {
 	}
 
 	/**
-	 * Sets the starting location to the start chunk
+	 * Sets the starting location to the start chunk.
 	 */
 	private void setStartLocation() {
 		// Move all chunks so the start chunk is the first one on the screen
