@@ -1,36 +1,47 @@
-/*
- * PositionBlock.java
- * 
- * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
- * 
- * Date: March 2, 2024
- * 
- * Description:
- * This class creates a individual block of the maze, which could be a wall, empty space, start block, or end block
- */
 package src;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+/**
+ * <h1>PositionBlock.java</h1>
+ * 
+ * <p>This class creates a individual block of the maze, which could be a wall, empty space, start block, or end block.</p>
+ * 
+ * @author Nick Clouse, Andrew Denegar, Molly O'Connor
+ * 
+ * @since March 2, 2024
+ * 
+ * @see {@link GameVariables}
+ * @see {@link Wall}
+ * @see {@link EmptyBlock}
+ * @see {@link EndBlock}
+ * @see {@link StartingBlock}
+ */
 public class PositionBlock implements GameVariables {
 
+	/** X coordinate of the block.*/
 	protected int x;
+	/** Y coordinate of the block.*/
 	protected int y;
 
+	/** Width of the block.*/
 	protected int width;
+	
+	/** Height of the block.*/
 	protected int height;
 
+	/** Color of the block.*/
 	private Color c;
 
 	/**
-	 * Constructor
+	 * Constructs a new PositionBlock with given parameters.
 	 * 
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @param c
+	 * @param x coordinate relative to the top left coordinate of the chunk.
+	 * @param y coordinate relative to the top left coordinate of the chunk.
+	 * @param width of the block.
+	 * @param height of the block.
+	 * @param c color of the block.
 	 */
 	public PositionBlock(int x, int y, int width, int height, Color c) {
 		this.x = x;
@@ -41,39 +52,39 @@ public class PositionBlock implements GameVariables {
 	}
 
 	/**
-	 * Updates block coords
+	 * Updates block coordinates.
 	 * 
-	 * @param newX
-	 * @param newY
+	 * @param dx the integer to update x by.
+	 * @param dy the integer to update y by.
 	 */
-	public void updateCoords(int newX, int newY) {
-		this.x += newX;
-		this.y += newY;
+	public void updateCoords(int dx, int dy) {
+		this.x += dx;
+		this.y += dy;
 	}
 
 	/**
-	 * @return the coords of the block
+	 * @return the coordinates of the block.
 	 */
 	public int[] getCoords() {
 		return new int[] { x, y };
 	}
 
 	/**
-	 * @return width of block
+	 * @return width of block.
 	 */
 	public int getWidth() {
 		return width;
 	}
 
 	/**
-	 * @return height of block
+	 * @return height of block.
 	 */
 	public int getHeight() {
 		return height;
 	}
 
 	/**
-	 *@return string version of block
+	 *@return string version of block.
 	 */
 	public String toString() {
 		if (this instanceof EmptyBlock)
@@ -89,11 +100,11 @@ public class PositionBlock implements GameVariables {
 	}
 
 	/**
-	 * Draws block on g
+	 * Draws block on g.
 	 * 
-	 * @param g
-	 * @param chunkXPosition
-	 * @param chunkYPosition
+	 * @param g 2DGraphics to draw on.
+	 * @param chunkXPosition x coordinate of chunk.
+	 * @param chunkYPosition y coordinate of chunk.
 	 */
 	public void draw(Graphics2D g, int chunkXPosition, int chunkYPosition) {
 		Color temp = g.getColor();
@@ -105,15 +116,14 @@ public class PositionBlock implements GameVariables {
 	}
 	
 	/**
-	 * Tests methods of PositionBlock
-	 * We made this a method so we could test all child classes
-	 * Within this file too
+	 * Tests methods of PositionBlock.
+	 * We made this a method so we could test all child classes within this file too.
 	 * 
-	 * @param initX
-	 * @param initY
-	 * @param width
-	 * @param height
-	 * @return if all tests were passed
+	 * @param initX starting x coordinate
+	 * @param initY starting y coordinate
+	 * @param width of the block
+	 * @param height of the block
+	 * @return true if all tests were passed
 	 */
 	private boolean testMethods(int initX, int initY, int width, int height, String blockStr) {
 		boolean allPassed = true;
