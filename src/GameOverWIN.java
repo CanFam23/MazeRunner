@@ -11,12 +11,31 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class GameOverWIN extends JFrame{
+/**
+ * <p>
+ * GameOverWIN creates the screen shown when user finds the end of the maze.
+ * </p>
+ * 
+ * @author Nick Clouse
+ * @author Andrew Denegar
+ * @author Molly O'Connor
+ * 
+ * @since February 28, 2024
+ */
+public class GameOverWIN extends JFrame {
+	/**
+	 * Serial Version UID
+	 */
 	private static final long serialVersionUID = 8986657739517647875L;
-	private BufferedImage backgroundImage;
-	
-	private boolean nextLevel = true; 
 
+	/**
+	 * Background image for screen
+	 */
+	private BufferedImage backgroundImage;
+
+	/**
+	 * Constructs new GameOverWIN window
+	 */
 	public GameOverWIN() {
 		// Load the image
 		try {
@@ -48,7 +67,6 @@ public class GameOverWIN extends JFrame{
 		JButton playAgain = new JButton("NEXT LEVEL");
 		playAgain.setFont(new Font("Arail", Font.PLAIN, 24));
 		playAgain.addActionListener(e -> {
-			nextLevel = true;
 			dispose();
 		});
 
@@ -63,11 +81,12 @@ public class GameOverWIN extends JFrame{
 		setVisible(true);
 
 	}
-	
-	public boolean loadNextLevel() {
-		return nextLevel;
-	}
-	
+
+	/**
+	 * Main method
+	 * 
+	 * @param args arguements passed
+	 */
 	public static void main(String[] args) {
 		GameOverWIN w = new GameOverWIN();
 	}

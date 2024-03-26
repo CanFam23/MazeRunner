@@ -1,13 +1,3 @@
-/*
- * Main.java
- * 
- * Authors: Nick Clouse, Andrew Denegar, Molly O'Connor
- * 
- * Date: February 20, 2024
- * 
- * Description:
- * Serves as the main file for our game. This is the file you should run to play our game.
- */
 package src;
 
 import java.awt.event.ActionEvent;
@@ -20,12 +10,39 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-
+/**
+ * <p>
+ * Serves as the main file for our game. This is the file you should run to play
+ * our game.
+ * </p>
+ * 
+ * @author Nick Clouse
+ * @author Andrew Denegar
+ * @author Molly O'Connor
+ * 
+ * @since February 20, 2024
+ * 
+ * @see JFrame
+ * @see HomeScreen
+ * @see GamePanel
+ */
 public class Main {
 
+	/**
+	 * Timer object used for timing how long the player has
+	 */
 	private static Timer timer;
+
+	/**
+	 * Window used to display game
+	 */
 	private static JFrame window;
 
+	/**
+	 * Main method
+	 * 
+	 * @param args arguements passed
+	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -62,6 +79,11 @@ public class Main {
 			int seconds = 0;
 			int seconds_left = 0;
 
+			/**
+			 * Made to keep track of how much time is left in the game.
+			 * 
+			 * @param e ActionEvent to process.
+			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				seconds++;
@@ -81,6 +103,11 @@ public class Main {
 		gamePanel.addKeyListener(new KeyAdapter() {
 			private boolean timerStarted = false;
 
+			/**
+			 * Made to check for key press. When a key is pressed, the timer starts.
+			 * 
+			 * @param e KeyEvent to process
+			 */
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// Start the timer only if it hasn't been started yet and arrow keys are pressed
@@ -96,13 +123,17 @@ public class Main {
 		gamePanel.setFocusable(true);
 		gamePanel.requestFocusInWindow();
 
-		// window.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		window.pack();
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
 
 		// Add window listener to handle window closing event
 		window.addWindowListener(new WindowAdapter() {
+			/**
+			 * Used to handle window closing event.
+			 * 
+			 * @param e WindowEvent to process.
+			 */
 			@Override
 			public void windowClosing(WindowEvent e) {
 				System.out.println("Average FPS: " + gamePanel.getFPS());
