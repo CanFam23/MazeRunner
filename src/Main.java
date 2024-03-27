@@ -41,7 +41,7 @@ public class Main {
 	/**
 	 * Main method
 	 * 
-	 * @param args arguements passed
+	 * @param args arguments passed
 	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
