@@ -16,6 +16,11 @@ import javax.swing.Timer;
  * our game.
  * </p>
  * 
+ * <p>
+ * This class initializes the game window, timer, and other necessary
+ * components.
+ * </p>
+ * 
  * @author Nick Clouse
  * @author Andrew Denegar
  * @author Molly O'Connor
@@ -28,22 +33,28 @@ import javax.swing.Timer;
  */
 public class Main {
 
-	/**
-	 * Timer object used for timing how long the player has
-	 */
+	// Timer object used for timing how long the player has
 	private static Timer timer;
 
-	/**
-	 * Window used to display game
-	 */
+	// Window used to display the game
 	private static JFrame window;
 
+	// Total elapsed seconds
+	private static int seconds = 0;
+
+	// Remaining seconds left for the player
+	private static int seconds_left = 0;
+
+	// The main game panel where the game is rendered
+	private static GamePanel gamePanel;
+
 	/**
-	 * Main method
+	 * Main method to start the game.
 	 * 
-	 * @param args arguments passed
+	 * @param args The arguments passed to the main method.
 	 */
 	public static void main(String[] args) {
+		// Main Game Logic, calls on HomeScreen.java
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -60,24 +71,23 @@ public class Main {
 	}
 
 	/**
-	 * Creates window and starts game
+	 * Creates window and starts game. Initializes the game window and starts the
+	 * game loop.
 	 */
 	public static void runMainCode() {
 		// Creates window
 		window = new JFrame();
+		gamePanel = new GamePanel();
 
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setTitle("Maze Runner - Use Arrows to start time");
 
 		// window.setResizable(false);
 		// Creates new game panel object
-		GamePanel gamePanel = new GamePanel();
 		window.add(gamePanel);
 
 		// Timer to track seconds
 		timer = new Timer(1000, new ActionListener() {
-			int seconds = 0;
-			int seconds_left = 0;
 
 			/**
 			 * Made to keep track of how much time is left in the game.
@@ -148,9 +158,40 @@ public class Main {
 	}
 
 	/**
-	 * Closes window
+	 * Closes the main window. Stops the game and disposes of the main window.
 	 */
 	public static void closeMainWindow() {
 		window.dispose();
 	}
+
+	/**
+	 * Resets the game timer and associated variables. Stops the timer, resets the
+	 * elapsed time, and starts listening for arrow key presses to restart the
+	 * timer.
+	 */
+	public static void resetTime() {
+		timer.stop();
+		seconds = 0;
+		seconds_left = 0;
+		window.setTitle("Maze Runner - Use Arrows to start time");
+		gamePanel.addKeyListener(new KeyAdapter() {
+			private boolean timerStarted = false;
+
+			/**
+			 * Made to check for key press. When a key is pressed, the timer starts.
+			 * 
+			 * @param e KeyEvent to process
+			 */
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// Start the timer only if it hasn't been started yet and arrow keys are pressed
+				if (!timerStarted && (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN
+						|| e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT)) {
+					timerStarted = true;
+					timer.start();
+				}
+			}
+		});
+	}
+
 }

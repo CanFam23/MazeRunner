@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 * characters.
 	 */
 	private Player ourPlayer;
-	
+
 	private List<Enemy> enemyList;
 
 	/** Visibility object, used to change visibility as time goes on. */
@@ -98,7 +99,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		enemyList.add(mageCreator.createEnemy(1000, 150));
 		enemyList.add(ghostCreator.createEnemy(1200, 125));
 		enemyList.add(ghostCreator.createEnemy(1100, 150));
-		
+
 		v.startTimer();
 
 	}
@@ -154,20 +155,35 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	public void update() {
 		// If the end is found, go to the next level
 		if (cmanager.endFound()) {
+			stopLoop();
+			// Disable player movements when end block is reached
+			keyH.upPressed = false;
+			keyH.downPressed = false;
+			keyH.rightPressed = false;
+			keyH.leftPressed = false;
 			if (current_level == NUM_LEVELS) {
-				JOptionPane.showMessageDialog(null, "Game Over, you win! (Placeholder)");
-				System.exit(0);
+				GameOverLOSE.GameOver();
 			} else {
-				System.out.println("New Level");
+				GameOverWIN.GameOverWIN();
+				while (GameOverWIN.isGameOverRunning()) {
+					System.out.print(""); // adds a break in the logic
+				}
 				reset();
-
+				ourPlayer.reset();
 				current_level++;
-
 				cmanager.loadLevel(current_level);
+				Main.resetTime();
+				/**
+				 * Made to check for key press. When a key is pressed, the timer starts.
+				 * 
+				 * @param e KeyEvent to process
+				 */
+
+				continueLoop();
 			}
 
 		}
-		
+
 		// Move enemies
 		for (Enemy e : enemyList)
 			e.move(cmanager.get_offset());
@@ -295,7 +311,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		// Draw map
 		cmanager.draw(g2);
-		
+
 		final int[] offset = cmanager.get_offset();
 		for (Enemy e : enemyList) {
 			e.draw(g2, offset);

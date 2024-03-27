@@ -1,6 +1,7 @@
 package src;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -22,7 +23,7 @@ import javax.swing.JPanel;
  * 
  * @since February 28, 2024
  */
-public class GameOverWIN extends JFrame {
+public class GameOverWIN  {
 	/**
 	 * Serial Version UID
 	 */
@@ -31,12 +32,27 @@ public class GameOverWIN extends JFrame {
 	/**
 	 * Background image for screen
 	 */
-	private BufferedImage backgroundImage;
-
+	private static BufferedImage backgroundImage;
+	
+	/**
+	 * The main JFrame used to display the game over window.
+	 */
+    private static JFrame frame = new JFrame(); // Initialize the frame
+	
+    /**
+     * The frame used for testing.
+     */
+    private static JFrame testFrame;
+    
+    /**
+     * Indicates whether the game over window is running or not.
+     */
+	private static boolean isRunning = true;
+	
 	/**
 	 * Constructs new GameOverWIN window
 	 */
-	public GameOverWIN() {
+	public static void GameOverWIN() {
 		// Load the image
 		try {
 			backgroundImage = ImageIO.read(new File("images/YouWin.png"));
@@ -44,9 +60,9 @@ public class GameOverWIN extends JFrame {
 			System.err.println("Failed to load win screen background image!");
 		}
 
-		setTitle("YOU WON!");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1000, 800);
+		frame.setTitle("YOU WON!");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(1000, 800);
 
 		JPanel panel = new JPanel() {
 			private static final long serialVersionUID = 2200499920275111737L;
@@ -61,13 +77,15 @@ public class GameOverWIN extends JFrame {
 		JButton endGame = new JButton("EXIT");
 		endGame.setFont(new Font("Arail", Font.PLAIN, 24));
 		endGame.addActionListener(e -> {
+			isRunning = false;
 			System.exit(0);
 		});
 
 		JButton playAgain = new JButton("NEXT LEVEL");
 		playAgain.setFont(new Font("Arail", Font.PLAIN, 24));
 		playAgain.addActionListener(e -> {
-			dispose();
+			isRunning = false;
+			frame.dispose();
 		});
 
 		JPanel buttonPanel = new JPanel();
@@ -75,19 +93,52 @@ public class GameOverWIN extends JFrame {
 		buttonPanel.add(endGame);
 
 		// Set up the frame
-		add(buttonPanel, BorderLayout.SOUTH);
-		add(panel);
-		setLocationRelativeTo(null);
-		setVisible(true);
+		frame.add(buttonPanel, BorderLayout.SOUTH);
+		frame.add(panel);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		testFrame = frame;
 
 	}
-
+	
+    /**
+     * Returns true if the game over window is running, false otherwise.
+     */
+    public static boolean isGameOverRunning() {
+        return isRunning;
+    }
+	
 	/**
 	 * Main method
 	 * 
 	 * @param args arguements passed
 	 */
-	public static void main(String[] args) {
-		GameOverWIN w = new GameOverWIN();
-	}
+    public static void main(String[] args) {
+        boolean allCasesPassed = true;
+
+        // Set up the test frame
+        testFrame = new JFrame();
+        
+        // Call the method under test
+        GameOverWIN.GameOverWIN();
+
+        // Check if the frame has any child components (i.e., if it's displaying the game over screen)
+        Container contentPane = testFrame.getContentPane();
+        if (contentPane.getComponentCount() <= 0) {
+            allCasesPassed = false;
+            System.err.println("Game over screen not displayed!");
+        }
+
+        // Check if the frame is visible
+        if (!testFrame.isVisible()) {
+            allCasesPassed = false;
+            System.err.println("Frame is not visible!");
+        }
+
+        if (allCasesPassed) {
+            System.out.println("All cases passed!");
+        } else {
+            System.err.println("At least one case failed!");
+        }
+    }
 }
