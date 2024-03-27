@@ -11,6 +11,8 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import src.Player.State;
+
 /**
  * <p>
  * GamePanel handles creating the screen and contains the main game loop. It
