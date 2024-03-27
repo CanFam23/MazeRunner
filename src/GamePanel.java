@@ -163,6 +163,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			keyH.downPressed = false;
 			keyH.rightPressed = false;
 			keyH.leftPressed = false;
+			ourPlayer.setState(State.Idle);
 			if (current_level == NUM_LEVELS) {
 				GameOverLOSE.GameOver();
 			} else {
