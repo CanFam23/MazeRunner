@@ -26,11 +26,17 @@ public class HomeScreen extends JFrame implements GameVariables {
 	 * Serial Version UID.
 	 */
 	private static final long serialVersionUID = 1L;
+	
 	/**
 	 * Background image to use.
 	 */
-
 	private BufferedImage backgroundImage;
+	
+    /**
+     * The Panel used for testing.
+     */
+    private static JPanel testPanel;
+    
 	/**
 	 * Start button
 	 */
@@ -117,6 +123,7 @@ public class HomeScreen extends JFrame implements GameVariables {
 
 		// Add the panel to the JFrame
 		add(panel);
+		testPanel = panel;
 	}
 
 	/**
@@ -125,12 +132,32 @@ public class HomeScreen extends JFrame implements GameVariables {
 	 * @param args arguements passed
 	 */
 	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				HomeScreen homeScreen = new HomeScreen();
-				homeScreen.setVisible(true);
-			}
-		});
-	}
+        boolean allCasesPassed = true;
+
+        // Set up the test panel
+        JPanel testPanel = new JPanel();
+        
+        // Call the method under test
+        HomeScreen homeScreen = new HomeScreen();
+        homeScreen.setVisible(true);
+
+        // Check if the panel has any child components (i.e., if it's displaying the home screen)
+        Container contentPane = homeScreen.getContentPane();
+        if (contentPane.getComponentCount() <= 0) {
+            allCasesPassed = false;
+            System.err.println("Home screen not displayed!");
+        }
+
+        // Check if the home screen is visible
+        if (!homeScreen.isVisible()) {
+            allCasesPassed = false;
+            System.err.println("Home screen is not visible!");
+        }
+
+        if (allCasesPassed) {
+            System.out.println("All cases passed!");
+        } else {
+            System.err.println("At least one case failed!");
+        }
+    }
 }
