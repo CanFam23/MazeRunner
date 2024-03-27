@@ -18,15 +18,36 @@ import javax.swing.JPanel;
 
 /**
  * Description:
- * This file holds Enemy.java, Mage, Ghost, EnemyFactory, MageFactory, and GhostFactory. These are the classes used to
- * 	create enemies including loading their images, storing their locations, and drawing to the screen.
+ * 	This file holds Enemy.java, Mage, Ghost, EnemyFactory, MageFactory, and GhostFactory. These are the classes used to
+ * 	create enemies including loading their images, storing their locations, and drawing to the screen. Mage and Ghost
+ *  are child classes of Enemy and MageFactory and GhostFactory are child classes of EnemyFactory.
  * 
  * @author Andrew Denegar
  * @date 2024-03-26
  *
  */
 
-abstract class Enemy {
+abstract class Enemy implements GameVariables {
+	
+	// Attributes that will be set in the constructor of child classes. If capitalized, it will not change.
+	protected int WIDTH;
+	protected int HEIGHT;
+	protected int position_x;
+	protected int position_y;
+	protected int speed;
+	
+	/** draw count keeps track of how many times draw has been called before switching to the next image in the list. */
+	protected int drawCount = 0;
+	
+	/** How many times the enemy is drawn before the next image is selected */
+	protected static final int DRAW_FRAMES = 10;
+	
+	// Set initial direction faced and sprite state
+	protected State currentState = State.Idle;
+	protected Facing currentFacing = Facing.E;
+	/** Holds all Buffered images for each state. Images do not change based on, 'Facing' except for being flipped left and right. */
+	protected Map<State, List<BufferedImage>> images;
+	
 	/**
 	 * What the sprite is currently doing.
 	 */
@@ -41,23 +62,100 @@ abstract class Enemy {
 		S, SE, E, NE, N, NW, W, SW
 	}
 	
+	/**
+	 * move decides how the enemy should move based on the player position (GameVariables), current position, and offset.
+	 * TODO: Implement more intelligent movement (Player detection area, maze traversal strategies).
+	 * 
+	 * @param offset the x and y coordinates respectively indicating the difference in position from the original maze to the current maze.
+	 */
+	public void move(int[] offset) {
+		// Store the position based on map movement
+		final int final_x = position_x + offset[0];
+		final int final_y = position_y + offset[1];
+		int dx = 0;
+		int dy = 0;
+		if (PLAYER_X > final_x + PLAYER_WIDTH / 2)
+			dx = speed;
+		else if (PLAYER_X < final_x - PLAYER_WIDTH / 2)
+			dx = -speed;
+		if (PLAYER_Y > final_y + PLAYER_HEIGHT / 2)
+			dy = speed;
+		else if (PLAYER_Y < final_y - PLAYER_HEIGHT / 2)
+			dy = -speed;
+		// Now that we have the movement that will happen, adjust the enemy's state/direction
+		if (dx != 0 || dy != 0) // NOTE: This will have to be modified when attacking and/or other modifications are made.
+			currentState = State.Move;
+		else
+			currentState = State.Idle;
+		if (dx > 0) 
+			currentFacing = Facing.E;
+		else if (dx < 0)
+			currentFacing = Facing.W;
+		// Update position (movement)
+		update_coords(dx, dy);
+	}
+	
+	/**
+	 * Update the position of the enemy. 
+	 * 
+	 * @param dx horizontal shift in the enemy's position
+	 * @param dy vertical shift in the enemy's position
+	 */
+	private void update_coords(int dx, int dy) {
+		position_x += dx;
+		position_y += dy;
+	}
+	
+	//TODO: Implement more than two directions to be drawn
 	/** Draw the enemy */
-	public abstract void draw(Graphics2D g);
+	public void draw(Graphics2D g, int[] offset) {
+		// Store position based on movement of the map
+		final int final_x = offset[0] + position_x;
+		final int final_y = offset[1] + position_y;
+		if (drawCount < DRAW_FRAMES) { // Draw the current image and increment drawCount
+			if (currentFacing == Facing.E) { // Facing right
+				g.drawImage(images.get(currentState).get(0), final_x + WIDTH, final_y, -WIDTH,
+						HEIGHT, null);
+			} else { // Facing left
+				g.drawImage(images.get(currentState).get(0), final_x, final_y, WIDTH,
+						HEIGHT, null);
+			}
+			drawCount++;
+		} else { // Draw the same thing as last time, then switch to the next image for next draw
+			BufferedImage img = images.get(currentState).remove(0);
+			if (currentFacing == Facing.E) { // Facing right
+				g.drawImage(img, final_x + WIDTH, final_y, -WIDTH,
+						HEIGHT, null);
+			} else { // Facing left
+				g.drawImage(img, final_x, final_y, WIDTH,
+						HEIGHT, null);
+			}
+			images.get(currentState).add(img); // Add the current image to the back of the list.
+			drawCount = 0;
+		}
+	}
 	
 	// Test enemy classes
 	public static void main(String[] args) {
+		// Create factories that will create our images.
 		EnemyFactory mageCreator = new MageFactory();
 		EnemyFactory ghostCreator = new GhostFactory();
 		
-		Enemy merlin = mageCreator.createEnemy();
-		Enemy casper = ghostCreator.createEnemy();
+		// Create enemy instances using 'magic' numbers for x and y positions.
+		Enemy merlin = mageCreator.createEnemy(10, 10);
+		Enemy casper = ghostCreator.createEnemy(110, 10);
+		Enemy gandalf = mageCreator.createEnemy(110, 110);
 
+		// Create JFrame and DrawingPanel to test our enemy drawing and image loading.
         JFrame frame = new JFrame("Drawing Application");
         DrawingPanel panel = new DrawingPanel();
         
+        // Add our enemies to the drawing panel to be drawn
         panel.addDrawable(merlin);
         panel.addDrawable(casper);
+        panel.addDrawable(gandalf);
 
+        // More GUI setup
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         frame.pack(); // Adjusts window to fit the preferred size and layouts of its subcomponents
@@ -65,6 +163,7 @@ abstract class Enemy {
         frame.setVisible(true);
     }
 
+	// Drawing panel used solely for testing purposes
     static class DrawingPanel extends JPanel {
         private List<Enemy> drawables = new ArrayList<>();
 
@@ -82,63 +181,42 @@ abstract class Enemy {
             Graphics2D g2d = (Graphics2D) g;
 
             for (Enemy drawable : drawables) {
-                drawable.draw(g2d);
+                drawable.draw(g2d, new int[] {0, 0});
             }
         }
     }
 }
 
-
-
+/**
+ * Mage is a child of Enemy with attributes and unique images.
+ * @author Andrew Denegar
+ */
 class Mage extends Enemy {
-	public static Map<State, List<BufferedImage>> images;
 	
-	private static final int MAGE_WIDTH = 100;
-	private static final int MAGE_HEIGHT = 100;
-	private State currentState = State.Idle;
-	private Facing currentFacing = Facing.E;
-	private int position_x = 10;
-	private int position_y = 10;
-	
-	@Override
-	public void draw(Graphics2D g) {
-		if (currentFacing == Facing.E) {
-			g.drawImage(images.get(currentState).get(0), position_x + MAGE_WIDTH, position_y, -MAGE_WIDTH,
-					MAGE_HEIGHT, null);
-		} else {
-			g.drawImage(images.get(currentState).get(0), position_x, position_y, MAGE_WIDTH,
-					MAGE_HEIGHT, null);
-		}
-		
-		
+	public Mage(int x, int y, Map<State, List<BufferedImage>> images) {
+		this.images = images;
+		WIDTH = 100;
+		HEIGHT = 100;
+		position_x = x;
+		position_y = y;
+		speed = 2;
 	}
-	
 }
 
+/**
+ * Ghost is a child of Enemy with attributes and unique images.
+ * @author Andrew Denegar
+ */
 class Ghost extends Enemy {
-	public static Map<State, List<BufferedImage>> images;
 	
-	private static final int GHOST_WIDTH = 100;
-	private static final int GHOST_HEIGHT = 100;
-	private State currentState = State.Idle;
-	private Facing currentFacing = Facing.E;
-	private int position_x = 110;
-	private int position_y = 110;
-	
-	@Override
-	public void draw(Graphics2D g) {
-		if (currentFacing == Facing.E) {
-			g.drawImage(images.get(currentState).get(0), position_x + GHOST_WIDTH, position_y, -GHOST_WIDTH,
-					GHOST_HEIGHT, null);
-		} else {
-			g.drawImage(images.get(currentState).get(0), position_x, position_y, GHOST_WIDTH,
-					GHOST_HEIGHT, null);
-		}
-		
-		
+	public Ghost(int x, int y, Map<State, List<BufferedImage>> images) {
+		this.images = images;
+		WIDTH = 100;
+		HEIGHT = 100;
+		position_x = x;
+		position_y = y;
+		speed = 3;
 	}
-
-	
 }
 
 
@@ -150,12 +228,12 @@ class Ghost extends Enemy {
 abstract class EnemyFactory {
 	
 	// Function that can be used by a user.
-	public abstract Enemy createEnemy();
+	public abstract Enemy createEnemy(int x, int y);
 	
 	/** load_images should be implemented separately for each enemy */
 	protected abstract void load_images();
 	
-	/** load_spritesheet should be the same for each enemies*/
+	/** load_spritesheet should be the same for each enemy. */
 	protected void load_spritesheet(String FILE_LOCATION, String character_name, src.Enemy.State playerState, int imageNumber, Map<src.Enemy.State, List<BufferedImage>> images) {
 		BufferedImage spriteSheet = null;
 		// Load the spritesheet file
@@ -168,7 +246,7 @@ abstract class EnemyFactory {
 			}
 		}
 		images.put(playerState, new LinkedList<>());
-		// Save constants used for spritesheet loading
+		// Save constants used for sprite sheet loading
 		final int height = spriteSheet.getHeight();
 		final int width = spriteSheet.getWidth();
 		for (int i = 0; i < imageNumber; i++) {
@@ -184,6 +262,7 @@ abstract class EnemyFactory {
  */
 class MageFactory extends EnemyFactory {
 	
+	/** Hold images (which should be the same for all Mages) */
 	static private Map<src.Enemy.State, List<BufferedImage>> images = new HashMap<>();
 	
 	public MageFactory() {
@@ -191,8 +270,8 @@ class MageFactory extends EnemyFactory {
 	}
 	
 	@Override
-	public Enemy createEnemy() {
-		return new Mage();
+	public Enemy createEnemy(int x, int y) {
+		return new Mage(x, y, images);
 	}
 
 	@Override
@@ -207,7 +286,6 @@ class MageFactory extends EnemyFactory {
 		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Move, imageNumber, images);
 		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Attack, imageNumber2, images);
 		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Dead, imageNumber2, images);
-		Mage.images = images;
 	}
 	
 }
@@ -218,6 +296,7 @@ class MageFactory extends EnemyFactory {
  */
 class GhostFactory extends EnemyFactory {
 
+	/** Hold images (which should be the same for all Ghosts) */
 	static private Map<src.Enemy.State, List<BufferedImage>> images = new HashMap<>();
 	
 	public GhostFactory() {
@@ -225,8 +304,8 @@ class GhostFactory extends EnemyFactory {
 	}
 	
 	@Override
-	public Enemy createEnemy() {
-		return new Ghost();
+	public Enemy createEnemy(int x, int y) {
+		return new Ghost(x, y, images);
 	}
 
 	@Override
@@ -241,7 +320,6 @@ class GhostFactory extends EnemyFactory {
 		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Move, imageNumber, images);
 		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Attack, imageNumber2, images);
 		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Dead, imageNumber2, images);
-		Ghost.images = images;
 	}
 	
 }

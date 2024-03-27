@@ -27,6 +27,10 @@ public class ChunkManager implements GameVariables {
 	/** List of chunks currently visible on the screen. */
 	private final List<Chunk> activeChunks = new ArrayList<>();
 
+	/** offset of the map from the original position */
+	private int x_offset = 0;
+	private int y_offset = 0;
+	
 	/** Width of each chunk. */
 	private int chunkWidth;
 
@@ -165,6 +169,8 @@ public class ChunkManager implements GameVariables {
 	 * @param dy integer to change y by.
 	 */
 	public void updateCoords(int dx, int dy) {
+		x_offset += dx;
+		y_offset += dy;
 		for (int x = 0; x < chunks.length; x++) {
 			for (int y = 0; y < chunks[0].length; y++) {
 				Chunk temp = chunks[x][y]; // Select a chunk
@@ -262,6 +268,16 @@ public class ChunkManager implements GameVariables {
 	 */
 	public List<Chunk> getActiveChunks() {
 		return activeChunks;
+	}
+	
+	/**
+	 * Returns the offset of the maze from the original maze position. Currently, this is used for enemy position
+	 * 	adjustments and enemy-player position detection.
+	 * 
+	 * @return the x and y offset from the original position of the maze in an array with two elements.
+	 */
+	public int[] get_offset() {
+		return new int[] {x_offset, y_offset};
 	}
 
 	/**
