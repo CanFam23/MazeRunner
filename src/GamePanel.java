@@ -11,6 +11,8 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import src.Player.State;
+
 /**
  * <p>
  * GamePanel handles creating the screen and contains the main game loop. It
@@ -161,6 +163,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			keyH.downPressed = false;
 			keyH.rightPressed = false;
 			keyH.leftPressed = false;
+			ourPlayer.setState(State.Idle);
 			if (current_level == NUM_LEVELS) {
 				GameOverLOSE.GameOver();
 			} else {
