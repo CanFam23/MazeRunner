@@ -310,7 +310,16 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		final Graphics2D g2 = (Graphics2D) g;
 
 		// Draw map
-		cmanager.draw(g2);
+		final List<Chunk> activeChunks = cmanager.getActiveChunks();
+		for (Chunk c : activeChunks) {
+			final int chunkX = c.getXPosition();
+			final int chunkY = c.getYPosition();
+			for (PositionBlock[] pbs : c.getBlocks()) {
+				for (PositionBlock pb : pbs) {
+					pb.draw(g2, chunkX, chunkY);
+				}
+			}
+		}
 
 		final int[] offset = cmanager.get_offset();
 		for (Enemy e : enemyList) {

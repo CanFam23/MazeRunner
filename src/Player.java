@@ -36,7 +36,9 @@ public class Player implements GameVariables {
 		/** Constant for when player is idle. */
 		Idle,
 		/** Constant for when player is moving. */
-		Move
+		Move,
+		/** When the player is attacking. */
+		Attack;
 	}
 
 	/**
@@ -93,6 +95,7 @@ public class Player implements GameVariables {
 		// Load a spritesheet for each player state
 		load_spritesheet(character_name, State.Idle, SPRITESHEET_WIDTH, SPRITESHEET_IDLE_HEIGHT);
 		load_spritesheet(character_name, State.Move, SPRITESHEET_WIDTH, SPRITESHEET_MOVE_HEIGHT);
+		load_spritesheet(character_name, State.Attack, SPRITESHEET_WIDTH, SPRITESHEET_MOVE_HEIGHT);
 	}
 
 	/**
@@ -352,7 +355,7 @@ public class Player implements GameVariables {
 		initializeGUI();
 
 		// Change these two variables to modify the animations tested
-		State playerState = State.Move; // Test the player state images (Move, Idle, etc.)
+		State playerState = State.Attack; // Test the player state images (Move, Idle, etc.)
 		Facing direction = Facing.S; // Test the direction the player is facing
 		int speed = (int) (0.1 * 1000); // Set seconds (first number) between each image.
 
