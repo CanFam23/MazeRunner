@@ -2,6 +2,11 @@ package src;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 /**
  * PositionBlock creates a individual block of the maze, which could be a wall,
@@ -32,8 +37,8 @@ public class PositionBlock implements GameVariables {
 	/** Height of the block. */
 	protected int height;
 
-	/** Color of the block. */
-	private Color c;
+	/** Block Image. */
+	private Image image;
 
 	/**
 	 * Constructs a new StartingBlock with the given parameters.
@@ -46,10 +51,10 @@ public class PositionBlock implements GameVariables {
 	 * @param height The height of the block.
 	 * @param c      The color of the block.
 	 */
-	public PositionBlock(int x, int y, int width, int height, Color c) {
+	public PositionBlock(int x, int y, int width, int height, Image image) {
 		this.x = x;
 		this.y = y;
-		this.c = c;
+		this.image = image;
 		this.width = width;
 		this.height = height;
 	}
@@ -110,12 +115,7 @@ public class PositionBlock implements GameVariables {
 	 * @param chunkYPosition y coordinate of chunk.
 	 */
 	public void draw(Graphics2D g, int chunkXPosition, int chunkYPosition) {
-		Color temp = g.getColor();
-
-		g.setColor(c);
-		g.fillRect(x + chunkXPosition, y + chunkYPosition, width, height);
-
-		g.setColor(temp);
+		g.drawImage(image, x + chunkXPosition, y + chunkYPosition, width, height, null);
 	}
 
 	/**
@@ -159,6 +159,11 @@ public class PositionBlock implements GameVariables {
 			System.err.format("Height should be %d, not %d!\n", height, getHeight());
 			allPassed = false;
 		}
+		// Checking for correct image assignment
+		if (!this.image.equals(image)) {
+			System.err.println("Image assignment failed!");
+			allPassed = false;
+		}
 
 		// Checking for correct toString conversion
 		if (!toString().equals(blockStr)) {
@@ -180,28 +185,36 @@ public class PositionBlock implements GameVariables {
 		final int initialX = 0;
 		final int initialY = 0;
 
+		Image positionBlockImage = null;
+		try {
+			positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// Testing a position block
-		PositionBlock pb = new PositionBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, Color.black);
+		PositionBlock pb = new PositionBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "????");
 
-		// Testing a empty block
-		pb = new EmptyBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, Color.black);
+		// Testing an empty block
+		pb = new EmptyBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "empt");
 
 		// Testing a wall
-		pb = new Wall(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, Color.black);
+		pb = new Wall(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "wall");
 
 		// Testing a starting block
-		pb = new StartingBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, Color.black);
+		pb = new StartingBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "strt");
 
 		// Testing a end block
-		pb = new EndBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, Color.black);
+		pb = new EndBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "EndB");
 

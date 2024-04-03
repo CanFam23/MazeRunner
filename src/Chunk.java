@@ -2,8 +2,13 @@ package src;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 /**
  * Chunk holds an nxn array of PositionBlocks and stores the x and y position of
@@ -329,10 +334,18 @@ public class Chunk implements GameVariables {
 		int r = 0;
 		int c = 0;
 
+		Image positionBlockImage = null;
+		try {
+			positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		// Adding blocks to chunk
 		for (int i = 0; i < Math.pow(chunkLength, 2); i++) {
 			final PositionBlock pb = new Wall((r % chunkLength) * WALL_WIDTH, (c % chunkLength) * WALL_HEIGHT,
-					WALL_WIDTH, WALL_HEIGHT, Color.black);
+					WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
 			chunk.add(r, c, pb);
 
 			if (r == chunkLength - 1) {
@@ -393,7 +406,7 @@ public class Chunk implements GameVariables {
 
 		// Checking collision function
 		final Chunk newChunk = new Chunk(0, 0, 0, 0);
-		PositionBlock pb = new PositionBlock(PLAYER_X, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT, Color.black);
+		PositionBlock pb = new PositionBlock(PLAYER_X, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
 
 		// Should find a collision because the PositiobBlock's coords are intersecting
 		// with the players
@@ -404,7 +417,7 @@ public class Chunk implements GameVariables {
 
 		// Should find a collision because the PositiobBlock's coords are intersecting
 		// with the players, this time they are slightly different
-		pb = new PositionBlock(PLAYER_X + WALL_WIDTH / 4, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT, Color.black);
+		pb = new PositionBlock(PLAYER_X + WALL_WIDTH / 4, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
 
 		if (newChunk.collision(pb) == Collision.NO_COLLISION) {
 			System.err.println("Collision() found no collision, when it should have found one!");
@@ -412,7 +425,7 @@ public class Chunk implements GameVariables {
 		}
 
 		// Should not find a collision because the block is at 0,0
-		pb = new PositionBlock(0, 0, WALL_WIDTH, WALL_HEIGHT, Color.black);
+		pb = new PositionBlock(0, 0, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
 
 		if (newChunk.collision(pb) != Collision.NO_COLLISION) {
 			System.err.println("Collision() found a collision, when it shouldn't have found one!");
