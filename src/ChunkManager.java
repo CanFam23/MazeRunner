@@ -2,11 +2,15 @@ package src;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.imageio.ImageIO;
 
 /**
  * ChunkManager loads and holds the chunks that will be used in the game. The
@@ -102,7 +106,34 @@ public class ChunkManager implements GameVariables {
 					chunks[y][x] = new Chunk(chunkXDimension, chunkYDimension, x, y);
 				}
 			}
+			
+			// Load Images
+			Image positionBlockImage = null;
+			try {
+				positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
+			Image wallImage = null;
+			try {
+				wallImage = ImageIO.read(new File("images/wall.png"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			Image startImage = null;
+			Image endImage = null;
+			try {
+				startImage = ImageIO.read(new File("images/startBlock.png"));
+				endImage = ImageIO.read(new File("images/startBlock.png"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			// Load the level data
 			int yPosition = 0;
 			boolean isStartingChunk = false;
@@ -110,22 +141,25 @@ public class ChunkManager implements GameVariables {
 			while (input.hasNextLine()) { // For every line in the file
 				int yChunk = yPosition / chunkYDimension;
 				String[] inputData = input.nextLine().split("");
+
 				for (int xPosition = 0; xPosition < inputData.length; xPosition++) { // For every wall in the line
 					int xChunk = xPosition / chunkXDimension;
 					PositionBlock pb = null;
+
 					if (inputData[xPosition].equals("0")) { // Create an empty block
 						pb = new EmptyBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, Color.white);
+								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT,
+								positionBlockImage);
 					} else if (inputData[xPosition].equals("1")) { // Create a wall
 						pb = new Wall((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, Color.black);
+								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, wallImage);
 					} else if (inputData[xPosition].equals("2")) { // Create a starting block
 						pb = new StartingBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, Color.blue);
+								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, startImage);
 						isStartingChunk = true;
 					} else if (inputData[xPosition].equals("3")) { // Create an end block
 						pb = new EndBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, Color.green);
+								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, endImage);
 						isEndChunk = true;
 					}
 					chunks[yChunk][xChunk].add(xPosition % chunkXDimension, yPosition % chunkYDimension, pb);
@@ -146,7 +180,6 @@ public class ChunkManager implements GameVariables {
 			}
 
 			setStartLocation();
-
 			return true;
 		} catch (FileNotFoundException e) {
 			System.err.println("File: '" + FILE_LOCATION + levelName + ".txt" + "' not found");
