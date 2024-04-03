@@ -1,6 +1,7 @@
 package src;
 
 import java.awt.Color;
+import java.awt.Image;
 
 /**
  * <p>
@@ -27,9 +28,9 @@ public class StartingBlock extends PositionBlock {
 	 *               chunk.
 	 * @param width  The width of the block.
 	 * @param height The height of the block.
-	 * @param c      The color of the block.
+	 * @param positionBlockImage      The color of the block.
 	 */
-	public StartingBlock(int x, int y, int width, int height, Color c) {
-		super(x, y, width, height, c);
+	public StartingBlock(int x, int y, int width, int height, Image positionBlockImage) {
+		super(x, y, width, height, positionBlockImage);
 	}
 }

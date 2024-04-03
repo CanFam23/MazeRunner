@@ -1,6 +1,7 @@
 package src;
 
 import java.awt.Color;
+import java.awt.Image;
 
 /**
  * <p>
@@ -25,9 +26,9 @@ public class Wall extends PositionBlock {
 	 * @param y      coordinate relative to the top left coordinate of the chunk.
 	 * @param width  of the block.
 	 * @param height of the block.
-	 * @param c      color of the block.
+	 * @param positionBlockImage      color of the block.
 	 */
-	public Wall(int x, int y, int width, int height, Color c) {
-		super(x, y, width, height, c);
+	public Wall(int x, int y, int width, int height, Image positionBlockImage) {
+		super(x, y, width, height, positionBlockImage);
 	}
 }
