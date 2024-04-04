@@ -289,7 +289,19 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			dx += speed;
 		}
 		cmanager.updateCoords(dx, dy);
-		ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
+		if (!ourPlayer.isStateLocked()) {
+			ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
+		}
+		
+		if (keyH.spacePressed) {
+			if (ourPlayer.getState() != "Attack") {
+				// Set our player to be attacking
+				ourPlayer.setState(State.Attack);
+				ourPlayer.resetDrawCount();
+			}
+			ourPlayer.lockState();
+			ourPlayer.lockFacing();
+		}
 	}
 
 	/**
@@ -314,12 +326,14 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		// Draw map
 		final List<Chunk> activeChunks = cmanager.getActiveChunks();
-		for (Chunk c : activeChunks) {
-			final int chunkX = c.getXPosition();
-			final int chunkY = c.getYPosition();
-			for (PositionBlock[] pbs : c.getBlocks()) {
-				for (PositionBlock pb : pbs) {
-					pb.draw(g2, chunkX, chunkY);
+		if (!activeChunks.isEmpty()) {
+			for (Chunk c : activeChunks) {
+				final int chunkX = c.getXPosition();
+				final int chunkY = c.getYPosition();
+				for (PositionBlock[] pbs : c.getBlocks()) {
+					for (PositionBlock pb : pbs) {
+						pb.draw(g2, chunkX, chunkY);
+					}
 				}
 			}
 		}

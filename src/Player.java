@@ -3,6 +3,7 @@ package src;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,9 +65,30 @@ public class Player implements GameVariables {
 	}
 
 	/**
-	 * Draw count is used.
+	 * Draw count is used to track the number of draws that have occurred since the last animation update.
 	 */
 	private int drawCount = 0;
+	
+	/**
+	 * Count of frames that attack has been drawn.
+	 */
+	private int attackCount = 0;
+	
+	/**
+	 * Animation constants that are used in multiple places.
+	 */
+	private static double ATTACKING_XPOS_ADJUSTMENT = 3.3;
+	private static double ATTACKING_WIDTH_ADJUSTMENT = 2.2;
+		
+	/**
+	 * True if an animation has started that must be completed.
+	 */
+	private boolean stateLocked = false;
+	
+	/**
+	 * True if an animation has started that must be completed.
+	 */
+	private boolean facingLocked = false;
 
 	/** Set initial player state. */
 	private State currentState = State.Idle;
@@ -129,9 +151,16 @@ public class Player implements GameVariables {
 			final int width = spriteSheet.getWidth();
 			final int framesPerAnim = xDim * yDim / Facing.values().length;
 			// Save image resizing constants
-			final double WIDTH_POSITION_ADJUSTMENT = 2.5;
+			final double WIDTH_POSITION_ADJUSTMENT;
+			final double WIDTH_SIZE_ADJUSTMENT;
+			if (playerState == State.Attack) {
+				WIDTH_POSITION_ADJUSTMENT = ATTACKING_XPOS_ADJUSTMENT;
+				WIDTH_SIZE_ADJUSTMENT = ATTACKING_WIDTH_ADJUSTMENT;
+			} else {
+				WIDTH_POSITION_ADJUSTMENT = 2.5;
+				WIDTH_SIZE_ADJUSTMENT = 4.0;
+			}
 			final double HEIGHT_POSITION_ADJUSTMENT = 3.2;
-			final double WIDTH_SIZE_ADJUSTMENT = 4;
 			final double HEIGHT_SIZE_ADJUSTMENT = 2.7;
 			// Count and direction will be changed based on the number of the image being
 			// loaded.
@@ -236,15 +265,35 @@ public class Player implements GameVariables {
 	 * @param g 2Dgraphics to draw on
 	 */
 	public void draw(Graphics2D g) {
-		if (drawCount < 5) { // For x ticks of the game loop, draw the same image.
-			g.drawImage(images.get(currentState).get(currentFacing).get(0), PLAYER_X, PLAYER_Y, PLAYER_WIDTH,
+		final double attackAdjustment;
+		final int framesPerSwitch = 6;
+		if (currentState == State.Attack) {
+			attackCount += 1;
+			attackAdjustment = PLAYER_WIDTH * (ATTACKING_XPOS_ADJUSTMENT / ATTACKING_WIDTH_ADJUSTMENT) / 2;
+		} else
+			attackAdjustment = 0;
+		if (drawCount < framesPerSwitch - 1) { // For x ticks of the game loop, draw the same image.
+			g.drawImage(images.get(currentState).get(currentFacing).get(0), (int) (PLAYER_X - attackAdjustment / 2), PLAYER_Y, (int) (PLAYER_WIDTH + attackAdjustment),
 					PLAYER_HEIGHT, null);
+			g.setColor(Color.red);
+			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 			drawCount++;
 		} else { // Then, switch the image to the next one in the sequence.
+			System.out.println("lap");
+			System.out.println(attackCount);
 			BufferedImage img = images.get(currentState).get(currentFacing).remove(0);
-			g.drawImage(img, PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT, null);
+			g.drawImage(img, (int) (PLAYER_X - attackAdjustment / 2), PLAYER_Y, (int) (PLAYER_WIDTH + attackAdjustment), PLAYER_HEIGHT, null);
+			g.setColor(Color.red);
+			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 			images.get(currentState).get(currentFacing).add(img);
 			drawCount = 0;
+		}
+		
+		if (attackCount == framesPerSwitch * 4) {
+			unlockState();
+			unlockFacing();
+			currentState = State.Idle;
+			attackCount = 0;
 		}
 
 	}
@@ -255,6 +304,46 @@ public class Player implements GameVariables {
 	public void reset() { // TODO add testing?
 		setState(State.Idle);
 		setFacing(Facing.N);
+	}
+	
+	public void resetDrawCount() {
+		drawCount = 0;
+	}
+	
+	public boolean isStateLocked() {
+		return stateLocked;
+	}
+	
+	public boolean isFacingLocked() {
+		return facingLocked;
+	}
+	
+	/**
+	 * Set the state to be fixed
+	 */
+	public void lockState() {
+		stateLocked = true;
+	}
+	
+	/**
+	 * Set facing to be fixed
+	 */
+	public void lockFacing() {
+		facingLocked = true;
+	}
+	
+	/**
+	 * Allow state to be changed
+	 */
+	public void unlockState() {
+		stateLocked = false;
+	}
+	
+	/**
+	 * Allow facing to be changed
+	 */
+	public void unlockFacing() {
+		facingLocked = false;
 	}
 
 	///////////////// BELOW CODE IS USED JUST FOR TESTING PURPOSES
@@ -288,7 +377,10 @@ public class Player implements GameVariables {
 				super.paintComponent(g);
 				// Draw the current image, if not null
 				if (image != null) {
-					g.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), this);
+					final int sizeMult = 20;
+					g.drawImage(image, 0, 0, image.getWidth() * sizeMult, image.getHeight() * sizeMult, this);
+					g.setColor(Color.RED);
+					g.drawRect(0, 0, image.getWidth() * sizeMult, image.getHeight() * sizeMult);
 				}
 			}
 		};
@@ -356,7 +448,7 @@ public class Player implements GameVariables {
 
 		// Change these two variables to modify the animations tested
 		State playerState = State.Attack; // Test the player state images (Move, Idle, etc.)
-		Facing direction = Facing.S; // Test the direction the player is facing
+		Facing direction = Facing.W; // Test the direction the player is facing
 		int speed = (int) (0.1 * 1000); // Set seconds (first number) between each image.
 
 		while (true) {
