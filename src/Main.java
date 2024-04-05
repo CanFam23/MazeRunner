@@ -16,12 +16,6 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-/*
- * TODO:
- * Update main menu, see if theres way to use same frame for all panels
- * Add leaderboard and tracking for it
- */
-
 /**
  * <p>
  * Serves as the main file for our game. This is the file you should run to play

@@ -76,6 +76,24 @@ public class PositionBlock implements GameVariables {
 	public int[] getCoords() {
 		return new int[] { x, y };
 	}
+	
+	
+	/**
+	 * 
+	 * TODO ADD tessting
+	 * @return
+	 */
+	public int[][] getBounds(int xPosition, int yPosition) {
+		final int newX = x + xPosition;
+		final int newY = y + yPosition;
+
+		final int[] wallXCoords = new int[] { newX - HITBOX_BUFFER_AMOUNT, newX + WALL_WIDTH + HITBOX_BUFFER_AMOUNT,
+				newX + WALL_WIDTH + HITBOX_BUFFER_AMOUNT, newX - HITBOX_BUFFER_AMOUNT };
+		final int[] wallYCoords = new int[] { newY - HITBOX_BUFFER_AMOUNT, newY - HITBOX_BUFFER_AMOUNT,
+				newY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT, newY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT };
+		
+		return new int[][] {wallXCoords,wallYCoords};
+	}
 
 	/**
 	 * @return width of block.
