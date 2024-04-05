@@ -163,6 +163,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// If the end is found, go to the next level
 		if (cmanager.endFound()) {
 			stopLoop();
+			Main.stopTime();
 			// Disable player movements when end block is reached
 			keyH.upPressed = false;
 			keyH.downPressed = false;
@@ -171,18 +172,20 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			if (current_level == NUM_LEVELS) {
 				GameOverLOSE.GameOver();
 			} else {
-				GameOverWIN.GameOverWIN();
-				while (GameOverWIN.isGameOverRunning()) {
-					System.out.print(""); // adds a break in the logic
+				Main.nextLevel(true);
+				while (Main.otherPanelRunning()) {
+					System.out.print("");
 				}
-				reset();
-				current_level++;
-				cmanager.loadLevel(current_level);
-				Main.resetTime();
-				continueLoop();
+			}
+			Main.showGamePanel();
+			reset();
+			current_level++;
+			cmanager.loadLevel(current_level);
+			Main.resetTime();
+			continueLoop();
 			}
 
-		}
+		
 
 		// Move enemies
 		for (Enemy e : enemyList)
@@ -475,7 +478,5 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 
 		System.exit(0);
-
 	}
-
 }

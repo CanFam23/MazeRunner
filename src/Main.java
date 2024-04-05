@@ -1,5 +1,6 @@
 package src;
 
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -62,6 +63,7 @@ public class Main {
 	// Background image that is the same as the maze walls
 	private static Image backgroundImage = null;
 
+	private static GameOverWIN nextLevel;
 	/**
 	 * Main method to start the game.
 	 * 
@@ -101,13 +103,18 @@ public class Main {
 		// Creates window
 		window = new JFrame();
 		gamePanel = new GamePanel(backgroundImage);
+		nextLevel = new GameOverWIN();
+		nextLevel.setPreferredSize(new Dimension(800, 600));
 
+		
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setTitle("Maze Runner - Use Arrows to start time");
 
 		// window.setResizable(false);
 		// Creates new game panel object
-		window.add(gamePanel);
+		nextLevel.setVisible(false);
+		window.getContentPane().add(gamePanel);
+		nextLevel.setPreferredSize(new Dimension(800, 600));
 
 		// Timer to track seconds
 		timer = new Timer(1000, new ActionListener() {
@@ -155,6 +162,9 @@ public class Main {
 		// Make sure the panel can receive focus
 		gamePanel.setFocusable(true);
 		gamePanel.requestFocusInWindow();
+		
+		nextLevel.setFocusable(true);
+		nextLevel.requestFocusInWindow();
 
 		window.pack();
 		window.setLocationRelativeTo(null);
@@ -193,7 +203,6 @@ public class Main {
 	 * timer.
 	 */
 	public static void resetTime() {
-		timer.stop();
 		seconds = 0;
 		seconds_left = 0;
 		window.setTitle("Maze Runner - Use Arrows to start time");
@@ -216,5 +225,35 @@ public class Main {
 			}
 		});
 	}
-
+	public static void stopTime() {
+		timer.stop();
+	}
+	
+	public static void nextLevel(boolean show) {
+		String formattedString = String.format("Completed Level in %d seconds", 120-seconds_left);
+		window.setTitle(formattedString);
+		window.setVisible(true);
+		window.getContentPane().add(nextLevel);
+        nextLevel.setVisible(show);
+        nextLevel.setFocusable(show);
+        gamePanel.stopLoop();
+        gamePanel.setVisible(false);
+	}
+	
+	public static void showGamePanel() {
+		window.setVisible(true);
+		window.getContentPane().add(gamePanel);
+        gamePanel.setVisible(true);
+        gamePanel.setFocusable(true);
+        gamePanel.startGameThread();
+        nextLevel.setVisible(false);
+	}
+	
+	public static boolean otherPanelRunning() {
+		if (nextLevel.isGameOverRunning()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
