@@ -92,17 +92,15 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		// Create our player and load the images
 		ourPlayer = new Player();
-		ourPlayer.load_images("Civilian1(black)");
+		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)
 
 		// Create enemies
 		enemyList = new ArrayList<Enemy>();
 		EnemyFactory mageCreator = new MageFactory();
 		EnemyFactory ghostCreator = new GhostFactory();
 		enemyList.add(mageCreator.createEnemy(1000, 150));
-		enemyList.add(ghostCreator.createEnemy(1200, 125));
-		enemyList.add(ghostCreator.createEnemy(1100, 150));
-
-		v.startTimer();
+//		enemyList.add(ghostCreator.createEnemy(1200, 125));
+//		enemyList.add(ghostCreator.createEnemy(1100, 150));
 
 	}
 
@@ -176,12 +174,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				current_level++;
 				cmanager.loadLevel(current_level);
 				Main.resetTime();
-				/**
-				 * Made to check for key press. When a key is pressed, the timer starts.
-				 * 
-				 * @param e KeyEvent to process
-				 */
-
 				continueLoop();
 			}
 
@@ -302,6 +294,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			ourPlayer.lockState();
 			ourPlayer.lockFacing();
 		}
+		v.updateRadius();
 	}
 
 	/**
@@ -310,7 +303,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	public void reset() { // TODO add testing?
 		ourPlayer.reset();
 		cmanager.reset();
-		v.restartTimer();
+		v.reset();
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package src;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -17,17 +18,44 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
- * Description:
+ * 
  * 	This file holds Enemy.java, Mage, Ghost, EnemyFactory, MageFactory, and GhostFactory. These are the classes used to
  * 	create enemies including loading their images, storing their locations, and drawing to the screen. Mage and Ghost
  *  are child classes of Enemy and MageFactory and GhostFactory are child classes of EnemyFactory.
  * 
  * @author Andrew Denegar
- * @date 2024-03-26
+ * @since March 26, 2024
  *
  */
 
+
+/*
+ * For better moving:
+ * 
+ * Get active chunks
+ * Find chunk enemy is in
+ * In that chunk, check walls to see if moving would make it closer to enemy without it colliding to the wall
+ * Can move 8 directions(Straight and diagonal)
+ * If it would be closer, move it, else, do nothing
+ * 
+ * If not tracking player, move from left to right, if move would result in collision, turn the opposite way
+ * 
+ * 
+ * Loading enemies in:
+ * Put numbers in maze that represent each enemy (5,6,etc)
+ * load_level could return the enemies list, unless we wanted chunk manager to manage enemies
+ * get active enemies, those currently on the screen
+ * update/move accordingly
+ */
+
 abstract class Enemy implements GameVariables {
+	
+	protected static final int X_DETECTION_RANGE = SCREEN_WIDTH/3;
+	protected static final int Y_DETECTION_RANGE = (int) (SCREEN_HEIGHT/2.5);
+	
+	/** How many times the enemy is drawn before the next image is selected */
+	protected static final int DRAW_FRAMES = 10;
+
 	
 	// Attributes that will be set in the constructor of child classes. If capitalized, it will not change.
 	protected int WIDTH;
@@ -38,9 +66,6 @@ abstract class Enemy implements GameVariables {
 	
 	/** draw count keeps track of how many times draw has been called before switching to the next image in the list. */
 	protected int drawCount = 0;
-	
-	/** How many times the enemy is drawn before the next image is selected */
-	protected static final int DRAW_FRAMES = 10;
 	
 	// Set initial direction faced and sprite state
 	protected State currentState = State.Idle;
@@ -63,36 +88,78 @@ abstract class Enemy implements GameVariables {
 	}
 	
 	/**
-	 * move decides how the enemy should move based on the player position (GameVariables), current position, and offset.
+	 * Move decides how the enemy should move based on the player position (GameVariables), current position, and offset.
 	 * TODO: Implement more intelligent movement (Player detection area, maze traversal strategies).
 	 * 
 	 * @param offset the x and y coordinates respectively indicating the difference in position from the original maze to the current maze.
 	 */
 	public void move(int[] offset) {
+		
 		// Store the position based on map movement
 		final int final_x = position_x + offset[0];
 		final int final_y = position_y + offset[1];
-		int dx = 0;
-		int dy = 0;
-		if (PLAYER_X > final_x + PLAYER_WIDTH / 2)
-			dx = speed;
-		else if (PLAYER_X < final_x - PLAYER_WIDTH / 2)
-			dx = -speed;
-		if (PLAYER_Y > final_y + PLAYER_HEIGHT / 2)
-			dy = speed;
-		else if (PLAYER_Y < final_y - PLAYER_HEIGHT / 2)
-			dy = -speed;
-		// Now that we have the movement that will happen, adjust the enemy's state/direction
-		if (dx != 0 || dy != 0) // NOTE: This will have to be modified when attacking and/or other modifications are made.
-			currentState = State.Move;
-		else
-			currentState = State.Idle;
-		if (dx > 0) 
-			currentFacing = Facing.E;
-		else if (dx < 0)
-			currentFacing = Facing.W;
-		// Update position (movement)
-		update_coords(dx, dy);
+		
+		//Checks if player is in range of enemy
+		if(inRangeOfPlayer(final_x,final_y)) {
+			System.out.println("Attack");
+		}else {
+		    //If player is within the detection range, enemy should move towards the player	
+			if(Math.abs(PLAYER_X - final_x) <= X_DETECTION_RANGE && Math.abs(PLAYER_Y - final_y) <= Y_DETECTION_RANGE) {
+				int dx = 0;
+				int dy = 0;
+				if (PLAYER_X > final_x + PLAYER_WIDTH / 2)
+					dx = speed;
+				else if (PLAYER_X < final_x - PLAYER_WIDTH / 2)
+					dx = -speed;
+				if (PLAYER_Y > final_y + PLAYER_HEIGHT / 2)
+					dy = speed;
+				else if (PLAYER_Y < final_y - PLAYER_HEIGHT / 2)
+					dy = -speed;
+				// Now that we have the movement that will happen, adjust the enemy's state/direction
+				if (dx != 0 || dy != 0) // NOTE: This will have to be modified when attacking and/or other modifications are made.
+					currentState = State.Move;
+				else
+					currentState = State.Idle;
+				if (dx > 0) 
+					currentFacing = Facing.E;
+				else if (dx < 0)
+					currentFacing = Facing.W;
+				// Update position (movement)
+				update_coords(dx, dy);
+			}
+		}
+		
+		
+		
+	}
+	
+	/**
+	 * Checks if the enemy is in range of the player. 
+	 * 
+	 * @param x x coordinate to use
+	 * @param y y coordinate to use
+	 * @return true if enemy is in range of the player
+	 */
+	public boolean inRangeOfPlayer(int x, int y) {
+		
+		// Convert 2D array of coords into arrays of x coords and y coords
+		final int[] otherXCoords = new int[] { x, x + WIDTH,
+				x + WIDTH, x};
+		final int[] otherYCoords = new int[] { y, position_y,
+				y + HEIGHT, y + HEIGHT };
+
+		// if player top left x < enemy bottom right x
+		if (playerXCoords[0] <= otherXCoords[2]
+				// if player bottom right x > enemy top left x
+				&& playerXCoords[2] >= otherXCoords[0]
+				// if player top left y < enemy bottom right y
+				&& playerYCoords[0] <= otherYCoords[2]
+				// if player bottom right y > enemy top left y
+				&& playerYCoords[2] >= otherYCoords[0]) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -133,6 +200,10 @@ abstract class Enemy implements GameVariables {
 			images.get(currentState).add(img); // Add the current image to the back of the list.
 			drawCount = 0;
 		}
+		
+		g.setColor(Color.RED);
+		g.drawRect(final_x, final_y, WIDTH, HEIGHT);
+		g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 	}
 	
 	// Test enemy classes
