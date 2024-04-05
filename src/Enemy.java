@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -91,6 +92,25 @@ abstract class Enemy implements GameVariables {
 		}
 		
 		return false;
+	}
+	
+	public static void enemiesHit(Set<Enemy> hitEnemies) {
+		/*
+		 * For each enemy:
+		 * start with farthest away enemy
+		 * If they can move back without hitting a wall or enemy, move back.
+		 * If not, dont move back
+		 * Update health, or die
+		 */
+		
+		   System.out.println("You hit " + hitEnemies.size() + " Enemies!");
+		   for(Enemy e: hitEnemies) {
+			   for(int i = 0; i < 50;i++) {
+				   e.update_coords(e.getSpeed(), 0);
+			   }
+		   }
+
+		
 	}
 	
 	/**

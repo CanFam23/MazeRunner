@@ -125,8 +125,7 @@ public class Main {
 		try {
 			backgroundImage = ImageIO.read(new File("images/backgroundBlock.png"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Failed to load backgroundBlock.png!");
 		}
 		
 		// Creates window

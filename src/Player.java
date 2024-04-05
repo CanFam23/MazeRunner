@@ -91,12 +91,6 @@ public class Player implements GameVariables {
 	 * Default the player to be holding a weapon.
 	 */
 	private boolean holdingWeapon = true;
-	
-	/**
-	 * Animation constants that are used in multiple places.
-	 */
-	private static double ATTACKING_XPOS_ADJUSTMENT = 3.3;
-	private static double ATTACKING_WIDTH_ADJUSTMENT = 2.2;
 		
 	/**
 	 * True if an animation has started that must be completed.
@@ -113,6 +107,8 @@ public class Player implements GameVariables {
 
 	/** Set initial player direction. */
 	private Facing currentFacing = Facing.N;
+	
+	private final int framesPerSwitch = 6;
 
 	/**
 	 * A map of images that can be accessed by first specifying the player state and
@@ -192,29 +188,6 @@ public class Player implements GameVariables {
 			final int height = spriteSheet.getHeight();
 			final int width = spriteSheet.getWidth();
 			final int framesPerAnim = xDim * yDim / Facing.values().length;
-			// Save image resizing constants
-			final double WIDTH_POSITION_ADJUSTMENT;
-			final double WIDTH_SIZE_ADJUSTMENT;
-			final double HEIGHT_POSITION_ADJUSTMENT;
-			final double HEIGHT_SIZE_ADJUSTMENT;
-			if (playerState == State.Attack) {
-				if (holdingWeapon) {
-					WIDTH_POSITION_ADJUSTMENT = ATTACKING_XPOS_ADJUSTMENT * 5;
-					WIDTH_SIZE_ADJUSTMENT = ATTACKING_WIDTH_ADJUSTMENT / 2.1;
-					HEIGHT_POSITION_ADJUSTMENT = 1;
-					HEIGHT_SIZE_ADJUSTMENT = 1;
-				} else {
-					WIDTH_POSITION_ADJUSTMENT = ATTACKING_XPOS_ADJUSTMENT;
-					WIDTH_SIZE_ADJUSTMENT = ATTACKING_WIDTH_ADJUSTMENT;
-					HEIGHT_POSITION_ADJUSTMENT = 3.2;
-					HEIGHT_SIZE_ADJUSTMENT = 2.7;
-				}				
-			} else {
-				WIDTH_POSITION_ADJUSTMENT = 2.5;
-				WIDTH_SIZE_ADJUSTMENT = 4.0;
-				HEIGHT_POSITION_ADJUSTMENT = 3.2;
-				HEIGHT_SIZE_ADJUSTMENT = 2.7;
-			}
 			
 			// Count and direction will be changed based on the number of the image being
 			// loaded.
@@ -231,18 +204,6 @@ public class Player implements GameVariables {
 					// Now that we have the image split from the other part, let's remove the
 					// whitespace
 					images.get(playerState).get(direction).add(subImage);
-					
-//					if (playerState == State.Attack) {
-//						images.get(playerState).get(direction).add(subImage);
-//					}
-//					else {
-//						BufferedImage finalImage = subImage.getSubimage((int) (width / xDim / WIDTH_POSITION_ADJUSTMENT),
-//								(int) (height / yDim / HEIGHT_POSITION_ADJUSTMENT),
-//								(int) (width / xDim / WIDTH_SIZE_ADJUSTMENT),
-//								(int) (height / yDim / HEIGHT_SIZE_ADJUSTMENT));
-//
-//						images.get(playerState).get(direction).add(finalImage);
-//					}
 
 					count++;
 					if (count % framesPerAnim == 0 && count != xDim * yDim) {
@@ -275,14 +236,17 @@ public class Player implements GameVariables {
 				if(CollisionDetection.getCollision(xCoords, yCoords, eXCoords, eYCoords) != Collision.NO_COLLISION) {
 					//System.out.println("Hit Enemy " + e);
 					hitEnemies.add(e);
+					handleAttack();
 				}
 			}
 		}
 	}
 	
 	public void handleAttack() {
-		if(hitEnemies.size() != 0 && currentState != State.Attack) {
-			System.out.println("You hit " + hitEnemies.size() + " Enemies!");
+		if(hitEnemies.size() != 0 && currentState == State.Attack && attackCount == framesPerSwitch * 2) {
+			Enemy.enemiesHit(hitEnemies);
+			System.out.println("Hit Enemy ");
+
 			hitEnemies.clear();
 		}
 	}
@@ -362,7 +326,6 @@ public class Player implements GameVariables {
 		final BufferedImage myImage = images.get(currentState).get(currentFacing).get(0);
 		final int imageXAdjustment = (int) ((myImage.getWidth() * SIZE - PLAYER_WIDTH) / 2);
 		final int imageYAdjustment = (int) ((myImage.getHeight() * SIZE - PLAYER_HEIGHT) / 2);
-		final int framesPerSwitch = 6;
 		if (currentState == State.Attack)
 			attackCount += 1;
 		
@@ -401,10 +364,11 @@ public class Player implements GameVariables {
 
 	}
 
+	// TODO add testing
 	/**
 	 * Reset player state and direction
 	 */
-	public void reset() { // TODO add testing?
+	public void reset() {
 		setState(State.Idle);
 		setFacing(Facing.N);
 	}
