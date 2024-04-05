@@ -1,6 +1,5 @@
 package src;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
@@ -30,10 +29,6 @@ public class ChunkManager implements GameVariables {
 
 	/** List of chunks currently visible on the screen. */
 	private final List<Chunk> activeChunks = new ArrayList<>();
-
-	/** offset of the map from the original position */
-	private int x_offset = 0;
-	private int y_offset = 0;
 	
 	/** Width of each chunk. */
 	private int chunkWidth;
@@ -73,6 +68,9 @@ public class ChunkManager implements GameVariables {
 
 	/** 2D array of all chunks. */
 	private Chunk[][] chunks;
+	
+	private final EnemyFactory mageCreator = new MageFactory();
+	private final EnemyFactory ghostCreator = new GhostFactory();
 
 	/**
 	 * Loads level from levelNum and creates a 2D array of chunks, which represent
@@ -112,16 +110,14 @@ public class ChunkManager implements GameVariables {
 			try {
 				positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.err.println("Failed to load emptyBlock.png!");
 			}
 
 			Image wallImage = null;
 			try {
 				wallImage = ImageIO.read(new File("images/wall.png"));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.err.println("Failed to load wall.png!");
 			}
 
 			Image startImage = null;
@@ -130,8 +126,7 @@ public class ChunkManager implements GameVariables {
 				startImage = ImageIO.read(new File("images/startBlock.png"));
 				endImage = ImageIO.read(new File("images/startBlock.png"));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.err.println("Failed to load startBlock.png!");
 			}
 			
 			// Load the level data
@@ -161,6 +156,16 @@ public class ChunkManager implements GameVariables {
 						pb = new EndBlock((xPosition % chunkXDimension) * WALL_WIDTH,
 								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, endImage);
 						isEndChunk = true;
+					} else if (inputData[xPosition].equals("4")) { //Puts a ghost in this space, empty block behind it
+						pb = new EmptyBlock((xPosition % chunkXDimension) * WALL_WIDTH,
+								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT,
+								positionBlockImage);
+						Enemy.enemies.add(ghostCreator.createEnemy(xPosition * WALL_WIDTH + WALL_WIDTH/4, yPosition * WALL_HEIGHT + WALL_HEIGHT/4));
+					} else if (inputData[xPosition].equals("5")) { //Puts a mage in this space, empty block behind it
+						pb = new EmptyBlock((xPosition % chunkXDimension) * WALL_WIDTH,
+								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT,
+								positionBlockImage);
+						Enemy.enemies.add(mageCreator.createEnemy(xPosition * WALL_WIDTH + WALL_WIDTH/4, yPosition * WALL_HEIGHT + WALL_HEIGHT/4));
 					}
 					chunks[yChunk][xChunk].add(xPosition % chunkXDimension, yPosition % chunkYDimension, pb);
 					// Keep track of what chunks are the start and end
@@ -180,6 +185,7 @@ public class ChunkManager implements GameVariables {
 			}
 
 			setStartLocation();
+			
 			return true;
 		} catch (FileNotFoundException e) {
 			System.err.println("File: '" + FILE_LOCATION + levelName + ".txt" + "' not found");
@@ -192,6 +198,33 @@ public class ChunkManager implements GameVariables {
 	 */
 	public void reset() { // TODO Add testing?
 		endFound = false;
+		activeChunks.clear();
+		Enemy.activeEnemies.clear();
+		Enemy.enemies.clear();
+		Enemy.resetOffset();
+	}
+	
+	/**
+	 * TODO add testing and javadoc
+	 */
+	public void updateEnemies() {
+		//Get enemies that can be see on the screen right now
+		for (Enemy e : Enemy.enemies) {
+			//e.move(get_offset(),getActiveChunks());
+			if(e.isVisible()) {
+				if(!Enemy.activeEnemies.contains(e)) {
+					Enemy.activeEnemies.add(e);
+				}
+			}else {
+				Enemy.activeEnemies.remove(e);
+			}
+		}
+		
+		//Move enemies that are active
+		for(Enemy e: Enemy.activeEnemies) {
+			e.move(getActiveChunks());
+		}
+		
 	}
 
 	/**
@@ -202,14 +235,14 @@ public class ChunkManager implements GameVariables {
 	 * @param dy integer to change y by.
 	 */
 	public void updateCoords(int dx, int dy) {
-		x_offset += dx;
-		y_offset += dy;
+		
+		Enemy.updateOffset(dx,dy);
+		
 		for (int x = 0; x < chunks.length; x++) {
 			for (int y = 0; y < chunks[0].length; y++) {
 				Chunk temp = chunks[x][y]; // Select a chunk
 				temp.updateCoords(dx, dy); // Update the chunk's coordinates
-				// Now, decide if the chunk should be added to or removed from the activeChunks
-				// list
+				// Now, decide if the chunk should be added to or removed from the activeChunks list
 				if (isVisible(temp)) {
 					if (!activeChunks.contains(temp)) {
 						activeChunks.add(temp);
@@ -248,7 +281,9 @@ public class ChunkManager implements GameVariables {
 	 */
 	public boolean containsPlayer(Chunk c, PositionBlock pb) {
 
-		if (c.collision(pb) == Collision.FULL_COLLISION) {
+		final int[][] pbBounds = pb.getBounds(c.xPosition, c.yPosition);
+		
+		if (CollisionDetection.getCollision(pbBounds[0],pbBounds[1],playerXCoords,playerYCoords) == Collision.FULL_COLLISION) {
 			return true;
 		}
 		return false;
@@ -267,6 +302,15 @@ public class ChunkManager implements GameVariables {
 			}
 		}
 	}
+	
+	/**TODO Add testing and javadoc
+	 * @param g2d
+	 */
+	public void drawEnemies(Graphics2D g2d) {
+		for (Enemy e : Enemy.activeEnemies) {
+			e.draw(g2d);
+		}
+	}
 
 	/**
 	 * Checks all active chunks for collision between walls and the player, returns
@@ -281,7 +325,7 @@ public class ChunkManager implements GameVariables {
 
 		// Adds any Integers returned from each chunk to the list
 		for (Chunk c : activeChunks) {
-			collisions.addAll(c.checkCollision());
+			collisions.addAll(c.checkCollision(playerXCoords,playerYCoords));
 		}
 
 		return collisions;
@@ -303,16 +347,6 @@ public class ChunkManager implements GameVariables {
 		return activeChunks;
 	}
 	
-	/**
-	 * Returns the offset of the maze from the original maze position. Currently, this is used for enemy position
-	 * 	adjustments and enemy-player position detection.
-	 * 
-	 * @return the x and y offset from the original position of the maze in an array with two elements.
-	 */
-	public int[] get_offset() {
-		return new int[] {x_offset, y_offset};
-	}
-
 	/**
 	 * @param chunk the chunk to check.
 	 * @return If chunk is currently visible on screen.
@@ -337,7 +371,9 @@ public class ChunkManager implements GameVariables {
 		// Move the chunks so the player starts on the start block
 		dx -= startCoords[0];
 		dy -= startCoords[1];
+
 		updateCoords(dx, dy);
+
 	}
 
 	public static void main(String[] args) {

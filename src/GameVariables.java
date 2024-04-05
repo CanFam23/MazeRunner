@@ -1,3 +1,4 @@
+
 package src;
 
 /**
@@ -99,5 +100,21 @@ public interface GameVariables {
 	final int[] playerXCoords = new int[] { PLAYER_X, PLAYER_X + PLAYER_WIDTH, PLAYER_X + PLAYER_WIDTH, PLAYER_X };
 	/** Player's y coordinates. */
 	final int[] playerYCoords = new int[] { PLAYER_Y, PLAYER_Y, PLAYER_Y + PLAYER_HEIGHT, PLAYER_Y + PLAYER_HEIGHT };
+	
+
+	/**
+	 * Used to check if a full collision is occurring, when all four sides of the
+	 * object are overlapping by this amount or less.
+	 */
+	final int FULL_COLLISION_INT = 75;
+	
+	/**
+	 * Used to check if the collision overlap is close enough for collision, mainly
+	 * multiple sides colliding at once.
+	 */
+	final int COLLISION_INT = 5;
+	
+	/** Used to make the block hitboxes slightly bigger then their dimensions. */
+	final int HITBOX_BUFFER_AMOUNT = 6; // TODO How close is close enough to register a collision?
 
 }
