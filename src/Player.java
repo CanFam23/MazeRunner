@@ -75,6 +75,11 @@ public class Player implements GameVariables {
 	private int attackCount = 0;
 	
 	/**
+	 * Size of the player (this controls the drawn size while PLAYER_WIDTH/HEIGHT controls the hit box).
+	 */
+	public static final int SIZE = 3;
+	
+	/**
 	 * Default the player to be holding a weapon.
 	 */
 	private boolean holdingWeapon = true;
@@ -292,9 +297,7 @@ public class Player implements GameVariables {
 	 * 
 	 * @param g 2Dgraphics to draw on
 	 */
-	public void draw(Graphics2D g) {
-		final int SIZE = 3;
-		
+	public void draw(Graphics2D g) {		
 		final BufferedImage myImage = images.get(currentState).get(currentFacing).get(0);
 		final int imageXAdjustment = (int) ((myImage.getWidth() * SIZE - PLAYER_WIDTH) / 2);
 		final int imageYAdjustment = (int) ((myImage.getHeight() * SIZE - PLAYER_HEIGHT) / 2);
