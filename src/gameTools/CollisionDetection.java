@@ -1,8 +1,8 @@
-package src;
+package gameTools;
 
 import java.util.List;
 
-import src.GameVariables.Collision;
+import gameTools.GameVariables.Collision;
 
 public class CollisionDetection implements GameVariables{
 	

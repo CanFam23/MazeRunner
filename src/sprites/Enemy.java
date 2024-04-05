@@ -1,4 +1,4 @@
-package src;
+package sprites;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,6 +16,11 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import chunks.Chunk;
+import gameTools.GameVariables;
+import gameTools.CollisionDetection;
+
 
 
 /**
@@ -587,7 +592,7 @@ abstract class EnemyFactory {
 	protected abstract void load_images();
 	
 	/** load_spritesheet should be the same for each enemy. */
-	protected void load_spritesheet(String FILE_LOCATION, String character_name, src.Enemy.State playerState, int imageNumber, Map<src.Enemy.State, List<BufferedImage>> images) {
+	protected void load_spritesheet(String FILE_LOCATION, String character_name, sprites.Enemy.State playerState, int imageNumber, Map<sprites.Enemy.State, List<BufferedImage>> images) {
 		BufferedImage spriteSheet = null;
 		// Load the spritesheet file
 		if (playerState.toString() != null) {
@@ -616,7 +621,7 @@ abstract class EnemyFactory {
 class MageFactory extends EnemyFactory {
 	
 	/** Hold images (which should be the same for all Mages) */
-	static private Map<src.Enemy.State, List<BufferedImage>> images = new HashMap<>();
+	static private Map<sprites.Enemy.State, List<BufferedImage>> images = new HashMap<>();
 	
 	
 	
@@ -642,10 +647,10 @@ class MageFactory extends EnemyFactory {
 		int imageNumber2 = 6; // Idle and Move differ from Attack and Dead
 		
 		// Load a sprite sheet for each player state
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Idle, imageNumber, images);
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Move, imageNumber, images);
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Attack, imageNumber2, images);
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Dead, imageNumber2, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Idle, imageNumber, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Move, imageNumber, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Attack, imageNumber2, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Dead, imageNumber2, images);
 	}
 	
 }
@@ -657,7 +662,7 @@ class MageFactory extends EnemyFactory {
 class GhostFactory extends EnemyFactory {
 
 	/** Hold images (which should be the same for all Ghosts) */
-	static private Map<src.Enemy.State, List<BufferedImage>> images = new HashMap<>();
+	static private Map<sprites.Enemy.State, List<BufferedImage>> images = new HashMap<>();
 	
 	public GhostFactory() {
 		// Store the padding for each enemy within it's factory class.
@@ -681,10 +686,10 @@ class GhostFactory extends EnemyFactory {
 		int imageNumber2 = 6; // Idle and Move differ from Attack and Dead
 		
 		// Load a spritesheet for each player state
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Idle, imageNumber, images);
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Move, imageNumber, images);
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Attack, imageNumber2, images);
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Dead, imageNumber2, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Idle, imageNumber, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Move, imageNumber, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Attack, imageNumber2, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Dead, imageNumber2, images);
 	}
 	
 }
