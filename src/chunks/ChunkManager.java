@@ -16,8 +16,13 @@ import blocks.EndBlock;
 import blocks.PositionBlock;
 import blocks.StartingBlock;
 import blocks.Wall;
+import gameTools.CollisionDetection;
 import gameTools.GameVariables;
-import sprites.Enemy.*;
+import sprites.Enemy;
+import sprites.EnemyFactory;
+import sprites.MageFactory;
+import sprites.GhostFactory;
+
 
 /**
  * ChunkManager loads and holds the chunks that will be used in the game. The
