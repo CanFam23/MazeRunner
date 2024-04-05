@@ -90,7 +90,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		// Create our player and load the images
 		ourPlayer = new Player();
-		ourPlayer.load_images("Civilian1(black)");
+		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)
 
 	}
 
@@ -269,8 +269,19 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			dx += speed;
 		}
 		cmanager.updateCoords(dx, dy);
-		ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
+		if (!ourPlayer.isStateLocked()) {
+			ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
+		}
 		
+		if (keyH.spacePressed) {
+			if (ourPlayer.getState() != "Attack") {
+				// Set our player to be attacking
+				ourPlayer.setState(State.Attack);
+				ourPlayer.resetDrawCount();
+			}
+			ourPlayer.lockState();
+			ourPlayer.lockFacing();
+		}
 		v.updateRadius();
 	}
 
@@ -297,6 +308,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// Draw map
 		cmanager.draw(g2);
 		cmanager.drawEnemies(g2);
+
 
 		ourPlayer.draw(g2);
 
