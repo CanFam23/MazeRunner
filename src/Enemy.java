@@ -198,7 +198,7 @@ abstract class Enemy implements GameVariables {
 		//Checks if player is in range of enemy
 		if(canAttack(currentX,currentY)) {
 			facePlayer();
-			System.out.println("Attack");
+			//System.out.println("Attack");
 		}else {
 		    //If player is within the detection range, enemy should move towards the player	
 			if(inRangeOfPlayer()) {
