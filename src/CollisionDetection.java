@@ -81,13 +81,21 @@ public class CollisionDetection implements GameVariables{
 
 	}
 	
+	/**
+	 * Handles all collisions passed through in the collisions list. Based on each enumerator in the list, 
+	 * it updates dx and dy accordingly with displacement, and returns a 2D array of dx and dy.
+	 * 
+	 * @param Collisions The collisions to handle.
+	 * @param Displacement How much to change dx and dy.
+	 * @return A 2D array of dx and dy, which are the final displacements.
+	 */
 	public static int[] handleCollision(List<Collision> collisions, int displacement) {
 		boolean topCollided = false;
 		boolean botCollided = false;
 		boolean rightCollided = false;
 		boolean leftCollided = false;
 		int dx = 0;
-		int dy = 9;
+		int dy = 0;
 		
 		for (Collision collisionNum : collisions) {
 			// Handle collision
