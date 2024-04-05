@@ -1,11 +1,16 @@
 package src;
 
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -53,6 +58,9 @@ public class Main {
 
 	// The main game panel where the game is rendered
 	private static GamePanel gamePanel;
+	
+	// Background image that is the same as the maze walls
+	private static Image backgroundImage = null;
 
 	/**
 	 * Main method to start the game.
@@ -82,9 +90,17 @@ public class Main {
 	 * game loop.
 	 */
 	public static void runMainCode() {
+		// Load Background Image
+		try {
+			backgroundImage = ImageIO.read(new File("images/backgroundBlock.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// Creates window
 		window = new JFrame();
-		gamePanel = new GamePanel();
+		gamePanel = new GamePanel(backgroundImage);
 
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setTitle("Maze Runner - Use Arrows to start time");
