@@ -1,4 +1,4 @@
-package src;
+package blocks;
 
 import java.awt.Color;
 import java.awt.Image;

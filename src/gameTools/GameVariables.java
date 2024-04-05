@@ -1,5 +1,5 @@
 
-package src;
+package gameTools;
 
 /**
  * <p>

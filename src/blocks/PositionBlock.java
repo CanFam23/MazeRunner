@@ -1,12 +1,13 @@
-package src;
+package blocks;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+
+import gameTools.GameVariables;
 
 /**
  * PositionBlock creates a individual block of the maze, which could be a wall,
@@ -22,7 +23,7 @@ import javax.imageio.ImageIO;
  * @see Wall
  * @see EmptyBlock
  * @see EndBlock
- * @see StartingBlock
+ * @see StartingBlocks
  */
 public class PositionBlock implements GameVariables {
 

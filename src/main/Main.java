@@ -1,5 +1,4 @@
-package src;
-
+package main;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -15,6 +14,11 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+
+import panels.GameOverLOSE;
+import panels.GameOverWIN;
+import panels.GamePanel;
+import panels.HomeScreen;
 
 /**
  * <p>

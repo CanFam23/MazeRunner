@@ -1,4 +1,4 @@
-package src;
+package sprites;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -9,6 +9,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
+
+import gameTools.CollisionDetection;
+import gameTools.GameVariables;
+
 import java.awt.*;
 
 import javax.imageio.ImageIO;
