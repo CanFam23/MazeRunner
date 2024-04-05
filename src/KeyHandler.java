@@ -21,7 +21,7 @@ public class KeyHandler implements KeyListener {
 	/**
 	 * Boolean used to check if corresponding key is being pressed or is released.
 	 */
-	public boolean upPressed, downPressed, leftPressed, rightPressed;
+	public boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed;
 
 	/**
 	 * Checks for key presses.
@@ -46,6 +46,9 @@ public class KeyHandler implements KeyListener {
 		if (code == KeyEvent.VK_DOWN) {
 			downPressed = true;
 		}
+		if (code == KeyEvent.VK_SPACE) {
+			spacePressed = true;
+		}
 	}
 
 	/**
@@ -68,6 +71,9 @@ public class KeyHandler implements KeyListener {
 		}
 		if (code == KeyEvent.VK_DOWN) {
 			downPressed = false;
+		}
+		if (code == KeyEvent.VK_SPACE) {
+			spacePressed = false;
 		}
 	}
 

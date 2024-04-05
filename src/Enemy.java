@@ -266,8 +266,8 @@ class Mage extends Enemy {
 	
 	public Mage(int x, int y, Map<State, List<BufferedImage>> images) {
 		this.images = images;
-		WIDTH = 100;
-		HEIGHT = 100;
+		WIDTH = 70;
+		HEIGHT = 70;
 		position_x = x;
 		position_y = y;
 		speed = 2;
@@ -282,8 +282,8 @@ class Ghost extends Enemy {
 	
 	public Ghost(int x, int y, Map<State, List<BufferedImage>> images) {
 		this.images = images;
-		WIDTH = 100;
-		HEIGHT = 100;
+		WIDTH = 60;
+		HEIGHT = 60;
 		position_x = x;
 		position_y = y;
 		speed = 3;
@@ -300,6 +300,12 @@ abstract class EnemyFactory {
 	
 	// Function that can be used by a user.
 	public abstract Enemy createEnemy(int x, int y);
+	
+	// Store the padding for each enemy within it's factory class.
+	public int TOP_PADDING;
+	public int RIGHT_PADDING;
+	public int BOTTOM_PADDING;
+	public int LEFT_PADDING;
 	
 	/** load_images should be implemented separately for each enemy */
 	protected abstract void load_images();
@@ -321,7 +327,7 @@ abstract class EnemyFactory {
 		final int height = spriteSheet.getHeight();
 		final int width = spriteSheet.getWidth();
 		for (int i = 0; i < imageNumber; i++) {
-			BufferedImage img = spriteSheet.getSubimage(0, (height / imageNumber) * i, width, (height / imageNumber));
+			BufferedImage img = spriteSheet.getSubimage(LEFT_PADDING, (height / imageNumber) * i + TOP_PADDING, (width - LEFT_PADDING) - RIGHT_PADDING, ((height / imageNumber) - TOP_PADDING) - BOTTOM_PADDING);
 			images.get(playerState).add(img);
 		}
 	}
@@ -336,7 +342,14 @@ class MageFactory extends EnemyFactory {
 	/** Hold images (which should be the same for all Mages) */
 	static private Map<src.Enemy.State, List<BufferedImage>> images = new HashMap<>();
 	
+	
+	
 	public MageFactory() {
+		// Store the padding for each enemy within it's factory class.
+		TOP_PADDING = 12;
+		RIGHT_PADDING = 12;
+		BOTTOM_PADDING = 12;
+		LEFT_PADDING = 12;
 		load_images();
 	}
 	
@@ -371,6 +384,11 @@ class GhostFactory extends EnemyFactory {
 	static private Map<src.Enemy.State, List<BufferedImage>> images = new HashMap<>();
 	
 	public GhostFactory() {
+		// Store the padding for each enemy within it's factory class.
+		TOP_PADDING = 10;
+		RIGHT_PADDING = 14;
+		BOTTOM_PADDING = 14;
+		LEFT_PADDING = 14;
 		load_images();
 	}
 	
