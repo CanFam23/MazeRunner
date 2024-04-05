@@ -146,6 +146,14 @@ public class Chunk implements GameVariables {
 		return new int[][] { { xPosition, xPosition + chunkWidth, xPosition + chunkWidth, xPosition },
 				{ yPosition, yPosition, yPosition + chunkHeight, yPosition + chunkHeight } };
 	}
+	
+	public int getXPosition() {
+		return xPosition;
+	}
+	
+	public int getYPosition() {
+		return yPosition;
+	}
 
 	/**
 	 * Returns a List of enumerators, which represent what side of the player is

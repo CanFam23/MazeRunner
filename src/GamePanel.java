@@ -99,7 +99,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		// Create our player and load the images
 		ourPlayer = new Player();
-		ourPlayer.load_images("Civilian1(black)");
+		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)
 
 		// Create enemies
 		enemyList = new ArrayList<Enemy>();
@@ -286,8 +286,19 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			dx += speed;
 		}
 		cmanager.updateCoords(dx, dy);
-		ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
+		if (!ourPlayer.isStateLocked()) {
+			ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
+		}
 		
+		if (keyH.spacePressed) {
+			if (ourPlayer.getState() != "Attack") {
+				// Set our player to be attacking
+				ourPlayer.setState(State.Attack);
+				ourPlayer.resetDrawCount();
+			}
+			ourPlayer.lockState();
+			ourPlayer.lockFacing();
+		}
 		v.updateRadius();
 	}
 
@@ -321,7 +332,18 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		final Graphics2D g2 = (Graphics2D) g;
 
 		// Draw map
-		cmanager.draw(g2);
+		final List<Chunk> activeChunks = cmanager.getActiveChunks();
+		if (!activeChunks.isEmpty()) {
+			for (Chunk c : activeChunks) {
+				final int chunkX = c.getXPosition();
+				final int chunkY = c.getYPosition();
+				for (PositionBlock[] pbs : c.getBlocks()) {
+					for (PositionBlock pb : pbs) {
+						pb.draw(g2, chunkX, chunkY);
+					}
+				}
+			}
+		}
 
 		final int[] offset = cmanager.get_offset();
 		for (Enemy e : enemyList) {
