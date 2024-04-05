@@ -1,6 +1,5 @@
 package src;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
@@ -27,21 +26,6 @@ import javax.imageio.ImageIO;
  * @see PositionBlock
  */
 public class Chunk implements GameVariables {
-
-	/** Used to make the block hitboxes slightly bigger then their dimensions. */
-	private static final int HITBOX_BUFFER_AMOUNT = 6; // TODO How close is close enough to register a collision?
-
-	/**
-	 * Used to check if the collision overlap is close enough for collision, mainly
-	 * multiple sides colliding at once.
-	 */
-	private static final int COLLISION_INT = 5;
-
-	/**
-	 * Used to check if a full collision is occurring, when all four sides of the
-	 * object are overlapping by this amount or less.
-	 */
-	private static final int FULL_COLLISION_INT = 75;
 
 	/** The group of blocks the chunk keeps track of. */
 	private PositionBlock[][] blocks;
@@ -122,10 +106,11 @@ public class Chunk implements GameVariables {
 				blocks[i][j].draw(g, xPosition, yPosition);
 			}
 		}
-
 	}
 
 	/**
+	 * Returns a boolean which represents if the chunk contains the start block.
+	 * 
 	 * @return true if chunk is start chunk.
 	 */
 	public boolean isStartChunk() {
@@ -133,6 +118,8 @@ public class Chunk implements GameVariables {
 	}
 
 	/**
+	 * Returns a boolean which represents if the chunk contains the end block.
+	 * 
 	 * @return true if chunk is end chunk.
 	 */
 	public boolean isEndChunk() {
@@ -147,13 +134,45 @@ public class Chunk implements GameVariables {
 				{ yPosition, yPosition, yPosition + chunkHeight, yPosition + chunkHeight } };
 	}
 
+	
 	/**
-	 * Returns a List of enumerators, which represent what side of the player is
-	 * colliding with a wall.
+	 * Checks if the chunk contains the given coordinates.
 	 * 
-	 * @return ArrayList of Collision enumerators.
+	 * @param xCoords The y coordinates to use.
+	 * @param yCoords The x coordinates to use.
+	 * @return true if the chunk contains those points.
 	 */
-	public List<Collision> checkCollision() {
+	public boolean containsPoints(int[] xCoords, int[] yCoords) {
+
+		final int[] chunkXCoords = new int[] { xPosition, xPosition + chunkWidth,
+				xPosition + chunkWidth, xPosition };
+		final int[] chunkYCoords = new int[] { yPosition, yPosition,
+				yPosition + chunkHeight, yPosition + chunkHeight };
+
+		// if player top left x < wall bottom right x
+		if (xCoords[0] <= chunkXCoords[2]
+				// if player bottom right x > wall top left x
+				&& xCoords[2] >= chunkXCoords[0]
+				// if player top left y < wall bottom right y
+				&& yCoords[0] <= chunkYCoords[2]
+				// if player bottom right y > wall top left y
+				&& yCoords[2] >= chunkYCoords[0]) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
+	
+	/**
+	 * Checks to see if any walls in the chunk are colliding with the given coordinates.
+	 * 
+	 * @param xCoords The y coordinates to use.
+	 * @param yCoords The x coordinates to use.
+	 * @return a List of Collision enumerators that represent the collisions found.
+	 */
+	public List<Collision> checkCollision(int[] xCoords, int[] yCoords) {
 
 		final List<Collision> Collisions = new ArrayList<>();
 
@@ -163,7 +182,10 @@ public class Chunk implements GameVariables {
 			for (int c = 0; c < blocks[0].length; c++) {
 				final PositionBlock temp = blocks[r][c];
 				if (temp instanceof Wall) {
-					final Collision collided = collision(temp);
+					
+					final int[][] tempCoords = temp.getBounds(xPosition,yPosition);
+					
+					final Collision collided = CollisionDetection.getCollision(tempCoords[0], tempCoords[1], xCoords, yCoords);
 
 					if (collided != Collision.NO_COLLISION) {
 						Collisions.add(collided);
@@ -175,82 +197,11 @@ public class Chunk implements GameVariables {
 
 		return Collisions;
 	}
+	
 
 	/**
-	 * Checks for collision between player and wall.
+	 * Gets all blocks in the chunk.
 	 * 
-	 * @param PositionBlock w the block to check for collision.
-	 * @return The corresponding collision.
-	 */
-	public Collision collision(PositionBlock w) {
-		// Convert 2D array of coords into arrays of x coords and y coords
-		final int[] otherCoords = w.getCoords();
-		final int x = otherCoords[0] + xPosition;
-		final int y = otherCoords[1] + yPosition;
-
-		final int[] otherXCoords = new int[] { x - HITBOX_BUFFER_AMOUNT, x + WALL_WIDTH + HITBOX_BUFFER_AMOUNT,
-				x + WALL_WIDTH + HITBOX_BUFFER_AMOUNT, x - HITBOX_BUFFER_AMOUNT };
-		final int[] otherYCoords = new int[] { y - HITBOX_BUFFER_AMOUNT, y - HITBOX_BUFFER_AMOUNT,
-				y + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT, y + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT };
-
-		// if player top left x < wall bottom right x
-		if (playerXCoords[0] <= otherXCoords[2]
-				// if player bottom right x > wall top left x
-				&& playerXCoords[2] >= otherXCoords[0]
-				// if player top left y < wall bottom right y
-				&& playerYCoords[0] <= otherYCoords[2]
-				// if player bottom right y > wall top left y
-				&& playerYCoords[2] >= otherYCoords[0]) {
-
-			// find which side of the player is touching a wall
-			final int overlapLeft = otherXCoords[1] - playerXCoords[0];
-			final int overlapRight = playerXCoords[1] - otherXCoords[0];
-			final int overlapTop = otherYCoords[2] - playerYCoords[0];
-			final int overlapBottom = playerYCoords[2] - otherYCoords[1];
-
-			// Find the smallest overlap
-			final int minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
-
-			// this checks if the user is in the general center of the block, a 'full
-			// collision'
-			if (overlapLeft > FULL_COLLISION_INT && overlapRight > FULL_COLLISION_INT && overlapTop > FULL_COLLISION_INT
-					&& overlapBottom > FULL_COLLISION_INT) {
-				return Collision.FULL_COLLISION;
-			}
-
-			// If two sides are colliding at the same time
-			// Bottom right corner
-			if (overlapRight < COLLISION_INT && overlapBottom < COLLISION_INT) {
-				return Collision.BOTTOM_RIGHT_CORNER;
-				// Bottom left corner
-			} else if (overlapLeft < COLLISION_INT && overlapBottom < COLLISION_INT) {
-				return Collision.BOTTOM_LEFT_CORNER;
-				// Top Right corner
-			} else if (overlapRight < COLLISION_INT && overlapTop < COLLISION_INT) {
-				return Collision.TOP_RIGHT_CORNER;
-				// Top left corner
-			} else if (overlapLeft < COLLISION_INT && overlapTop < COLLISION_INT) {
-				return Collision.TOP_LEFT_CORNER;
-			}
-
-			// Return the side of the collision
-			if (minOverlap == overlapLeft) {
-				return Collision.LEFT_SIDE; // Collided from the left
-			} else if (minOverlap == overlapRight) {
-				return Collision.RIGHT_SIDE; // Collided from the right
-			} else if (minOverlap == overlapTop) {
-				return Collision.TOP_SIDE; // Collided from the top
-			} else {
-				return Collision.BOTTOM_SIDE; // Collided from the bottom
-			}
-		} else {
-			// no collision
-			return Collision.NO_COLLISION;
-		}
-
-	}
-
-	/**
 	 * @return The 2D array of blocks.
 	 */
 	public PositionBlock[][] getBlocks() {
@@ -258,6 +209,8 @@ public class Chunk implements GameVariables {
 	}
 
 	/**
+	 * Gets the width of the chunk.
+	 * 
 	 * @return chunkWidth.
 	 */
 	public int getChunkWidth() {
@@ -265,6 +218,8 @@ public class Chunk implements GameVariables {
 	}
 
 	/**
+	 * Gets the height of the chunk.
+	 * 
 	 * @return chunkHeight.
 	 */
 	public int getChunkHeight() {
@@ -272,6 +227,8 @@ public class Chunk implements GameVariables {
 	}
 
 	/**
+	 * Converts chunk to string.
+	 * 
 	 * @return String format of chunk.
 	 */
 	public String toString() {
@@ -285,6 +242,11 @@ public class Chunk implements GameVariables {
 		return ret;
 	}
 
+	/**
+	 * Main Method.
+	 * 
+	 * @param args Arguements passed.
+	 */
 	public static void main(String[] args) {
 		boolean allPassed = true;
 
@@ -338,8 +300,7 @@ public class Chunk implements GameVariables {
 		try {
 			positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Failed to load emptyBlock.png!");
 		}
 
 		// Adding blocks to chunk
@@ -372,7 +333,7 @@ public class Chunk implements GameVariables {
 		// are (10x10 == 100), there should only
 		// be one block thats colliding with the player
 		int numCollisions = 1;
-		List<Collision> collisions = chunk.checkCollision();
+		List<Collision> collisions = chunk.checkCollision(playerXCoords,playerYCoords);
 
 		if (collisions.size() != numCollisions) {
 			System.err.format("checkCollisions should've found %d collision, but it found %d\n", numCollisions,
@@ -383,7 +344,7 @@ public class Chunk implements GameVariables {
 		// Update the coords so two blocks should be colliding with the player
 		chunk.updateCoords(WALL_WIDTH, WALL_HEIGHT / 2);
 		numCollisions = 2;
-		collisions = chunk.checkCollision();
+		collisions = chunk.checkCollision(playerXCoords,playerYCoords);
 
 		if (collisions.size() != numCollisions) {
 			System.err.format("checkCollisions should've found %d collisions, but it found %d\n", numCollisions,
@@ -396,7 +357,7 @@ public class Chunk implements GameVariables {
 		// collisions should be found
 		chunk.updateCoords((int) Math.pow(WALL_WIDTH, 2), WALL_HEIGHT / 2);
 		numCollisions = 0;
-		collisions = chunk.checkCollision();
+		collisions = chunk.checkCollision(playerXCoords,playerYCoords);
 
 		if (collisions.size() != numCollisions) {
 			System.err.format("checkCollisions should've found %d collisions, but it found %d\n", numCollisions,
@@ -405,12 +366,13 @@ public class Chunk implements GameVariables {
 		}
 
 		// Checking collision function
-		final Chunk newChunk = new Chunk(0, 0, 0, 0);
+		Chunk newChunk = new Chunk(0, 0, 0, 0);
 		PositionBlock pb = new PositionBlock(PLAYER_X, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
 
 		// Should find a collision because the PositiobBlock's coords are intersecting
 		// with the players
-		if (newChunk.collision(pb) == Collision.NO_COLLISION) {
+		int[][] tempBounds = pb.getBounds(0, 0);
+		if (CollisionDetection.getCollision(tempBounds[0],tempBounds[1],playerXCoords,playerYCoords) == Collision.NO_COLLISION) {
 			System.err.println("Collision() found no collision, when it should have found one!");
 			allPassed = false;
 		}
@@ -418,18 +380,34 @@ public class Chunk implements GameVariables {
 		// Should find a collision because the PositiobBlock's coords are intersecting
 		// with the players, this time they are slightly different
 		pb = new PositionBlock(PLAYER_X + WALL_WIDTH / 4, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
+		
+		tempBounds = pb.getBounds(0, 0);
 
-		if (newChunk.collision(pb) == Collision.NO_COLLISION) {
+		if (CollisionDetection.getCollision(tempBounds[0],tempBounds[1],playerXCoords,playerYCoords) == Collision.NO_COLLISION) {
 			System.err.println("Collision() found no collision, when it should have found one!");
 			allPassed = false;
 		}
 
 		// Should not find a collision because the block is at 0,0
 		pb = new PositionBlock(0, 0, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
+		tempBounds = pb.getBounds(0, 0);
 
-		if (newChunk.collision(pb) != Collision.NO_COLLISION) {
+		if (CollisionDetection.getCollision(tempBounds[0],tempBounds[1],playerXCoords,playerYCoords) != Collision.NO_COLLISION) {
 			System.err.println("Collision() found a collision, when it shouldn't have found one!");
 			allPassed = false;
+		}
+		
+		boolean contains = newChunk.containsPoints(playerXCoords, playerYCoords);
+		if(contains) {
+			System.err.println("containsPoints() said the chunk contained the point, when it didn't!");
+		}
+		
+		
+		
+		newChunk = new Chunk(chunkLength, chunkLength, chunkX, chunkY);
+		contains = newChunk.containsPoints(playerXCoords, playerYCoords);
+		if(!contains) {
+			System.err.println("containsPoints() said the chunk didn't contain the points, when it did!");
 		}
 
 		// Testing toString

@@ -243,6 +243,10 @@ public class Player implements GameVariables {
 			images.get(currentState).get(currentFacing).add(img);
 			drawCount = 0;
 		}
+		
+		//TODO remove
+		g.setColor(Color.RED);
+		g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 
 	}
 
