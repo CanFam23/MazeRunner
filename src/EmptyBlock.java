@@ -1,6 +1,5 @@
 package src;
 
-import java.awt.Color;
 import java.awt.Image;
 
 /**

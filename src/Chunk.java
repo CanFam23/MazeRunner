@@ -134,10 +134,12 @@ public class Chunk implements GameVariables {
 				{ yPosition, yPosition, yPosition + chunkHeight, yPosition + chunkHeight } };
 	}
 	
+	//TODO add testing
 	public int getXPosition() {
 		return xPosition;
 	}
 	
+	//TODO add testing
 	public int getYPosition() {
 		return yPosition;
 	}

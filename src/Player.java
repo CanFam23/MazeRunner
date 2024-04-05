@@ -131,12 +131,12 @@ public class Player implements GameVariables {
 		//Add values to hitboxes
 		hitboxes.put(Facing.E, new Rectangle(PLAYER_X + PLAYER_WIDTH/2, PLAYER_Y, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
 		hitboxes.put(Facing.W, new Rectangle(PLAYER_X - PLAYER_WIDTH, PLAYER_Y, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
-		hitboxes.put(Facing.N, new Rectangle(PLAYER_X, PLAYER_Y-PLAYER_HEIGHT, PLAYER_WIDTH, (int)(PLAYER_HEIGHT*1.5)));
-		hitboxes.put(Facing.S, new Rectangle(PLAYER_X, PLAYER_Y+PLAYER_HEIGHT/2, PLAYER_WIDTH, (int)(PLAYER_HEIGHT*1.5)));
-		hitboxes.put(Facing.NE, new Rectangle(PLAYER_X+ PLAYER_WIDTH/2, PLAYER_Y-PLAYER_HEIGHT/2, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
-		hitboxes.put(Facing.SE, new Rectangle(PLAYER_X+ PLAYER_WIDTH/2, PLAYER_Y+PLAYER_HEIGHT/2, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
-		hitboxes.put(Facing.NW, new Rectangle(PLAYER_X- PLAYER_WIDTH, PLAYER_Y-PLAYER_HEIGHT/2, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
-		hitboxes.put(Facing.SW, new Rectangle(PLAYER_X- PLAYER_WIDTH, PLAYER_Y+PLAYER_HEIGHT/2, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
+		hitboxes.put(Facing.N, new Rectangle(PLAYER_X, PLAYER_Y-PLAYER_HEIGHT/2, PLAYER_WIDTH, PLAYER_HEIGHT));
+		hitboxes.put(Facing.S, new Rectangle(PLAYER_X, PLAYER_Y+PLAYER_HEIGHT/2, PLAYER_WIDTH, PLAYER_HEIGHT));
+		hitboxes.put(Facing.NE, new Rectangle(PLAYER_X+ PLAYER_WIDTH/2, PLAYER_Y-PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.25), PLAYER_HEIGHT));
+		hitboxes.put(Facing.SE, new Rectangle(PLAYER_X+ PLAYER_WIDTH/2, PLAYER_Y+PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.25), PLAYER_HEIGHT));
+		hitboxes.put(Facing.NW, new Rectangle(PLAYER_X- PLAYER_WIDTH, PLAYER_Y-PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.25), PLAYER_HEIGHT));
+		hitboxes.put(Facing.SW, new Rectangle(PLAYER_X- PLAYER_WIDTH, PLAYER_Y+PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.25), PLAYER_HEIGHT));
 
 	}
 
@@ -273,7 +273,7 @@ public class Player implements GameVariables {
 				final int[] eXCoords = new int[] {eCoords[0],eCoords[0]+e.getWidth(),eCoords[0]+e.getWidth(),eCoords[0]};
 				final int[] eYCoords = new int[] {eCoords[1],eCoords[1],eCoords[1]+e.getHeight(),eCoords[1]+e.getHeight()};
 				if(CollisionDetection.getCollision(xCoords, yCoords, eXCoords, eYCoords) != Collision.NO_COLLISION) {
-					System.out.println("Hit Enemy " + e);
+					//System.out.println("Hit Enemy " + e);
 					hitEnemies.add(e);
 				}
 			}
