@@ -69,8 +69,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 */
 	private Player ourPlayer;
 
-	private List<Enemy> enemyList;
-
 	/** Visibility object, used to change visibility as time goes on. */
 	private Visibility v = new Visibility();
 
@@ -100,14 +98,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// Create our player and load the images
 		ourPlayer = new Player();
 		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)
-
-		// Create enemies
-		enemyList = new ArrayList<Enemy>();
-		EnemyFactory mageCreator = new MageFactory();
-		EnemyFactory ghostCreator = new GhostFactory();
-		enemyList.add(mageCreator.createEnemy(1000, 150));
-//		enemyList.add(ghostCreator.createEnemy(1200, 125));
-//		enemyList.add(ghostCreator.createEnemy(1100, 150));
 
 	}
 
@@ -187,10 +177,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		
 
-		// Move enemies
-		for (Enemy e : enemyList)
-			e.move(cmanager.get_offset());
-
 		// Move Player
 		int dx = 0;
 		int dy = 0;
@@ -201,6 +187,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		boolean leftCollided = false;
 
 		List<Collision> collisions = cmanager.checkCollision();
+		
+		cmanager.updateEnemies();
 
 		// If theres at least one collision
 		if (collisions.size() > 0) {
@@ -297,6 +285,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			if (ourPlayer.getState() != "Attack") {
 				// Set our player to be attacking
 				ourPlayer.setState(State.Attack);
+				ourPlayer.attack();
 				ourPlayer.resetDrawCount();
 			}
 			ourPlayer.lockState();
@@ -335,23 +324,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		final Graphics2D g2 = (Graphics2D) g;
 
 		// Draw map
-		final List<Chunk> activeChunks = cmanager.getActiveChunks();
-		if (!activeChunks.isEmpty()) {
-			for (Chunk c : activeChunks) {
-				final int chunkX = c.getXPosition();
-				final int chunkY = c.getYPosition();
-				for (PositionBlock[] pbs : c.getBlocks()) {
-					for (PositionBlock pb : pbs) {
-						pb.draw(g2, chunkX, chunkY);
-					}
-				}
-			}
-		}
+		cmanager.draw(g2);
+		cmanager.drawEnemies(g2);
 
-		final int[] offset = cmanager.get_offset();
-		for (Enemy e : enemyList) {
-			e.draw(g2, offset);
-		}
 
 		ourPlayer.draw(g2);
 

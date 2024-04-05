@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+
 /**
  * 
  * 	This file holds Enemy.java, Mage, Ghost, EnemyFactory, MageFactory, and GhostFactory. These are the classes used to
@@ -27,42 +28,133 @@ import javax.swing.JPanel;
  * @since March 26, 2024
  *
  */
-
-
-/*
- * For better moving:
- * 
- * Get active chunks
- * Find chunk enemy is in
- * In that chunk, check walls to see if moving would make it closer to enemy without it colliding to the wall
- * Can move 8 directions(Straight and diagonal)
- * If it would be closer, move it, else, do nothing
- * 
- * If not tracking player, move from left to right, if move would result in collision, turn the opposite way
- * 
- * 
- * Loading enemies in:
- * Put numbers in maze that represent each enemy (5,6,etc)
- * load_level could return the enemies list, unless we wanted chunk manager to manage enemies
- * get active enemies, those currently on the screen
- * update/move accordingly
- */
-
 abstract class Enemy implements GameVariables {
+	/**
+	 * Calculates the distance between two points using 
+	 * the <a href="https://www.purplemath.com/modules/distform.htm">distance formula<a/>. 
+	 * 
+	 * @param x1 First x coordinate.
+	 * @param y1 First y coordinate.
+	 * @param x2 Second x coordinate.
+	 * @param y2 Second y coordinate.
+	 * @return The distance between the two points.
+	 */
+	public static double calculateDistance(int x1, int y1, int x2, int y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
 	
+	/**
+	 * Update the offsets.
+	 * 
+	 * @param dx The number to update x offset by.
+	 * @param dy The number to update y offset by.
+	 */
+	public static void updateOffset(int dx, int dy) {
+		xOffset += dx;
+		yOffset += dy;
+	}
+	
+	/**
+	 * Resets the offset.
+	 */
+	public static void resetOffset() {
+		xOffset = 0;
+		yOffset = 0;
+	}
+	
+	/**
+	 * Checks for a collision between eOne and all enemies in activeEnemies. 
+	 * 
+	 * @param eOne The enemy to use.
+	 * @param newX The x coordinate to use.
+	 * @param newY The y coordinate to use.
+	 * @return true if there's a collision.
+	 */
+	public static boolean enemyCollision(Enemy eOne, int newX, int newY) {
+		final int[] eOneXCoords = new int[] {newX,newX+eOne.getWidth(),newX+eOne.getWidth(),newX};
+		final int[] eOneYCoords = new int[] {newY,newY,newY+eOne.getHeight(),newY+eOne.getHeight()};
+		
+		for(Enemy eTwo: activeEnemies) {
+			if(eTwo.equals(eOne)) {
+				continue;
+			}
+			final int[] eTwoCoords = eTwo.getPosition();
+			
+			final int[] eTwoXCoords = new int[] {eTwoCoords[0],eTwoCoords[0]+eTwo.getWidth(),eTwoCoords[0]+eTwo.getWidth(),eTwoCoords[0]};
+			final int[] eTwoYCoords = new int[] {eTwoCoords[1],eTwoCoords[1],eTwoCoords[1]+eTwo.getHeight(),eTwoCoords[1]+eTwo.getHeight()};
+			
+			final Collision c = CollisionDetection.getCollision(eOneXCoords, eOneYCoords, eTwoXCoords, eTwoYCoords);
+
+			if(c != Collision.NO_COLLISION) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * List of all enemies. This is static for easier access for collision detection.
+	 */
+	public static final List<Enemy> enemies = new ArrayList<>();
+	/**
+	 * List of all enemies currently visible on the screen. This is static for easier access for collision detection.
+	 */
+	public static final List<Enemy> activeEnemies = new ArrayList<>();
+
+	
+	/**
+	 * How close the player can get to the enemy horizontally before it goes towards the player.
+	 */
 	protected static final int X_DETECTION_RANGE = SCREEN_WIDTH/3;
+	/**
+	 * How close the player can get to the enemy vertically before it goes towards the player.
+	 */
 	protected static final int Y_DETECTION_RANGE = (int) (SCREEN_HEIGHT/2.5);
 	
-	/** How many times the enemy is drawn before the next image is selected */
+	/**
+	 * The x offset of the maze from it's starting position.
+	 */
+	protected static int xOffset = 0;
+	/**
+	 * The y offset of the maze from it's starting position.
+	 */
+	protected static int yOffset = 0;
+	
+	/** How many times the enemy is drawn before the next image is selected .*/
 	protected static final int DRAW_FRAMES = 10;
+	
 
 	
-	// Attributes that will be set in the constructor of child classes. If capitalized, it will not change.
+	/** Width of enemy. */
 	protected int WIDTH;
+	
+	/** Height of enemy. */
 	protected int HEIGHT;
+	
+	/** X position of enemy.*/
 	protected int position_x;
+	
+	/** Y position of enemy.*/
+
 	protected int position_y;
+	
+	/** Speed of enemy. */
 	protected int speed;
+	
+	/**
+	 * Speed used when not tracking player.
+	 */
+	protected int roamingSpeed; 
+
+	
+	
+	
+	/**
+	 * All directions the enemy can move.
+	 */
+	protected int[][] DELTAS;
+	protected int displacement = 4;
 	
 	/** draw count keeps track of how many times draw has been called before switching to the next image in the list. */
 	protected int drawCount = 0;
@@ -73,6 +165,8 @@ abstract class Enemy implements GameVariables {
 	/** Holds all Buffered images for each state. Images do not change based on, 'Facing' except for being flipped left and right. */
 	protected Map<State, List<BufferedImage>> images;
 	
+	protected boolean chasing = false;
+
 	/**
 	 * What the sprite is currently doing.
 	 */
@@ -87,60 +181,205 @@ abstract class Enemy implements GameVariables {
 		S, SE, E, NE, N, NW, W, SW
 	}
 	
+
+	//TODO update testing
 	/**
-	 * Move decides how the enemy should move based on the player position (GameVariables), current position, and offset.
-	 * TODO: Implement more intelligent movement (Player detection area, maze traversal strategies).
+	 * Move decides how the enemy should move based on the player position and current position.
 	 * 
-	 * @param offset the x and y coordinates respectively indicating the difference in position from the original maze to the current maze.
+	 * @param activeChunks The chunks to use when checking collisions with walls.
 	 */
-	public void move(int[] offset) {
+	public void move(List<Chunk> activeChunks) {
 		
-		// Store the position based on map movement
-		final int final_x = position_x + offset[0];
-		final int final_y = position_y + offset[1];
+		//Get the current position 
+		final int[] currentCoords = getPosition();
+		final int currentX = currentCoords[0];
+		final int currentY = currentCoords[1];
 		
 		//Checks if player is in range of enemy
-		if(inRangeOfPlayer(final_x,final_y)) {
-			System.out.println("Attack");
+		if(canAttack(currentX,currentY)) {
+			facePlayer();
+			//System.out.println("Attack");
 		}else {
 		    //If player is within the detection range, enemy should move towards the player	
-			if(Math.abs(PLAYER_X - final_x) <= X_DETECTION_RANGE && Math.abs(PLAYER_Y - final_y) <= Y_DETECTION_RANGE) {
-				int dx = 0;
-				int dy = 0;
-				if (PLAYER_X > final_x + PLAYER_WIDTH / 2)
-					dx = speed;
-				else if (PLAYER_X < final_x - PLAYER_WIDTH / 2)
-					dx = -speed;
-				if (PLAYER_Y > final_y + PLAYER_HEIGHT / 2)
-					dy = speed;
-				else if (PLAYER_Y < final_y - PLAYER_HEIGHT / 2)
-					dy = -speed;
+			if(inRangeOfPlayer()) {
+				chasing = true;
+				final int[] newDeltas = newPosition(activeChunks);
+				
+				final int dx = newDeltas[0];
+				final int dy = newDeltas[1];
+
 				// Now that we have the movement that will happen, adjust the enemy's state/direction
-				if (dx != 0 || dy != 0) // NOTE: This will have to be modified when attacking and/or other modifications are made.
-					currentState = State.Move;
-				else
-					currentState = State.Idle;
-				if (dx > 0) 
-					currentFacing = Facing.E;
-				else if (dx < 0)
-					currentFacing = Facing.W;
+				changeState(dx,dy);
 				// Update position (movement)
 				update_coords(dx, dy);
+				
+			}else {
+				chasing = false;
+				changeState(roamingSpeed,0);
+				moveAround(activeChunks);
+			}
+		}
+	}
+	
+	//TODO Add testing
+	/**
+	 * Changes the direction the enemy is facing so it's always facing the player.
+	 */
+	public void facePlayer() {
+		final int currentX = position_x + xOffset;
+		
+		if(SCREEN_WIDTH/2 > currentX + WIDTH/2) {
+			currentFacing = Facing.E;
+		}else {
+			currentFacing = Facing.W;
+		}
+	}
+	
+	//TODO Add testing
+	/**
+	 * Changes state and direction of Enemy depending on values of x and y.
+	 * If x and y both don't equal 0, then the enemy is moving, else, it's idle.
+	 * If s is positive, the enemy is moving east, else its moving west.
+	 * 
+	 * @param x x coordinate to check.
+	 * @param y y coordinate to check.
+	 */
+	public void changeState(int x, int y) {
+		if (x != 0 || y != 0)
+			currentState = State.Move;
+		else
+			currentState = State.Idle;
+		if (x > 0) 
+			currentFacing = Facing.E;
+		else if (x < 0)
+			currentFacing = Facing.W;
+	}
+	
+	//TODO Add testing
+	/**
+	 * Moves the enemy back and forth when it's not tracking the player.
+	 * 
+	 * @param activeChunks Chunks checked for collision so Enemy can't move through walls.
+	 */
+	public void moveAround(List<Chunk> activeChunks) {
+		//If Enemy isn't colliding with a wall or other enemy, move it.
+		if(!wallCollision(position_x + xOffset,position_y + yOffset,activeChunks) && !enemyCollision(this,roamingSpeed,0)) {
+			update_coords(roamingSpeed,0);
+		//Else, change its direction
+		}else {
+			roamingSpeed *= -1;
+			update_coords(roamingSpeed*2,0);
+			changeState(roamingSpeed,0);
+			
+		}
+
+	}
+	
+	//TODO Add testing
+	/**
+	 * Checks if the enemy is currently visible on the screen.
+	 * 
+	 * @return true if the Enemy is currently visible on the screen.
+	 */
+	public boolean isVisible() {
+		final int tempX = position_x + xOffset;
+		final int tempY = position_y + yOffset;
+		
+		if((tempX + WIDTH > 0 && tempX < SCREEN_WIDTH) && (tempY + HEIGHT > 0 && tempY < SCREEN_HEIGHT)) {
+			return true;
+		}
+		return false;
+	}
+	
+	//TODO Add testing
+	/**
+	 * Finds a new position for the enemy. It first finds the distance between the player and the enemy.
+	 * It then checks all possible directions it can move. If the move would result in a smaller distance to the player,
+	 * and wouldn't result in a collision between a wall or a enemy, then it's considered a valid move.
+	 * 
+	 * @param currentX The current x position of the enemy.
+	 * @param currentY The current y position of the enemy.
+	 * @param activeChunks The chunks to check for collision.
+	 * @return A 2D array of integers, which are the enemies new coordinates.
+	 */
+	public int[] newPosition(List<Chunk> activeChunks) {
+		final int[] currentCoords = getPosition();
+		final int currentX = currentCoords[0];
+		final int currentY = currentCoords[1];
+		final double currentDistance = calculateDistance(PLAYER_X,PLAYER_Y,currentX,currentY);
+		
+		int[] newDeltas = new int[]{0,0};
+		
+		double minDistance = currentDistance;
+		
+		//Check all possible ways the enemy could move.
+		for(int[] delta: DELTAS) {
+			
+			int newX = currentX + delta[0];
+			int newY = currentY + delta[1];
+			final double distance = calculateDistance(PLAYER_X,PLAYER_Y,newX,newY);
+		
+			/*
+			 * if distance is less than current distance and theres no wall collision, thats the new best delta vlues and distance
+			 */
+			if(distance < minDistance && !wallCollision(newX,newY,activeChunks) && !enemyCollision(this,newX,newY)) { 
+				minDistance = distance;
+				newDeltas = delta;
 			}
 		}
 		
-		
-		
+		return newDeltas;
 	}
 	
+	//TODO Add testing
 	/**
-	 * Checks if the enemy is in range of the player. 
+	 * Checks for a collision between the enemy and the walls in activeChunks.
 	 * 
-	 * @param x x coordinate to use
-	 * @param y y coordinate to use
-	 * @return true if enemy is in range of the player
+	 * @param x The x coordinate to use.
+	 * @param y The y coordinate to use.
+	 * @param activeChunks The chunks to check for collision of walls.
+	 * @return true if there is a collision between any wall in any chunk.
 	 */
-	public boolean inRangeOfPlayer(int x, int y) {
+	public boolean wallCollision(int x,int y,List<Chunk> activeChunks) {
+		
+		final int[] xCoords = new int[] {x, x + WIDTH, x + WIDTH, x};
+		
+		final int[] yCoords = new int[] {y, y, y + HEIGHT, y + HEIGHT};
+
+		final List<Collision> collisions = new ArrayList<Collision>();
+		
+		//If a chunk contains any part of the square formed by the coordinates, check for a collision between it's walls and the coords.
+		for(Chunk c: activeChunks) {
+			if(c.containsPoints(xCoords, yCoords)) {
+				collisions.addAll(c.checkCollision(xCoords, yCoords));
+			}
+		}
+		
+		return collisions.size() != 0;
+	}
+	
+	//TODO Add testing
+	/**
+	 * Checks if the enemy is in range of the player so it can start moving towards the player.
+	 * 
+	 * @return true if the enemy is in range of the player.
+	 */
+	public boolean inRangeOfPlayer() {
+		final int[] currentCoords = getPosition();
+		final int currentX = currentCoords[0];
+		final int currentY = currentCoords[1];
+		return Math.abs(PLAYER_X - currentX) <= X_DETECTION_RANGE && Math.abs(PLAYER_Y - currentY) <= Y_DETECTION_RANGE;
+	}
+	
+	//TODO Add testing
+	/**
+	 * Checks if the player is close enough to the player to attack.
+	 * 
+	 * @param x The x coordinate to use.
+	 * @param y The y coordinate to use.
+	 * @return true If the enemy is closer enough to attack.
+	 */
+	public boolean canAttack(int x, int y) {
 		
 		// Convert 2D array of coords into arrays of x coords and y coords
 		final int[] otherXCoords = new int[] { x, x + WIDTH,
@@ -148,19 +387,50 @@ abstract class Enemy implements GameVariables {
 		final int[] otherYCoords = new int[] { y, position_y,
 				y + HEIGHT, y + HEIGHT };
 
-		// if player top left x < enemy bottom right x
-		if (playerXCoords[0] <= otherXCoords[2]
-				// if player bottom right x > enemy top left x
-				&& playerXCoords[2] >= otherXCoords[0]
-				// if player top left y < enemy bottom right y
-				&& playerYCoords[0] <= otherYCoords[2]
-				// if player bottom right y > enemy top left y
-				&& playerYCoords[2] >= otherYCoords[0]) {
-			return true;
-		}
-		
-		return false;
+		return CollisionDetection.getCollision(playerXCoords, playerYCoords, otherXCoords, otherYCoords) != Collision.NO_COLLISION;
 	}
+	
+	//TODO Add testing
+	/**
+	 * Gets the actual position of the enemy. 
+	 * 
+	 * @return The actual position of the enemy. 
+	 */
+	public int[] getPosition() {
+		return new int[] {position_x + xOffset,position_y + yOffset };
+	}
+	
+	//TODO Add testing
+	/**
+	 * Gets the speed of the enemy.
+	 * 
+	 * @return The speed of the enemy.
+	 */
+	public int getSpeed() {
+		return speed;
+	}
+	
+	//TODO Add testing
+	/**
+	 * Gets the width of the enemy.
+	 * 
+	 * @return The width of the enemy.
+	 */
+	public int getWidth() {
+		return WIDTH;
+	}
+	
+	//TODO Add testing
+	/**
+	 * Gets the height of the enemy.
+	 * 
+	 * @return The height of the enemy.
+	 */
+	public int getHeight() {
+		return HEIGHT;
+	}
+	
+	
 	
 	/**
 	 * Update the position of the enemy. 
@@ -175,10 +445,10 @@ abstract class Enemy implements GameVariables {
 	
 	//TODO: Implement more than two directions to be drawn
 	/** Draw the enemy */
-	public void draw(Graphics2D g, int[] offset) {
+	public void draw(Graphics2D g) {
 		// Store position based on movement of the map
-		final int final_x = offset[0] + position_x;
-		final int final_y = offset[1] + position_y;
+		final int final_x = xOffset + position_x;
+		final int final_y = yOffset + position_y;
 		if (drawCount < DRAW_FRAMES) { // Draw the current image and increment drawCount
 			if (currentFacing == Facing.E) { // Facing right
 				g.drawImage(images.get(currentState).get(0), final_x + WIDTH, final_y, -WIDTH,
@@ -201,9 +471,11 @@ abstract class Enemy implements GameVariables {
 			drawCount = 0;
 		}
 		
+		//TODO remove
 		g.setColor(Color.RED);
 		g.drawRect(final_x, final_y, WIDTH, HEIGHT);
-		g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
+		if(chasing)
+			g.drawLine(final_x + WIDTH/2, final_y + HEIGHT/2, PLAYER_X + PLAYER_WIDTH/2, PLAYER_Y + PLAYER_HEIGHT/2);
 	}
 	
 	// Test enemy classes
@@ -252,7 +524,7 @@ abstract class Enemy implements GameVariables {
             Graphics2D g2d = (Graphics2D) g;
 
             for (Enemy drawable : drawables) {
-                drawable.draw(g2d, new int[] {0, 0});
+                drawable.draw(g2d);
             }
         }
     }
@@ -271,6 +543,8 @@ class Mage extends Enemy {
 		position_x = x;
 		position_y = y;
 		speed = 2;
+		roamingSpeed = speed/2;
+		DELTAS = new int[][]{{-speed, 0}, {0, -speed}, {0, speed}, {speed, 0}, {speed, speed},{-speed, speed},{speed, -speed},{-speed, -speed}};
 	}
 }
 
@@ -287,6 +561,8 @@ class Ghost extends Enemy {
 		position_x = x;
 		position_y = y;
 		speed = 3;
+		roamingSpeed = speed/2;
+		DELTAS = new int[][]{{-speed, 0}, {0, -speed}, {0, speed}, {speed, 0}, {speed, speed},{-speed, speed},{speed, -speed},{-speed, -speed}};
 	}
 }
 
