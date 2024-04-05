@@ -96,19 +96,19 @@ public class GameOverWIN extends JPanel {
 //	 * 
 //	 * @param args arguements passed
 //	 */
-public static void main(String[] args) {
-    JFrame frame = new JFrame("Game Over Window Test");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-    GameOverWIN gameOverPanel = new GameOverWIN();
-    gameOverPanel.setPreferredSize(new Dimension(800, 600));
-
-    frame.add(gameOverPanel);
-
-    frame.pack();
-    frame.setLocationRelativeTo(null);
-    frame.setVisible(true);
-}
+	public static void main(String[] args) {
+	    JFrame frame = new JFrame("Game Over Window Test");
+	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	
+	    GameOverWIN gameOverPanel = new GameOverWIN();
+	    gameOverPanel.setPreferredSize(new Dimension(800, 600));
+	
+	    frame.add(gameOverPanel);
+	
+	    frame.pack();
+	    frame.setLocationRelativeTo(null);
+	    frame.setVisible(true);
+	}
 }
 //    public static void main(String[] args) {
 //        boolean allCasesPassed = true;

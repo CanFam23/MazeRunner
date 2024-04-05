@@ -50,6 +50,9 @@ public class Main {
 
 	// Remaining seconds left for the player
 	private static int seconds_left = 0;
+	
+	// Time elapsed for level
+	private static int timeAmount = 120;
 
 	// The main game panel where the game is rendered
 	private static GamePanel gamePanel;
@@ -58,27 +61,33 @@ public class Main {
 	private static Image backgroundImage = null;
 
 	private static GameOverWIN nextLevel;
+	
+	private static GameOverLOSE timeOut;
+	
+	private static HomeScreen homePanel;
 	/**
 	 * Main method to start the game.
 	 * 
 	 * @param args The arguments passed to the main method.
 	 */
 	public static void main(String[] args) {
-		// Main Game Logic, calls on HomeScreen.java
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-//				HomeScreen homeScreen = new HomeScreen();
-//				homeScreen.addWindowListener(new WindowAdapter() {
-//					@Override
-//					public void windowClosed(WindowEvent e) {
-//						runMainCode();
-//					}
-//				});
-//				homeScreen.setVisible(true);
-				runMainCode();
-			}
-		});
+	    window = new JFrame();
+	    homePanel = new HomeScreen();
+	    // Set up the window and display the HomeScreen panel
+	    window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setPreferredSize(new Dimension(1000, 800));
+	    window.getContentPane().add(homePanel);
+	    window.pack();
+	    window.setLocationRelativeTo(null);
+	    window.setVisible(true);
+
+	    // Add action listener to the button in HomeScreen
+	    homePanel.getStartButton().addActionListener(new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            runMainCode();
+	        }
+	    });
 	}
 
 	/**
@@ -95,10 +104,12 @@ public class Main {
 		}
 		
 		// Creates window
-		window = new JFrame();
 		gamePanel = new GamePanel(backgroundImage);
 		nextLevel = new GameOverWIN();
+		timeOut = new GameOverLOSE();
 		nextLevel.setPreferredSize(new Dimension(800, 600));
+		timeOut.setPreferredSize(new Dimension(800, 600));
+
 
 		
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -106,9 +117,9 @@ public class Main {
 
 		// window.setResizable(false);
 		// Creates new game panel object
+		timeOut.setVisible(false); 
 		nextLevel.setVisible(false);
 		window.getContentPane().add(gamePanel);
-		nextLevel.setPreferredSize(new Dimension(800, 600));
 
 		// Timer to track seconds
 		timer = new Timer(1000, new ActionListener() {
@@ -121,16 +132,14 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				seconds++;
-				seconds_left = 120 - seconds;
+				seconds_left = timeAmount - seconds;
 
 				if (seconds_left <= 0) {
 					timer.stop();
-					GameOverLOSE.GameOver();
-					closeMainWindow();
+					gameOverPanel(true);
+				} else {
+					window.setTitle("Maze Runner - Time Left: " + seconds_left + " seconds");
 				}
-
-				window.setTitle("Maze Runner - Time Left: " + seconds_left + " seconds");
-
 			}
 		});
 
@@ -232,6 +241,7 @@ public class Main {
         nextLevel.setFocusable(show);
         gamePanel.stopLoop();
         gamePanel.setVisible(false);
+        homePanel.setVisible(false);
 	}
 	
 	public static void showGamePanel() {
@@ -241,6 +251,20 @@ public class Main {
         gamePanel.setFocusable(true);
         gamePanel.startGameThread();
         nextLevel.setVisible(false);
+        homePanel.setVisible(false);
+
+	}
+	
+	public static void gameOverPanel(boolean show) {
+		String formattedString = String.format("Failed to complete the level in 120 seconds");
+		window.setTitle(formattedString);
+		window.setVisible(true);
+		window.getContentPane().add(timeOut);
+        timeOut.setVisible(show);
+        timeOut.setFocusable(show);
+        gamePanel.stopLoop();
+        gamePanel.setVisible(false);
+        homePanel.setVisible(false);
 	}
 	
 	public static boolean otherPanelRunning() {
