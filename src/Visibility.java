@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RadialGradientPaint;
 import java.awt.geom.GeneralPath;
-import java.util.TimerTask;
-import java.util.Timer;
 
 /**
  * <p>
@@ -39,8 +37,10 @@ public class Visibility implements GameVariables {
 
 	/** Amount to decrease the radius by. */
 	private final int decreaseAmount = 1;
-
-	/** Delay for the timer in milliseconds. */
+	
+	/**
+	 * Radius will decrease every 'delay' milliseconds
+	 */
 	private final int delay = startingRadius - minRadius;
 
 	/**
@@ -58,51 +58,26 @@ public class Visibility implements GameVariables {
 
 	/** radius that will be updated and used to draw the circle. */
 	private int radius = startingRadius;
-	/** Timer used to update the circle radius. */
-	private Timer timer;
-
-	/**
-	 * Inner class that extends Timer Task. Creates a new TimerTask to update the
-	 * radius of the players view.
-	 */
-	private class updateRadius extends TimerTask {
-		public void run() {
-			if (radius > minRadius) {
-				radius -= decreaseAmount;
-			} else {
-				stopTimer();
-			}
-		}
-	}
 
 	/**
 	 * Constructs a new Visibility object.
 	 */
 	public Visibility() {
-		timer = new Timer();
+		
+	}
+	
+	public void updateRadius() {
+		//System.out.println(System.currentTimeMillis());
+		if (radius > minRadius && System.currentTimeMillis() % delay <= 20) {
+			radius -= decreaseAmount;
+		}
 	}
 
 	/**
-	 * Starts the timer.
+	 * Resets radius.
 	 */
-	public void startTimer() {
-		timer.schedule(new updateRadius(), 1000, delay);
-	}
-
-	/**
-	 * Stops the timer.
-	 */
-	public void stopTimer() {
-		timer.cancel();
-	}
-
-	/**
-	 * Resets and restarts the timer.
-	 */
-	public void restartTimer() {
+	public void reset() {
 		radius = startingRadius;
-		timer = new Timer();
-		timer.schedule(new updateRadius(), delay);
 	}
 
 	/**

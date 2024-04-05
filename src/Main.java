@@ -10,6 +10,12 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
+/*
+ * TODO:
+ * Update main menu, see if theres way to use same frame for all panels
+ * Add leaderboard and tracking for it
+ */
+
 /**
  * <p>
  * Serves as the main file for our game. This is the file you should run to play
@@ -58,14 +64,15 @@ public class Main {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				HomeScreen homeScreen = new HomeScreen();
-				homeScreen.addWindowListener(new WindowAdapter() {
-					@Override
-					public void windowClosed(WindowEvent e) {
-						runMainCode();
-					}
-				});
-				homeScreen.setVisible(true);
+//				HomeScreen homeScreen = new HomeScreen();
+//				homeScreen.addWindowListener(new WindowAdapter() {
+//					@Override
+//					public void windowClosed(WindowEvent e) {
+//						runMainCode();
+//					}
+//				});
+//				homeScreen.setVisible(true);
+				runMainCode();
 			}
 		});
 	}
