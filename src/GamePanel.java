@@ -160,7 +160,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			keyH.rightPressed = false;
 			keyH.leftPressed = false;
 			if (current_level == NUM_LEVELS) {
-				GameOverLOSE.GameOver();
+				System.out.print("");
+				Main.gameOverPanel(true);
 			} else {
 				Main.nextLevel(true);
 				while (Main.otherPanelRunning()) {
@@ -173,8 +174,10 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			cmanager.loadLevel(current_level);
 			Main.resetTime();
 			continueLoop();
-			}
-
+		}
+		if (ourPlayer.getHealth() <= 0) {
+//			ChunkManager.setStartLocation();
+		}
 		
 
 		// Move Player

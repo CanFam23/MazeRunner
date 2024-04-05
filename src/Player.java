@@ -65,6 +65,11 @@ public class Player implements GameVariables {
 	}
 
 	/**
+	 *  Tracks the health of our player
+	 */
+    private int health = 100;
+
+	/**
 	 * Draw count is used to track the number of draws that have occurred since the last animation update.
 	 */
 	private int drawCount = 0;
@@ -482,6 +487,29 @@ public class Player implements GameVariables {
 		image = newImage;
 		panel.repaint(); // This will trigger paintComponent to redraw the image
 	}
+	
+	/**
+     * Subtract health from the player.
+     * 
+     * @param amount The amount of health to subtract.
+     */
+    public void subtractHealth(int amount) {
+        health -= amount;
+    }
+    
+	/**
+     * Set player health back to 100 
+     */
+    public void resetHealth() {
+    	health = 100; 
+    }
+    
+	/**
+     * Return the current health of player 
+     */
+    public int getHealth() {
+    	return health;
+    }
 
 	/**
 	 * Main method
