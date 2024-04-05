@@ -5,9 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -116,6 +119,8 @@ public class Player implements GameVariables {
 	 * A map of Facing enumerators and Rectangles
 	 */
 	private Map<Facing,Rectangle> hitboxes = new HashMap<>();
+	
+	private Set<Enemy> hitEnemies = new HashSet<>();
 	
 	public Player() {
 		//Add values to hitboxes
@@ -244,7 +249,7 @@ public class Player implements GameVariables {
 		}
 	}
 	
-	public void attack() {
+	public void attacking() {
 		Rectangle hitbox = hitboxes.get(currentFacing);
 		int x = (int) hitbox.getX();
 		int y = (int) hitbox.getY();
@@ -257,13 +262,23 @@ public class Player implements GameVariables {
 				y + height, y + height };
 		
 		for(Enemy e: Enemy.activeEnemies) {
-			final int[] eCoords = e.getPosition();
-			
-			final int[] eXCoords = new int[] {eCoords[0],eCoords[0]+e.getWidth(),eCoords[0]+e.getWidth(),eCoords[0]};
-			final int[] eYCoords = new int[] {eCoords[1],eCoords[1],eCoords[1]+e.getHeight(),eCoords[1]+e.getHeight()};
-			if(CollisionDetection.getCollision(xCoords, yCoords, eXCoords, eYCoords) != Collision.NO_COLLISION) {
-				System.out.println("Hit Enemy " + e);
+			if(!hitEnemies.contains(e)) {
+				final int[] eCoords = e.getPosition();
+				
+				final int[] eXCoords = new int[] {eCoords[0],eCoords[0]+e.getWidth(),eCoords[0]+e.getWidth(),eCoords[0]};
+				final int[] eYCoords = new int[] {eCoords[1],eCoords[1],eCoords[1]+e.getHeight(),eCoords[1]+e.getHeight()};
+				if(CollisionDetection.getCollision(xCoords, yCoords, eXCoords, eYCoords) != Collision.NO_COLLISION) {
+					System.out.println("Hit Enemy " + e);
+					hitEnemies.add(e);
+				}
 			}
+		}
+	}
+	
+	public void handleAttack() {
+		if(hitEnemies.size() != 0 && currentState != State.Attack) {
+			System.out.println("You hit " + hitEnemies.size() + " Enemies!");
+			hitEnemies.clear();
 		}
 	}
 
