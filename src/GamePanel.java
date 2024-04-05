@@ -277,12 +277,15 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			if (ourPlayer.getState() != "Attack") {
 				// Set our player to be attacking
 				ourPlayer.setState(State.Attack);
-				ourPlayer.attack();
 				ourPlayer.resetDrawCount();
+			}else {
+				ourPlayer.attacking();
+
 			}
 			ourPlayer.lockState();
 			ourPlayer.lockFacing();
 		}
+		ourPlayer.handleAttack();
 		v.updateRadius();
 	}
 

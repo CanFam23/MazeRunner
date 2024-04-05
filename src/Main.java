@@ -10,6 +10,19 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
+/*
+ * TODO:
+ * Fix attacking hitboxes, right now it only detects right when played swings, but I want it to check throughout animation
+ * Restructure files and images
+ * Make enemies knockback when hit
+ * Allow enemies to hit, knockback player
+ * 
+ * How we could make game run better:
+ * 
+ * Change collision algorithm? Change to using rectangles, would be time consuming, but could be more efficient
+ * Change all position tracking to be like enemy tracking (using offset)
+ */
+
 /**
  * <p>
  * Serves as the main file for our game. This is the file you should run to play
