@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.RadialGradientPaint;
 import java.awt.geom.GeneralPath;
 
+import gameTools.GameVariables;
+
 /**
  * <p>
  * This class handles drawing the visibility of the player in our game. The
