@@ -216,7 +216,7 @@ abstract class Enemy implements GameVariables {
 			}else {
 				chasing = false;
 				changeState(roamingSpeed,0);
-				moveAround(activeChunks);
+				roam(activeChunks);
 			}
 		}
 	}
@@ -261,7 +261,7 @@ abstract class Enemy implements GameVariables {
 	 * 
 	 * @param activeChunks Chunks checked for collision so Enemy can't move through walls.
 	 */
-	public void moveAround(List<Chunk> activeChunks) {
+	public void roam(List<Chunk> activeChunks) {
 		//If Enemy isn't colliding with a wall or other enemy, move it.
 		if(!wallCollision(position_x + xOffset,position_y + yOffset,activeChunks) && !enemyCollision(this,roamingSpeed,0)) {
 			update_coords(roamingSpeed,0);

@@ -5,14 +5,12 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import src.Player.State;
@@ -284,13 +282,17 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
 		}
 		
+		if(ourPlayer.getState().equals("Attack")) {
+			ourPlayer.attacking();
+		}
+		
 		if (keyH.spacePressed) {
 			if (ourPlayer.getState() != "Attack") {
 				// Set our player to be attacking
 				ourPlayer.setState(State.Attack);
 				ourPlayer.resetDrawCount();
 			}else {
-				ourPlayer.attacking();
+//				ourPlayer.attacking();
 
 			}
 			ourPlayer.lockState();
