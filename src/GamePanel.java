@@ -4,10 +4,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -74,12 +78,15 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	/** Keeps track of game state (Running vs not running). */
 	private boolean isRunning = true;
 
+	private Image backgroundImage;
+
 	/**
 	 * Constructs a GamePanel object.
 	 */
-	public GamePanel() {
+	public GamePanel(Image backgroundImage) {
+		this.backgroundImage = backgroundImage;
+	    setPreferredSize(new Dimension(800, 600));
 		this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
-		this.setBackground(Color.black);
 		this.setDoubleBuffered(true);
 
 		this.addKeyListener(keyH);
@@ -146,28 +153,32 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// If the end is found, go to the next level
 		if (cmanager.endFound()) {
 			stopLoop();
+			Main.stopTime();
 			// Disable player movements when end block is reached
 			keyH.upPressed = false;
 			keyH.downPressed = false;
 			keyH.rightPressed = false;
 			keyH.leftPressed = false;
-			ourPlayer.setState(State.Idle);
 			if (current_level == NUM_LEVELS) {
-				GameOverLOSE.GameOver();
+				System.out.print("");
+				Main.gameOverPanel(true);
 			} else {
-				GameOverWIN.GameOverWIN();
-				while (GameOverWIN.isGameOverRunning()) {
-					System.out.print(""); // adds a break in the logic
+				Main.nextLevel(true);
+				while (Main.otherPanelRunning()) {
+					System.out.print("");
 				}
-				reset();
-				ourPlayer.reset();
-				current_level++;
-				cmanager.loadLevel(current_level);
-				Main.resetTime();
-				continueLoop();
 			}
-
+			Main.showGamePanel();
+			reset();
+			current_level++;
+			cmanager.loadLevel(current_level);
+			Main.resetTime();
+			continueLoop();
 		}
+		if (ourPlayer.getHealth() <= 0) {
+//			ChunkManager.setStartLocation();
+		}
+		
 
 		// Move Player
 		int dx = 0;
@@ -306,7 +317,16 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
+		
+		// Creates green grass background
+	    if (backgroundImage != null) {
+	        g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+	    } else {
+	        // If no image is available, fallback to a solid color background
+	        g.setColor(Color.RED); // Change to desired background color
+	        g.fillRect(0, 0, getWidth(), getHeight());
+	    }
+	    
 		final Graphics2D g2 = (Graphics2D) g;
 
 		// Draw map
@@ -368,10 +388,18 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	}
 
 	public static void main(String[] args) {
-
+		
+		Image backgroundImage = null;
+		// Load Background Image
+		try {
+			backgroundImage = ImageIO.read(new File("images/wall.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		boolean allPassed = true;
 
-		final GamePanel gp = new GamePanel();
+		final GamePanel gp = new GamePanel(backgroundImage);
 
 		// Making sure game thread hasn't started yet
 		if (gp.threadStarted() == true) {
@@ -431,7 +459,5 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 
 		System.exit(0);
-
 	}
-
 }
