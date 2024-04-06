@@ -296,10 +296,13 @@ public class ChunkManager implements GameVariables {
 	 */
 	public void draw(Graphics2D g2d) {
 		// Loop through all chunks
-		for (int i = 0; i < chunks.length; i++) {
-			for (int j = 0; j < chunks[i].length; j++) {
-				chunks[i][j].draw(g2d);
-			}
+//		for (int i = 0; i < chunks.length; i++) {
+//			for (int j = 0; j < chunks[i].length; j++) {
+//				chunks[i][j].draw(g2d);
+//			}
+//		}
+		for(Chunk c: activeChunks) {
+			c.draw(g2d);
 		}
 	}
 	
