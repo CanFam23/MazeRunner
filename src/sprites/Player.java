@@ -231,16 +231,15 @@ public class Player implements GameVariables {
 		final int[] yCoords = new int[] { y, y,
 				y + height, y + height };
 		
-		for(Enemy e: Enemy.activeEnemies) {
-			if(!hitEnemies.contains(e)) {
+		if (Enemy.activeEnemies.size() != 0 && Enemy.enemies.size() != 0) {
+			for(Enemy e: Enemy.activeEnemies) {
 				final int[] eCoords = e.getPosition();
-				
 				final int[] eXCoords = new int[] {eCoords[0],eCoords[0]+e.getWidth(),eCoords[0]+e.getWidth(),eCoords[0]};
 				final int[] eYCoords = new int[] {eCoords[1],eCoords[1],eCoords[1]+e.getHeight(),eCoords[1]+e.getHeight()};
 				if(CollisionDetection.getCollision(xCoords, yCoords, eXCoords, eYCoords) != Collision.NO_COLLISION) {
-					System.out.println("Hit Enemy " + e);
-					hitEnemies.add(e);
-					handleAttack();
+//					System.out.println("Hit Enemy " + e);
+					e.subtractHitCount(1);
+					break;
 				}
 			}
 		}

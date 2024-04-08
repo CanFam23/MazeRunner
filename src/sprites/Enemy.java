@@ -440,6 +440,10 @@ public abstract class Enemy implements GameVariables {
      */
     public void subtractHitCount(int amount) {
         hitCount -= amount;
+        if (hitCount <= 0) {
+        	enemies.remove(this);
+        	activeEnemies.remove(this);
+        }
     }
     
 	/**
