@@ -168,7 +168,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				System.out.print("");
 				Main.gameOverPanel(true);
 			} else {
-				Main.nextLevel(true);
+				Main.showNextLevelPanel(true);
 				while (Main.otherPanelRunning()) {
 					System.out.print("");
 				}

@@ -151,9 +151,12 @@ public abstract class Enemy implements GameVariables {
 	 * Speed used when not tracking player.
 	 */
 	protected int roamingSpeed; 
-
 	
-	
+	//TODO Figure out real number
+	/**
+	 *  Tracks the hit count of our enemy
+	 */
+    private int hitCount = 5; // 5 hits to make an enemy die? change number?
 	
 	/**
 	 * All directions the enemy can move.
@@ -435,6 +438,28 @@ public abstract class Enemy implements GameVariables {
 		return HEIGHT;
 	}
 	
+	/**
+     * Subtract health from the player.
+     * 
+     * @param amount The amount of health to subtract.
+     */
+    public void subtractHitCount(int amount) {
+        hitCount -= amount;
+    }
+    
+	/**
+     * Set player health back to 100 
+     */
+    public void resetHitCount() {
+    	hitCount = 5; 
+    }
+    
+	/**
+     * Return the current health of player 
+     */
+    public int getHitCount() {
+    	return hitCount;
+    }
 	
 	
 	/**

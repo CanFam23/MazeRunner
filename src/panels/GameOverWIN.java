@@ -82,6 +82,7 @@ public class GameOverWIN extends JPanel {
         // Add components to this panel
         add(panel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
+        isRunning = true;
     }
 
     /**

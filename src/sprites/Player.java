@@ -437,6 +437,29 @@ public class Player implements GameVariables {
 	public void unlockFacing() {
 		facingLocked = false;
 	}
+	
+	/**
+     * Subtract health from the player.
+     * 
+     * @param amount The amount of health to subtract.
+     */
+    public void subtractHealth(int amount) {
+        health -= amount;
+    }
+    
+	/**
+     * Set player health back to 100 
+     */
+    public void resetHealth() {
+    	health = 100; 
+    }
+    
+	/**
+     * Return the current health of player 
+     */
+    public int getHealth() {
+    	return health;
+    }
 
 	///////////////// BELOW CODE IS USED JUST FOR TESTING PURPOSES
 	///////////////// //////////////////
@@ -492,28 +515,6 @@ public class Player implements GameVariables {
 		panel.repaint(); // This will trigger paintComponent to redraw the image
 	}
 	
-	/**
-     * Subtract health from the player.
-     * 
-     * @param amount The amount of health to subtract.
-     */
-    public void subtractHealth(int amount) {
-        health -= amount;
-    }
-    
-	/**
-     * Set player health back to 100 
-     */
-    public void resetHealth() {
-    	health = 100; 
-    }
-    
-	/**
-     * Return the current health of player 
-     */
-    public int getHealth() {
-    	return health;
-    }
 
 	/**
 	 * Main method
