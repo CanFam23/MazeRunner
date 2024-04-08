@@ -303,7 +303,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			ourPlayer.lockState();
 			ourPlayer.lockFacing();
 		}
-		v.updateRadius();
+//		v.updateRadius();
 	}
 
 	/**
@@ -338,11 +338,44 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// Draw map
 		cmanager.draw(g2);
 		cmanager.drawEnemies(g2);
+		
+//		v.drawVision(g2);
+		
+		if (ourPlayer.getHealth() < 10000) {
+			ourPlayer.addHealth(1);
+		}
+		// Health bar properties
+		int healthBarWidth = 200; // Make the health bar width slightly smaller than the panel width
+		int healthBarHeight = 20; // Reduce the height of the health bar
+		int padding = 30; // Padding from the top and right edges of the panel
+		int healthBarX = getWidth() - healthBarWidth - padding; // Adjust X coordinate to be near the right edge
+		int healthBarY = padding; // Adjust Y coordinate to be near the top edge
+		int titleX = getWidth() - healthBarWidth - padding; // X coordinate of the title (aligned with health bar)
+		int titleY = padding - 5; // Y coordinate of the title (just above the health bar)
+		int healthPercentage = (int)(((float)ourPlayer.getHealth() / 10000) * 100); // Assuming maximum health is 10000
 
+		// Draw title
+		g.setColor(Color.WHITE);
+		String title = "Player Health: " + healthPercentage + "%";
+		g.drawString(title, titleX, titleY);
 
+		// Draw health bar outline
+		g.setColor(Color.BLACK); // Outline color
+		g.drawRect(healthBarX - 1, healthBarY - 1, healthBarWidth + 2, healthBarHeight + 2); // Outline
+
+		// Draw health bar background
+		g.setColor(Color.RED); // Background color
+		g.fillRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight); // Background
+
+		// Calculate the width of the health bar based on player's health percentage
+		int currentHealth = ourPlayer.getHealth();
+		int barWidth = (int) (((double) currentHealth / 10000) * healthBarWidth);
+
+		// Draw the health portion of the health bar
+		g.setColor(Color.GREEN); // Health color
+		g.fillRect(healthBarX, healthBarY, barWidth, healthBarHeight); // Health
+		
 		ourPlayer.draw(g2);
-
-		v.drawVision(g2);
 
 		// Saves some memory
 		g2.dispose();
