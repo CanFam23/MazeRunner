@@ -89,6 +89,7 @@ public class Main {
 	    homePanel.getStartButton().addActionListener(new ActionListener() {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
+	        	homePanel.setVisible(false);
 	            runMainCode();
 	        }
 	    });
@@ -236,7 +237,7 @@ public class Main {
 		timer.stop();
 	}
 	
-	public static void nextLevel(boolean show) {
+	public static void showNextLevelPanel(boolean show) {
 		String formattedString = String.format("Completed Level in %d seconds", 120-seconds_left);
 		window.setTitle(formattedString);
 		window.setVisible(true);
