@@ -244,9 +244,12 @@ public class Main {
 		window.getContentPane().add(nextLevel);
         nextLevel.setVisible(show);
         nextLevel.setFocusable(show);
+        nextLevel.setVisible(true);
+        nextLevel.setIsGameOverRunning(true);
         gamePanel.stopLoop();
         gamePanel.setVisible(false);
         homePanel.setVisible(false);
+        
 	}
 	
 	public static void showGamePanel() {
