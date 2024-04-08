@@ -1,4 +1,4 @@
-package src;
+package sprites;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,6 +18,11 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import chunks.Chunk;
+import gameTools.GameVariables;
+import gameTools.CollisionDetection;
+
+
 
 /**
  * 
@@ -29,8 +34,7 @@ import javax.swing.JPanel;
  * @since March 26, 2024
  *
  */
-abstract class Enemy implements GameVariables {
-	//TODO Add testing
+public abstract class Enemy implements GameVariables {
 	/**
 	 * Calculates the distance between two points using 
 	 * the <a href="https://www.purplemath.com/modules/distform.htm">distance formula<a/>. 
@@ -141,9 +145,12 @@ abstract class Enemy implements GameVariables {
 	 * Speed used when not tracking player.
 	 */
 	protected int roamingSpeed; 
-
 	
-	
+	//TODO Figure out real number
+	/**
+	 *  Tracks the hit count of our enemy
+	 */
+    private int hitCount = 5; // 5 hits to make an enemy die? change number?
 	
 	/**
 	 * All directions the enemy can move.
@@ -425,6 +432,28 @@ abstract class Enemy implements GameVariables {
 		return HEIGHT;
 	}
 	
+	/**
+     * Subtract health from the player.
+     * 
+     * @param amount The amount of health to subtract.
+     */
+    public void subtractHitCount(int amount) {
+        hitCount -= amount;
+    }
+    
+	/**
+     * Set player health back to 100 
+     */
+    public void resetHitCount() {
+    	hitCount = 5; 
+    }
+    
+	/**
+     * Return the current health of player 
+     */
+    public int getHitCount() {
+    	return hitCount;
+    }
 	
 	
 	/**
@@ -589,161 +618,3 @@ abstract class Enemy implements GameVariables {
     }
 }
 
-/**
- * Mage is a child of Enemy with attributes and unique images.
- * @author Andrew Denegar
- */
-class Mage extends Enemy {
-	
-	public Mage(int x, int y, Map<State, List<BufferedImage>> images) {
-		this.images = images;
-		WIDTH = 70;
-		HEIGHT = 70;
-		position_x = x;
-		position_y = y;
-		speed = 2;
-		roamingSpeed = speed/2;
-		DELTAS = new int[][]{{-speed, 0}, {0, -speed}, {0, speed}, {speed, 0}, {speed, speed},{-speed, speed},{speed, -speed},{-speed, -speed}};
-	}
-}
-
-/**
- * Ghost is a child of Enemy with attributes and unique images.
- * @author Andrew Denegar
- */
-class Ghost extends Enemy {
-	
-	public Ghost(int x, int y, Map<State, List<BufferedImage>> images) {
-		this.images = images;
-		WIDTH = 60;
-		HEIGHT = 60;
-		position_x = x;
-		position_y = y;
-		speed = 3;
-		roamingSpeed = speed/2;
-		DELTAS = new int[][]{{-speed, 0}, {0, -speed}, {0, speed}, {speed, 0}, {speed, speed},{-speed, speed},{speed, -speed},{-speed, -speed}};
-	}
-}
-
-
-/**
- * EnemyFactory will be used to create up to five enemy factory classes: Beaver, Ghost, Mage, Necromancer, and Salamander.
- * 	Extensions of EnemyFactories will load the static images for each of the classes
- * 
- */
-abstract class EnemyFactory {
-	
-	// Function that can be used by a user.
-	public abstract Enemy createEnemy(int x, int y);
-	
-	// Store the padding for each enemy within it's factory class.
-	public int TOP_PADDING;
-	public int RIGHT_PADDING;
-	public int BOTTOM_PADDING;
-	public int LEFT_PADDING;
-	
-	/** load_images should be implemented separately for each enemy */
-	protected abstract void load_images();
-	
-	/** load_spritesheet should be the same for each enemy. */
-	protected void load_spritesheet(String FILE_LOCATION, String character_name, src.Enemy.State playerState, int imageNumber, Map<src.Enemy.State, List<BufferedImage>> images) {
-		BufferedImage spriteSheet = null;
-		// Load the spritesheet file
-		if (playerState.toString() != null) {
-			final String resource = FILE_LOCATION + character_name + "_" + playerState.toString() + ".png";
-			try {
-				spriteSheet = ImageIO.read(new File(resource));
-			} catch (IOException e) {
-				System.out.println("Image not found at '" + resource + "'");
-			}
-		}
-		images.put(playerState, new LinkedList<>());
-		// Save constants used for sprite sheet loading
-		final int height = spriteSheet.getHeight();
-		final int width = spriteSheet.getWidth();
-		for (int i = 0; i < imageNumber; i++) {
-			BufferedImage img = spriteSheet.getSubimage(LEFT_PADDING, (height / imageNumber) * i + TOP_PADDING, (width - LEFT_PADDING) - RIGHT_PADDING, ((height / imageNumber) - TOP_PADDING) - BOTTOM_PADDING);
-			images.get(playerState).add(img);
-		}
-	}
-}
-
-/**
- * MageFactory will load the Mage images and create Mage instances using the createEnemy function.
- *
- */
-class MageFactory extends EnemyFactory {
-	
-	/** Hold images (which should be the same for all Mages) */
-	static private Map<src.Enemy.State, List<BufferedImage>> images = new HashMap<>();
-	
-	
-	
-	public MageFactory() {
-		// Store the padding for each enemy within it's factory class.
-		TOP_PADDING = 12;
-		RIGHT_PADDING = 12;
-		BOTTOM_PADDING = 12;
-		LEFT_PADDING = 12;
-		load_images();
-	}
-	
-	@Override
-	public Enemy createEnemy(int x, int y) {
-		return new Mage(x, y, images);
-	}
-
-	@Override
-	protected void load_images() {
-		final String character_name = "Mage";
-		final String FILE_LOCATION = "Textures/Mage/";
-		int imageNumber = 3; // This is the number of images in the spriteSheet
-		int imageNumber2 = 6; // Idle and Move differ from Attack and Dead
-		
-		// Load a sprite sheet for each player state
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Idle, imageNumber, images);
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Move, imageNumber, images);
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Attack, imageNumber2, images);
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Dead, imageNumber2, images);
-	}
-	
-}
-
-/**
- * GhostFactory will load the static images for Ghosts and create enemies using the createEnemy function.
- *
- */
-class GhostFactory extends EnemyFactory {
-
-	/** Hold images (which should be the same for all Ghosts) */
-	static private Map<src.Enemy.State, List<BufferedImage>> images = new HashMap<>();
-	
-	public GhostFactory() {
-		// Store the padding for each enemy within it's factory class.
-		TOP_PADDING = 10;
-		RIGHT_PADDING = 14;
-		BOTTOM_PADDING = 14;
-		LEFT_PADDING = 14;
-		load_images();
-	}
-	
-	@Override
-	public Enemy createEnemy(int x, int y) {
-		return new Ghost(x, y, images);
-	}
-
-	@Override
-	protected void load_images() {
-		final String character_name = "Ghost";
-		final String FILE_LOCATION = "Textures/Ghost/";
-		int imageNumber = 3; // This is the number of images in the spriteSheet
-		int imageNumber2 = 6; // Idle and Move differ from Attack and Dead
-		
-		// Load a spritesheet for each player state
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Idle, imageNumber, images);
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Move, imageNumber, images);
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Attack, imageNumber2, images);
-		load_spritesheet(FILE_LOCATION, character_name, src.Enemy.State.Dead, imageNumber2, images);
-	}
-	
-}

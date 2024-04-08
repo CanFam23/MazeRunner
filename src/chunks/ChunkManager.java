@@ -1,4 +1,4 @@
-package src;
+package chunks;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -10,6 +10,19 @@ import java.util.List;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
+
+import blocks.EmptyBlock;
+import blocks.EndBlock;
+import blocks.PositionBlock;
+import blocks.StartingBlock;
+import blocks.Wall;
+import gameTools.CollisionDetection;
+import gameTools.GameVariables;
+import sprites.Enemy;
+import sprites.EnemyFactory;
+import sprites.MageFactory;
+import sprites.GhostFactory;
+
 
 /**
  * ChunkManager loads and holds the chunks that will be used in the game. The

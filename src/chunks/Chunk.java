@@ -1,4 +1,4 @@
-package src;
+package chunks;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -8,6 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+
+import blocks.EndBlock;
+import blocks.PositionBlock;
+import blocks.StartingBlock;
+import blocks.Wall;
+import gameTools.CollisionDetection;
+import gameTools.GameVariables;
 
 /**
  * Chunk holds an nxn array of PositionBlocks and stores the x and y position of

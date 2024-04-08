@@ -1,9 +1,11 @@
-package src;
+package panels;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RadialGradientPaint;
 import java.awt.geom.GeneralPath;
+
+import gameTools.GameVariables;
 
 /**
  * <p>

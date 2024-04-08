@@ -1,24 +1,22 @@
-package src;
+package panels;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.awt.Container;
-import java.awt.Dimension;
 
 /**
- * GameOverLOSE creates the game over screen when the user fails to find the end
- * of the maze.
- * 
- * This class provides a static method to display the game over screen with options
- * to exit the game or play again.
+ * <p>
+ * GameOverWIN creates the panel shown when user finds the end of the maze.
+ * </p>
  * 
  * @author Nick Clouse
  * @author Andrew Denegar
@@ -26,26 +24,33 @@ import java.awt.Dimension;
  * 
  * @since February 28, 2024
  */
-public class GameOverLOSE extends JPanel {
+public class GameOverWIN extends JPanel {
     /**
-     * Image to use for background.
+     * Serial Version UID
+     */
+    private static final long serialVersionUID = 8986657739517647875L;
+
+    /**
+     * Background image for panel
      */
     private BufferedImage backgroundImage;
-    
+
+    /**
+     * Indicates whether the game over panel is running or not.
+     */
     private boolean isRunning = true;
 
     /**
-     * Creates JFrame and adds components.
-     * Displays the game over screen with options to exit the game or play again.
+     * Constructs new GameOverWIN panel
      */
-    public GameOverLOSE() {
+    public GameOverWIN() {
         // Load the image
         try {
-            backgroundImage = ImageIO.read(new File("images/GameOver2.png"));
+            backgroundImage = ImageIO.read(new File("images/YouWin.png"));
         } catch (IOException e) {
-            System.err.println("Failed to load game over screen background image!");
+            System.err.println("Failed to load win screen background image!");
         }
-        
+
         setLayout(new BorderLayout());
 
         JPanel panel = new JPanel() {
@@ -55,63 +60,65 @@ public class GameOverLOSE extends JPanel {
                 g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
             }
         };
-        
-        // User is done
+
         JButton endGame = new JButton("EXIT");
         endGame.setFont(new Font("Arial", Font.PLAIN, 24));
         endGame.addActionListener(e -> {
+            isRunning = false;
             System.exit(0);
         });
 
-        // User plays again
-        JButton playAgain = new JButton("PLAY AGAIN");
+        JButton playAgain = new JButton("NEXT LEVEL");
         playAgain.setFont(new Font("Arial", Font.PLAIN, 24));
         playAgain.addActionListener(e -> {
             isRunning = false;
-
+            // You can handle what happens when "NEXT LEVEL" button is clicked here
         });
 
-        // Set up panel
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(playAgain);
         buttonPanel.add(endGame);
-        
+
         // Add components to this panel
         add(panel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
-
+        isRunning = true;
     }
-    
+
     /**
      * Returns true if the game over panel is running, false otherwise.
      */
     public boolean isGameOverRunning() {
         return isRunning;
     }
-    
-	/**
-	 * Main method
-	 * 
-	 * @param args arguements passed
-	 */
-    public static void main(String[] args) {
+	
+//	/**
+//	 * Main method
+//	 * 
+//	 * @param args arguements passed
+//	 */
+	public static void main(String[] args) {
 	    JFrame frame = new JFrame("Game Over Window Test");
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	
-	    GameOverLOSE gameOverPanel = new GameOverLOSE();
+	    GameOverWIN gameOverPanel = new GameOverWIN();
 	    gameOverPanel.setPreferredSize(new Dimension(800, 600));
 	
 	    frame.add(gameOverPanel);
+	
 	    frame.pack();
 	    frame.setLocationRelativeTo(null);
 	    frame.setVisible(true);
 	}
-
+}
+//    public static void main(String[] args) {
+//        boolean allCasesPassed = true;
+//
 //        // Set up the test frame
 //        testFrame = new JFrame();
 //        
 //        // Call the method under test
-//        GameOverLOSE.GameOver();
+//        GameOverWIN.GameOverWIN();
 //
 //        // Check if the frame has any child components (i.e., if it's displaying the game over screen)
 //        Container contentPane = testFrame.getContentPane();
@@ -132,4 +139,4 @@ public class GameOverLOSE extends JPanel {
 //            System.err.println("At least one case failed!");
 //        }
 //    }
-}
+//}
