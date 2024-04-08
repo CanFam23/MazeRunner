@@ -19,6 +19,7 @@ import chunks.ChunkManager;
 import gameTools.GameVariables;
 import gameTools.KeyHandler;
 import main.Main;
+import sprites.Enemy;
 import sprites.Player;
 import sprites.Player.State;
 
@@ -159,6 +160,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		if (cmanager.endFound()) {
 			stopLoop();
 			Main.stopTime();
+			ourPlayer.reset();
 			// Disable player movements when end block is reached
 			keyH.upPressed = false;
 			keyH.downPressed = false;
@@ -293,8 +295,10 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			if (ourPlayer.getState() != "Attack") {
 				// Set our player to be attacking
 				ourPlayer.setState(sprites.Player.State.Attack);
-				ourPlayer.attack();
-				ourPlayer.resetDrawCount();
+				if (Enemy.activeEnemies.size() != 0 && Enemy.enemies.size() != 0) {
+					ourPlayer.attack();
+					ourPlayer.resetDrawCount();
+				}
 			}
 			ourPlayer.lockState();
 			ourPlayer.lockFacing();
