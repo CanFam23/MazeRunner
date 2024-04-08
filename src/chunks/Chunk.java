@@ -110,7 +110,9 @@ public class Chunk implements GameVariables {
 	public void draw(Graphics2D g) {
 		for (int i = 0; i < blocks.length; i++) {
 			for (int j = 0; j < blocks[i].length; j++) {
-				blocks[i][j].draw(g, xPosition, yPosition);
+				 if (blocks[i][j] != null) { 
+					 blocks[i][j].draw(g, xPosition, yPosition);
+				 }
 			}
 		}
 	}

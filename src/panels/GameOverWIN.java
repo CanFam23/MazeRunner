@@ -91,6 +91,12 @@ public class GameOverWIN extends JPanel {
     public boolean isGameOverRunning() {
         return isRunning;
     }
+    /**
+     * Returns true if the game over panel is running, false otherwise.
+     */
+    public void setIsGameOverRunning(boolean t) {
+        isRunning = t;
+    }
 	
 //	/**
 //	 * Main method
