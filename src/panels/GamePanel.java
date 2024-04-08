@@ -96,7 +96,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		this.addKeyListener(keyH);
 		this.setFocusable(true);
 
-		cmanager = new ChunkManager();
+		cmanager = ChunkManager.getInstance();
 		cmanager.loadLevel(current_level);
 
 		// Create our player and load the images
@@ -287,12 +287,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.updateCoords(dx, dy);
 		if (!ourPlayer.isStateLocked()) {
 			ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
-		}
-		
-		if(ourPlayer.getState().equals("Attack")) {
-			ourPlayer.attacking();
-		}
-		
+		} 
 		if (keyH.spacePressed) {
 			if (ourPlayer.getState() != "Attack") {
 				// Set our player to be attacking

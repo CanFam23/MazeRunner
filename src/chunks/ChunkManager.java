@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -37,37 +39,25 @@ import sprites.GhostFactory;
  * @see Chunk
  */
 public class ChunkManager implements GameVariables {
-	/**
-	 * Update the offsets.
-	 * 
-	 * @param dx The number to update x offset by.
-	 * @param dy The number to update y offset by.
-	 */
-	public static void updateOffset(int dx, int dy) {
-		xOffset += dx;
-		yOffset += dy;
-	}
-	
-	/**
-	 * Resets the offset.
-	 */
-	public static void resetOffset() {
-		xOffset = 0;
-		yOffset = 0;
-	}
-	
 	/** List of chunks currently visible on the screen. */
-	public static final List<Chunk> activeChunks = new ArrayList<>();
+	public static final Set<Chunk> activeChunks = new HashSet<>();
 	
 	/** File location, should always be in data folder. */
 	private static final String FILE_LOCATION = "data/";
 	
 	/**
+	 * The current instance of ChunkManager.
+	 */
+	private static ChunkManager single_instance = null;
+	
+	/**
 	 * The x offset of the maze from it's starting position.
+	 * This is public so other classes can access it, like Player and Enemy
 	 */
 	public static int xOffset = 0;
 	/**
 	 * The y offset of the maze from it's starting position.
+	 * This is public so other classes can access it, like Player and Enemy
 	 */
 	public static int yOffset = 0;
 	
@@ -112,6 +102,50 @@ public class ChunkManager implements GameVariables {
 	
 	private final EnemyFactory mageCreator = new MageFactory();
 	private final EnemyFactory ghostCreator = new GhostFactory();
+	
+	/**
+	 * Constructor for ChunkManager. This is private because
+	 * ChunkManager is a singleton, and only one instance of 
+	 * ChunkManager can exist at a time.
+	 */
+	private ChunkManager() {
+		
+	}
+	
+	/**
+	 * Makes a new instance of ChunkManager.
+	 * Chunk manager is a singleton, which means only
+	 * one instance of ChunkManager can exist at a time. 
+	 * ChunkManager is a singleton because we only need one instance of it
+	 * for our game, and don't want multiple instances to be made. 
+	 * 
+	 * @return The current instance of ChunkManager.
+	 */
+	public static synchronized ChunkManager getInstance(){
+        if (single_instance == null)
+            single_instance = new ChunkManager();
+ 
+        return single_instance;
+    }
+	
+	/**
+	 * Update the offsets.
+	 * 
+	 * @param dx The number to update x offset by.
+	 * @param dy The number to update y offset by.
+	 */
+	public static void updateOffset(int dx, int dy) {
+		xOffset += dx;
+		yOffset += dy;
+	}
+	
+	/**
+	 * Resets the offset.
+	 */
+	public static void resetOffset() {
+		xOffset = 0;
+		yOffset = 0;
+	}
 
 	/**
 	 * Loads level from levelNum and creates a 2D array of chunks, which represent
@@ -127,7 +161,7 @@ public class ChunkManager implements GameVariables {
 			final String[] levelStrings = input.nextLine().split(":")[1].split("x"); // Save the dimension of the chunks
 																						// - example: (x chunks, y
 																						// chunks)
-			levelXDimension = Integer.parseInt(levelStrings[0]); // TODO: Possibly change the level description loading
+			levelXDimension = Integer.parseInt(levelStrings[0]);
 
 			levelYDimension = Integer.parseInt(levelStrings[1]);
 			final String[] chunkStrings = input.nextLine().split(":")[1].split("x"); // Save chunk dimensions - example:
@@ -235,7 +269,8 @@ public class ChunkManager implements GameVariables {
 	}
 
 	/**
-	 * Resets ChunkManager.
+	 * Resets ChunkManager. Sets variables like endFound and x/y offsets to their starting values,
+	 * and clears Enemy arrays.
 	 */
 	public void reset() { // TODO Add testing?
 		endFound = false;
@@ -246,16 +281,14 @@ public class ChunkManager implements GameVariables {
 	}
 	
 	/**
-	 * TODO add testing and javadoc
+	 * Adds all enemies currently visible on the screen to activeEnemies Set, so they can be drawn.
+	 * It then moves all enemies that are active.
 	 */
 	public void updateEnemies() {
 		//Get enemies that can be see on the screen right now
 		for (Enemy e : Enemy.enemies) {
-			//e.move(get_offset(),getActiveChunks());
 			if(e.isVisible()) {
-				if(!Enemy.activeEnemies.contains(e)) {
-					Enemy.activeEnemies.add(e);
-				}
+				Enemy.activeEnemies.add(e);
 			}else {
 				Enemy.activeEnemies.remove(e);
 			}
@@ -285,10 +318,7 @@ public class ChunkManager implements GameVariables {
 				temp.updateCoords(dx, dy); // Update the chunk's coordinates
 				// Now, decide if the chunk should be added to or removed from the activeChunks list
 				if (isVisible(temp)) {
-					if (!activeChunks.contains(temp)) {
-						activeChunks.add(temp);
-					}
-
+					activeChunks.add(temp);
 				} else {
 					activeChunks.remove(temp);
 				}
@@ -382,7 +412,7 @@ public class ChunkManager implements GameVariables {
 	 * 
 	 * @return the list of chunks that are visible on the screen.
 	 */
-	public List<Chunk> getActiveChunks() {
+	public Set<Chunk> getActiveChunks() {
 		return activeChunks;
 	}
 	
@@ -417,7 +447,7 @@ public class ChunkManager implements GameVariables {
 
 	public static void main(String[] args) {
 		// Create a chunk manager and load the level data.
-		ChunkManager chunky = new ChunkManager();
+		ChunkManager chunky = ChunkManager.getInstance();
 		chunky.loadLevel(1);
 
 		boolean all_passed = true;
@@ -456,6 +486,39 @@ public class ChunkManager implements GameVariables {
 			System.out.println("The player has been moved way off the screen, no chunks should be visible.");
 			all_passed = false;
 		}
+		
+		chunky.loadLevel(0);
+		
+		/*
+		 * updateEnemies
+		 * endFound
+		 */
+		
+		//Testing resetOffset
+		final int[] preResetOffset = new int[] {xOffset,yOffset};
+		resetOffset();
+		final int[] postResetOffset = new int[] {xOffset,yOffset};
+		if(preResetOffset[0] == postResetOffset[0] && preResetOffset[1] == postResetOffset[1]) {
+			System.out.println("Failed to reset offset.");
+			all_passed = false;
+		}
+		
+		//Testing updateOffset
+		final int[] preUpdateOffset = new int[] {xOffset,yOffset};
+		updateOffset(100,100);
+		final int[] postUpdateOffset = new int[] {xOffset,yOffset};
+		if(preUpdateOffset[0] == postUpdateOffset[0] && preUpdateOffset[1] == postUpdateOffset[1]) {
+			System.out.println("Failed to update offset.");
+			all_passed = false;
+		}
+		
+		//Testing reset
+		chunky.reset();
+		if(chunky.endFound == true || Enemy.activeEnemies.size() != 0 || Enemy.enemies.size() != 0 || preUpdateOffset[0] == postUpdateOffset[0] && preUpdateOffset[1] == postUpdateOffset[1]) {
+			System.out.println("Failed to reset ChunkManager.");
+			all_passed = false;
+		}
+		
 
 		if (all_passed == true) {
 			System.out.println("All cases passed! :)");
