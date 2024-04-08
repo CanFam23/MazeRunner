@@ -24,11 +24,39 @@ import javax.imageio.ImageIO;
  * @see Chunk
  */
 public class ChunkManager implements GameVariables {
+	/**
+	 * Update the offsets.
+	 * 
+	 * @param dx The number to update x offset by.
+	 * @param dy The number to update y offset by.
+	 */
+	public static void updateOffset(int dx, int dy) {
+		xOffset += dx;
+		yOffset += dy;
+	}
+	
+	/**
+	 * Resets the offset.
+	 */
+	public static void resetOffset() {
+		xOffset = 0;
+		yOffset = 0;
+	}
+	
+	/** List of chunks currently visible on the screen. */
+	public static final List<Chunk> activeChunks = new ArrayList<>();
+	
 	/** File location, should always be in data folder. */
 	private static final String FILE_LOCATION = "data/";
-
-	/** List of chunks currently visible on the screen. */
-	private final List<Chunk> activeChunks = new ArrayList<>();
+	
+	/**
+	 * The x offset of the maze from it's starting position.
+	 */
+	protected static int xOffset = 0;
+	/**
+	 * The y offset of the maze from it's starting position.
+	 */
+	protected static int yOffset = 0;
 	
 	/** Width of each chunk. */
 	private int chunkWidth;
@@ -201,7 +229,7 @@ public class ChunkManager implements GameVariables {
 		activeChunks.clear();
 		Enemy.activeEnemies.clear();
 		Enemy.enemies.clear();
-		Enemy.resetOffset();
+		resetOffset();
 	}
 	
 	/**
@@ -222,7 +250,7 @@ public class ChunkManager implements GameVariables {
 		
 		//Move enemies that are active
 		for(Enemy e: Enemy.activeEnemies) {
-			e.move(getActiveChunks());
+			e.move();
 		}
 		
 	}
@@ -236,7 +264,7 @@ public class ChunkManager implements GameVariables {
 	 */
 	public void updateCoords(int dx, int dy) {
 		
-		Enemy.updateOffset(dx,dy);
+		updateOffset(dx,dy);
 		
 		for (int x = 0; x < chunks.length; x++) {
 			for (int y = 0; y < chunks[0].length; y++) {
@@ -295,12 +323,7 @@ public class ChunkManager implements GameVariables {
 	 * @param g2d 2D graphics to draw on.
 	 */
 	public void draw(Graphics2D g2d) {
-		// Loop through all chunks
-//		for (int i = 0; i < chunks.length; i++) {
-//			for (int j = 0; j < chunks[i].length; j++) {
-//				chunks[i][j].draw(g2d);
-//			}
-//		}
+		// Loop through active chunks, those are the only ones we need to draw
 		for(Chunk c: activeChunks) {
 			c.draw(g2d);
 		}
