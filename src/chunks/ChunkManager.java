@@ -65,11 +65,11 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * The x offset of the maze from it's starting position.
 	 */
-	protected static int xOffset = 0;
+	public static int xOffset = 0;
 	/**
 	 * The y offset of the maze from it's starting position.
 	 */
-	protected static int yOffset = 0;
+	public static int yOffset = 0;
 	
 	/** Width of each chunk. */
 	private int chunkWidth;

@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import chunks.Chunk;
+import chunks.ChunkManager;
 import gameTools.GameVariables;
 import gameTools.CollisionDetection;
 
