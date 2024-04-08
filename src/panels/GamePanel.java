@@ -1,4 +1,4 @@
-package src;
+package panels;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -13,7 +13,12 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import src.Player.State;
+import chunks.ChunkManager;
+import gameTools.GameVariables;
+import gameTools.KeyHandler;
+import main.Main;
+import sprites.Player;
+import sprites.Player.State;
 
 /**
  * <p>
@@ -161,15 +166,15 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				System.out.print("");
 				Main.gameOverPanel(true);
 			} else {
-				Main.nextLevel(true);
+				Main.showNextLevelPanel(true);
 				while (Main.otherPanelRunning()) {
 					System.out.print("");
 				}
 			}
-			Main.showGamePanel();
 			reset();
 			current_level++;
 			cmanager.loadLevel(current_level);
+			Main.showGamePanel();
 			Main.resetTime();
 			continueLoop();
 		}
@@ -289,7 +294,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		if (keyH.spacePressed) {
 			if (ourPlayer.getState() != "Attack") {
 				// Set our player to be attacking
-				ourPlayer.setState(State.Attack);
+				ourPlayer.setState(sprites.Player.State.Attack);
+				ourPlayer.attack();
 				ourPlayer.resetDrawCount();
 			}
 			ourPlayer.lockState();

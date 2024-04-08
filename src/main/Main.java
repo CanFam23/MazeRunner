@@ -1,5 +1,4 @@
-package src;
-
+package main;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -14,6 +13,11 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.Timer;
+
+import panels.GameOverLOSE;
+import panels.GameOverWIN;
+import panels.GamePanel;
+import panels.HomeScreen;
 
 /*
  * TODO:
@@ -41,6 +45,7 @@ import javax.swing.Timer;
  * Comment/Test new functions and variables
  * look into changing the collision method
  */
+
 
 /**
  * <p>
@@ -111,6 +116,7 @@ public class Main {
 	    homePanel.getStartButton().addActionListener(new ActionListener() {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
+	        	homePanel.setVisible(false);
 	            runMainCode();
 	        }
 	    });
@@ -257,7 +263,7 @@ public class Main {
 		timer.stop();
 	}
 	
-	public static void nextLevel(boolean show) {
+	public static void showNextLevelPanel(boolean show) {
 		String formattedString = String.format("Completed Level in %d seconds", 120-seconds_left);
 		window.setTitle(formattedString);
 		window.setVisible(true);

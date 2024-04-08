@@ -1,11 +1,11 @@
-package src;
+package blocks;
 
 import java.awt.Color;
 import java.awt.Image;
 
 /**
  * <p>
- * StartingBlock represents the start location of the Maze.
+ * EmptyBlock represents the end location of the Maze.
  * </p>
  * <p>
  * It extends the {@link PositionBlock} class.
@@ -17,10 +17,10 @@ import java.awt.Image;
  * 
  * @since March 2, 2024
  */
-public class StartingBlock extends PositionBlock {
+public class EndBlock extends PositionBlock {
 
 	/**
-	 * Constructs a new StartingBlock with the given parameters.
+	 * Constructs a new EndBlock with the given parameters.
 	 * 
 	 * @param x      The x-coordinate relative to the top-left coordinate of the
 	 *               chunk.
@@ -30,7 +30,8 @@ public class StartingBlock extends PositionBlock {
 	 * @param height The height of the block.
 	 * @param positionBlockImage      The color of the block.
 	 */
-	public StartingBlock(int x, int y, int width, int height, Image positionBlockImage) {
+	public EndBlock(int x, int y, int width, int height, Image positionBlockImage) {
 		super(x, y, width, height, positionBlockImage);
 	}
+
 }
