@@ -1,6 +1,9 @@
 
 package gameTools;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * <p>
  * This interface is used to store constant variables that multiple classes
@@ -48,6 +51,54 @@ public interface GameVariables {
 		/** Constant for no collision between the players hit box and another object. */
 		NO_COLLISION
 	}
+	
+	/**
+	 * Sprite States.
+	 */
+	public enum State {
+		/** Constant for when sprite is idle. */
+		Idle,
+		/** Constant for when sprite is moving. */
+		Move,
+		/** When the sprite is attacking. */
+		Attack,
+		/** When the sprite is dead. */
+		Dead;
+	}
+
+	/**
+	 * The direction the sprite is currently facing.
+	 */
+	public enum Facing {
+		/** Constant for the sprite facing south. */
+		S,
+		/** Constant for the sprite facing southeast. */
+		SE,
+		/** Constant for the sprite facing east. */
+		E,
+		/** Constant for the sprite facing northeast. */
+		NE,
+		/** Constant for the sprite facing north. */
+		N,
+		/** Constant for the sprite facing northwest. */
+		NW,
+		/** Constant for the sprite facing west. */
+		W,
+		/** Constant for the sprite facing southwest. */
+		SW
+	}
+	
+	@SuppressWarnings("serial")
+	final Map<Facing,Facing> oppositeDirection = new HashMap<Facing,Facing>() {{
+        put(Facing.N, Facing.S);
+        put(Facing.S, Facing.N);
+        put(Facing.E, Facing.W);
+        put(Facing.W, Facing.E);
+        put(Facing.NW, Facing.SE);
+        put(Facing.NE, Facing.SW);
+        put(Facing.SE, Facing.NW);
+        put(Facing.SW, Facing.NE);
+    }};
 
 	/** Width of the screen. */
 	final int SCREEN_WIDTH = 1000;

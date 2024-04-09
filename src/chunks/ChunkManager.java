@@ -20,6 +20,7 @@ import blocks.StartingBlock;
 import blocks.Wall;
 import gameTools.CollisionDetection;
 import gameTools.GameVariables;
+import gameTools.GameVariables.Facing;
 import sprites.Enemy;
 import sprites.EnemyFactory;
 import sprites.MageFactory;
@@ -103,6 +104,14 @@ public class ChunkManager implements GameVariables {
 	private final EnemyFactory mageCreator = new MageFactory();
 	private final EnemyFactory ghostCreator = new GhostFactory();
 	
+	private boolean knockback = false;
+	private int knockbackCounter = 0;
+	private final int maxKnockbackCount = 10;
+	private final int knockbackSpeed = 10;
+	private Facing knockbackDir = Facing.N;
+	private int knockbackDx = 0;
+	private int knockbackDy = 0;
+	
 	/**
 	 * Constructor for ChunkManager. This is private because
 	 * ChunkManager is a singleton, and only one instance of 
@@ -145,6 +154,12 @@ public class ChunkManager implements GameVariables {
 	public static void resetOffset() {
 		xOffset = 0;
 		yOffset = 0;
+	}
+	
+	public static void playerHit() {
+		if(single_instance != null) {
+			single_instance.handlePlayerHit();
+		}
 	}
 
 	/**
@@ -283,6 +298,17 @@ public class ChunkManager implements GameVariables {
 		Enemy.activeEnemies.clear();
 		Enemy.enemies.clear();
 		resetOffset();
+	}
+	
+	public void handlePlayerHit() {
+		System.out.println("Player Hit");
+		if(!knockback) {
+			knockback = true;
+		}
+	}
+	
+	public boolean getKnockback() {
+		return knockback;
 	}
 	
 	/**

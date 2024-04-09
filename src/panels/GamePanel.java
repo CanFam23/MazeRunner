@@ -19,7 +19,6 @@ import gameTools.KeyHandler;
 import main.Main;
 import sprites.Enemy;
 import sprites.Player;
-import sprites.Player.State;
 
 /**
  * <p>
@@ -60,6 +59,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 	/** Speed of player. */
 	private final int speed = 6;
+	
+	private final int[][] DELTAS = new int[][]{{-speed, 0}, {0, -speed}, {0, speed}, {speed, 0}, {speed, speed},{-speed, speed},{speed, -speed},{-speed, -speed}};
 
 	/** Number of levels in game. */
 	private final int NUM_LEVELS = 3;
@@ -284,7 +285,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		if (keyH.leftPressed && !leftCollided) {
 			dx += speed;
 		}
-		cmanager.updateCoords(dx, dy);
+		
 		if (!ourPlayer.isStateLocked()) {
 			ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
 		} 
@@ -293,13 +294,24 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				// Set our player to be attacking
 				ourPlayer.setState(sprites.Player.State.Attack);
 		if (Enemy.activeEnemies.size() != 0 && Enemy.enemies.size() != 0) {
-					ourPlayer.attacking();
+					//ourPlayer.attacking();
 					ourPlayer.resetDrawCount();
 				}
 			}
 			ourPlayer.lockState();
 			ourPlayer.lockFacing();
 		}
+		if(ourPlayer.getState().equals("Attack")) {
+			ourPlayer.attacking();
+		}
+		
+		
+		if(ourPlayer.hitEnemies() && !ourPlayer.getState().equals("Attack")) {
+			ourPlayer.handleAttack();
+		}
+		
+		cmanager.updateCoords(dx, dy);
+
 	}
 
 	/**
