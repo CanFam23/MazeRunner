@@ -33,19 +33,80 @@ import gameTools.GameVariables;
  */
 public class PositionBlock implements GameVariables {
 
-	/** X coordinate of the block. */
-	protected int x;
-	/** Y coordinate of the block. */
-	protected int y;
+	/**
+	 * Main method
+	 * 
+	 * @param args arguements passed
+	 */
+	public static void main(String[] args) {
+		boolean allPassed = true;
 
-	/** Width of the block. */
-	protected int width;
+		final int initialX = 0;
+		final int initialY = 0;
+
+		VolatileImage vImage = null;
+		
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+        GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
+		
+		try {
+			vImage = graphicsConfig.createCompatibleVolatileImage(WALL_WIDTH, WALL_HEIGHT);
+			Graphics2D g = vImage.createGraphics();
+			final BufferedImage positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
+			g.drawImage(positionBlockImage, 0, 0, null);
+			g.dispose();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// Testing a position block
+		PositionBlock pb = new PositionBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
+
+		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "????");
+
+		// Testing an empty block
+		pb = new EmptyBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
+
+		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "empt");
+
+		// Testing a wall
+		pb = new Wall(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
+
+		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "wall");
+
+		// Testing a starting block
+		pb = new StartingBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
+
+		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "strt");
+
+		// Testing a end block
+		pb = new EndBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
+
+		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "EndB");
+
+		if (allPassed) {
+			System.out.println("All cases passed!");
+		} else {
+			System.err.println("At least 1 case failed!");
+		}
+	}
 
 	/** Height of the block. */
 	protected int height;
 
 	/** Block Image. */
 	private VolatileImage image;
+
+	/** Width of the block. */
+	protected int width;
+
+	/** X coordinate of the block. */
+	protected int x;
+
+	/** Y coordinate of the block. */
+	protected int y;
 
 	/**
 	 * Constructs a new StartingBlock with the given parameters.
@@ -67,28 +128,22 @@ public class PositionBlock implements GameVariables {
 	}
 
 	/**
-	 * Updates block coordinates.
+	 * Draws block on g.
 	 *
-	 * @param dx the integer to update x by.
-	 * @param dy the integer to update y by.
+	 * @param g              2DGraphics to draw on.
+	 * @param chunkXPosition x coordinate of chunk.
+	 * @param chunkYPosition y coordinate of chunk.
 	 */
-	public void updateCoords(int dx, int dy) {
-		this.x += dx;
-		this.y += dy;
+	public void draw(Graphics2D g, int chunkXPosition, int chunkYPosition) {
+		g.drawImage(image, x + chunkXPosition, y + chunkYPosition, width, height, null);
 	}
 
 	/**
-	 * @return the coordinates of the block.
-	 */
-	public int[] getCoords() {
-		return new int[] { x, y };
-	}
-	
-	
-	/**
+	 * Creates the hitbox for the positionBlock and returns it.
 	 * 
-	 * TODO ADD tessting
-	 * @return
+	 * @param xPosition X Position to base coordinates off of.
+	 * @param yPosition Y Position to base coordinates off of.
+	 * @return A 2D int[] array that represent the hitbox of the block.
 	 */
 	public int[][] getBounds(int xPosition, int yPosition) {
 		final int newX = x + xPosition;
@@ -98,18 +153,22 @@ public class PositionBlock implements GameVariables {
 				newX + WALL_WIDTH + HITBOX_BUFFER_AMOUNT, newX - HITBOX_BUFFER_AMOUNT };
 		final int[] wallYCoords = new int[] { newY - HITBOX_BUFFER_AMOUNT, newY - HITBOX_BUFFER_AMOUNT,
 				newY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT, newY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT };
-		
-		return new int[][] {wallXCoords,wallYCoords};
+
+		return new int[][] { wallXCoords, wallYCoords };
 	}
 
 	/**
-	 * @return width of block.
+	 * Gets coordinates of block.
+	 * 
+	 * @return the coordinates of the block.
 	 */
-	public int getWidth() {
-		return width;
+	public int[] getCoords() {
+		return new int[] { x, y };
 	}
 
 	/**
+	 * Gets height of block.
+	 * 
 	 * @return height of block.
 	 */
 	public int getHeight() {
@@ -117,6 +176,17 @@ public class PositionBlock implements GameVariables {
 	}
 
 	/**
+	 * Gets width of block.
+	 * 
+	 * @return width of block.
+	 */
+	public int getWidth() {
+		return width;
+	}
+
+	/**
+	 * Converts block to string.
+	 * 
 	 * @return string version of block.
 	 */
 	public String toString() {
@@ -133,15 +203,14 @@ public class PositionBlock implements GameVariables {
 	}
 
 	/**
-	 * Draws block on g.
+	 * Updates block coordinates.
 	 *
-	 * @param g              2DGraphics to draw on.
-	 * @param chunkXPosition x coordinate of chunk.
-	 * @param chunkYPosition y coordinate of chunk.
+	 * @param dx the integer to update x by.
+	 * @param dy the integer to update y by.
 	 */
-	public void draw(Graphics2D g, int chunkXPosition, int chunkYPosition) {
-		g.drawImage(image, x + chunkXPosition,  y + chunkYPosition, width, height, null);
-		// g.drawImage(image, x + chunkXPosition, y + chunkYPosition, width, height, null); // To draw a BufferedImage or regular Image.
+	public void updateCoords(int dx, int dy) {
+		this.x += dx;
+		this.y += dy;
 	}
 
 	/**
@@ -197,68 +266,22 @@ public class PositionBlock implements GameVariables {
 			allPassed = false;
 		}
 
+		final int[] wallXCoords = new int[] { initX - HITBOX_BUFFER_AMOUNT, initX + WALL_WIDTH + HITBOX_BUFFER_AMOUNT,
+				initX + WALL_WIDTH + HITBOX_BUFFER_AMOUNT, initX - HITBOX_BUFFER_AMOUNT };
+		final int[] wallYCoords = new int[] { initY - HITBOX_BUFFER_AMOUNT, initY - HITBOX_BUFFER_AMOUNT,
+				initY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT, initY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT };
+		final int[][] checkCoords = new int[][] {wallXCoords,wallYCoords};
+		
+		final int[][] coords = getBounds(0,0);
+		for(int r = 0; r < coords.length; r++) {
+			for(int c = 0; c < coords[0].length; c++) {
+				if(checkCoords[r][c] != coords[r][c]) {
+					System.err.println("Hitbox coords are incorrect!");
+					allPassed = false;
+				}
+			}
+		}
+
 		return allPassed;
-	}
-
-	/**
-	 * Main method
-	 * 
-	 * @param args arguements passed
-	 */
-	public static void main(String[] args) {
-		JFrame myFrame = new JFrame();
-		
-		boolean allPassed = true;
-
-		final int initialX = 0;
-		final int initialY = 0;
-
-		VolatileImage vImage = null;
-		
-		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice device = env.getDefaultScreenDevice();
-        GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
-		
-		try {
-			vImage = graphicsConfig.createCompatibleVolatileImage(WALL_WIDTH, WALL_HEIGHT);
-			Graphics2D g = vImage.createGraphics();
-			final BufferedImage positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
-			g.drawImage(positionBlockImage, 0, 0, null);
-			g.dispose();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		// Testing a position block
-		PositionBlock pb = new PositionBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
-
-		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "????");
-
-		// Testing an empty block
-		pb = new EmptyBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
-
-		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "empt");
-
-		// Testing a wall
-		pb = new Wall(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
-
-		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "wall");
-
-		// Testing a starting block
-		pb = new StartingBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
-
-		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "strt");
-
-		// Testing a end block
-		pb = new EndBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
-
-		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "EndB");
-
-		if (allPassed) {
-			System.out.println("All cases passed!");
-		} else {
-			System.err.println("At least 1 case failed!");
-		}
 	}
 }
