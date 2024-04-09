@@ -225,7 +225,7 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * TODO add testing and javadoc
 	 */
-	public void updateEnemies() {
+	public synchronized void updateEnemies() {
 		//Get enemies that can be see on the screen right now
 		for (Enemy e : Enemy.enemies) {
 			//e.move(get_offset(),getActiveChunks());
@@ -312,11 +312,13 @@ public class ChunkManager implements GameVariables {
 	 * 
 	 * @param g2d 2D graphics to draw on.
 	 */
-	public void draw(Graphics2D g2d) {
-		// Loop through all chunks
-		for (int i = 0; i < chunks.length; i++) {
-			for (int j = 0; j < chunks[i].length; j++) {
-				chunks[i][j].draw(g2d);
+	public synchronized void draw(Graphics2D g2d) {		
+		for (Chunk c : activeChunks) {
+			PositionBlock[][] pbs = c.getBlocks();
+			for (int y = 0; y < pbs.length; y++) {
+				for (int x = 0; x < pbs[0].length; x++) {
+					pbs[y][x].draw(g2d, c.getXPosition(), c.getYPosition());
+				}
 			}
 		}
 	}
