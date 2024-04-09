@@ -219,12 +219,13 @@ public class ChunkManager implements GameVariables {
 			}
 
 			// Load Images
-			VolatileImage positionBlockImage = null;
+			VolatileImage EmptyImage = null;
 			try {
-				positionBlockImage = convertToVolatile(ImageIO.read(new File("images/emptyBlock.png")));
+				EmptyImage = convertToVolatile(ImageIO.read(new File("images/emptyBlock.png")));
 			} catch (IOException e) {
 				System.err.println("Failed to load emptyBlock.png!");
 			}
+			EmptyBlock.setImage(EmptyImage);
 
 			VolatileImage wallImage = null;
 			try {
@@ -232,6 +233,7 @@ public class ChunkManager implements GameVariables {
 			} catch (IOException e) {
 				System.err.println("Failed to load wall.png!");
 			}
+			Wall.setImage(wallImage);
 
 			VolatileImage startImage = null;
 			try {
@@ -239,13 +241,15 @@ public class ChunkManager implements GameVariables {
 			} catch (IOException e) {
 				System.err.println("Failed to load startBlock.png!");
 			}
+			StartingBlock.setImage(startImage);
+			
 			VolatileImage endImage = null;
-
 			try {
 				endImage = convertToVolatile(ImageIO.read(new File("images/endBlock.png")));
 			} catch (IOException e) {
 				System.err.println("Failed to load endBlock.png!");
 			}
+			EndBlock.setImage(endImage);
 
 			// Load the level data
 			int yPosition = 0;
@@ -261,29 +265,26 @@ public class ChunkManager implements GameVariables {
 
 					if (inputData[xPosition].equals("0")) { // Create an empty block
 						pb = new EmptyBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT,
-								positionBlockImage);
+								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT);
 					} else if (inputData[xPosition].equals("1")) { // Create a wall
 						pb = new Wall((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, wallImage);
+								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT);
 					} else if (inputData[xPosition].equals("2")) { // Create a starting block
 						pb = new StartingBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, startImage);
+								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT);
 						isStartingChunk = true;
 					} else if (inputData[xPosition].equals("3")) { // Create an end block
 						pb = new EndBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT, endImage);
+								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT);
 						isEndChunk = true;
 					} else if (inputData[xPosition].equals("4")) { // Puts a ghost in this space, empty block behind it
 						pb = new EmptyBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT,
-								positionBlockImage);
+								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT);
 						Enemy.enemies.add(ghostCreator.createEnemy(xPosition * WALL_WIDTH + WALL_WIDTH / 4,
 								yPosition * WALL_HEIGHT + WALL_HEIGHT / 4));
 					} else if (inputData[xPosition].equals("5")) { // Puts a mage in this space, empty block behind it
 						pb = new EmptyBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT,
-								positionBlockImage);
+								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT);
 						Enemy.enemies.add(mageCreator.createEnemy(xPosition * WALL_WIDTH + WALL_WIDTH / 4,
 								yPosition * WALL_HEIGHT + WALL_HEIGHT / 4));
 					}
@@ -458,7 +459,7 @@ public class ChunkManager implements GameVariables {
 	 * @param dx integer to change x by.
 	 * @param dy integer to change y by.
 	 */
-	public void updateCoords(int dx, int dy) {
+	public synchronized void updateCoords(int dx, int dy) {
 
 		updateOffset(dx, dy);
 
