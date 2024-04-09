@@ -333,18 +333,20 @@ public class ChunkManager implements GameVariables {
 
 			switch (knockbackDir) {
 			case N:
-				knockbackDy = knockbackSpeed;
+			case NW:
+			case NE:
+				knockbackDy = -knockbackSpeed;
 				break;
 			case S:
-				knockbackDy = -knockbackSpeed;
+			case SW:
+			case SE:
+				knockbackDy = knockbackSpeed;
 				break;
 			case E:
 				knockbackDx = -knockbackSpeed;
 				break;
 			case W:
 				knockbackDx = knockbackSpeed;
-				break;
-			default:
 				break;
 			}
 		}
