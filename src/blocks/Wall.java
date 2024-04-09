@@ -1,6 +1,5 @@
 package blocks;
 
-import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.VolatileImage;
 
@@ -23,11 +22,13 @@ public class Wall extends PositionBlock {
 	/**
 	 * Constructs a new Wall with given parameters.
 	 * 
-	 * @param x      coordinate relative to the top left coordinate of the chunk.
-	 * @param y      coordinate relative to the top left coordinate of the chunk.
-	 * @param width  of the block.
-	 * @param height of the block.
-	 * @param positionBlockImage      color of the block.
+	 * @param x                  coordinate relative to the top left coordinate of
+	 *                           the chunk.
+	 * @param y                  coordinate relative to the top left coordinate of
+	 *                           the chunk.
+	 * @param width              of the block.
+	 * @param height             of the block.
+	 * @param positionBlockImage color of the block.
 	 */
 	public Wall(int x, int y, int width, int height, VolatileImage positionBlockImage) {
 		super(x, y, width, height, positionBlockImage);

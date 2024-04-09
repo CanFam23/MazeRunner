@@ -1,6 +1,5 @@
 package blocks;
 
-import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.VolatileImage;
 
@@ -23,13 +22,13 @@ public class StartingBlock extends PositionBlock {
 	/**
 	 * Constructs a new StartingBlock with the given parameters.
 	 * 
-	 * @param x      The x-coordinate relative to the top-left coordinate of the
-	 *               chunk.
-	 * @param y      The y-coordinate relative to the top-left coordinate of the
-	 *               chunk.
-	 * @param width  The width of the block.
-	 * @param height The height of the block.
-	 * @param positionBlockImage      The color of the block.
+	 * @param x                  The x-coordinate relative to the top-left
+	 *                           coordinate of the chunk.
+	 * @param y                  The y-coordinate relative to the top-left
+	 *                           coordinate of the chunk.
+	 * @param width              The width of the block.
+	 * @param height             The height of the block.
+	 * @param positionBlockImage The color of the block.
 	 */
 	public StartingBlock(int x, int y, int width, int height, VolatileImage positionBlockImage) {
 		super(x, y, width, height, positionBlockImage);
