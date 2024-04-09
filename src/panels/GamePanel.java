@@ -15,6 +15,8 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import blocks.PositionBlock;
+import chunks.Chunk;
 import chunks.ChunkManager;
 import gameTools.GameVariables;
 import gameTools.KeyHandler;
@@ -281,8 +283,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 
 		final Graphics2D g2 = (Graphics2D) g;
-
-		// Draw map
+		
+		// Draw the active chunks on the map by extracting all the relevant position blocks
 		cmanager.draw(g2);
 		cmanager.drawEnemies(g2);
 
