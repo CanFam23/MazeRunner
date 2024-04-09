@@ -10,8 +10,10 @@ import java.util.Map;
  */
 public class Mage extends Enemy {
 	
-	public Mage(int x, int y, Map<State, List<BufferedImage>> images) {
+	public Mage(int x, int y, Map<State, List<BufferedImage>> images, int[] PADDING, int attackImages) {
 		this.images = images;
+		this.PADDING = PADDING;
+		this.NUMATTACKINGIMAGES = attackImages;
 		WIDTH = 70;
 		HEIGHT = 70;
 		position_x = x;

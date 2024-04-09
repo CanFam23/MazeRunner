@@ -25,6 +25,9 @@ public abstract class EnemyFactory {
 	public int BOTTOM_PADDING;
 	public int LEFT_PADDING;
 	
+	/** Padding will hold all the padding values which will be passed to the enemy */
+	public int[] PADDING;
+	
 	/** load_images should be implemented separately for each enemy */
 	protected abstract void load_images();
 	
@@ -44,9 +47,16 @@ public abstract class EnemyFactory {
 		// Save constants used for sprite sheet loading
 		final int height = spriteSheet.getHeight();
 		final int width = spriteSheet.getWidth();
-		for (int i = 0; i < imageNumber; i++) {
-			BufferedImage img = spriteSheet.getSubimage(LEFT_PADDING, (height / imageNumber) * i + TOP_PADDING, (width - LEFT_PADDING) - RIGHT_PADDING, ((height / imageNumber) - TOP_PADDING) - BOTTOM_PADDING);
-			images.get(playerState).add(img);
+		if (playerState == sprites.Enemy.State.Attack) {
+			for (int i = 0; i < imageNumber; i++) {
+				BufferedImage img = spriteSheet.getSubimage(0, (height / imageNumber) * i, width, height / imageNumber);
+				images.get(playerState).add(img);
+			}
+		} else {
+			for (int i = 0; i < imageNumber; i++) {
+				BufferedImage img = spriteSheet.getSubimage(LEFT_PADDING, (height / imageNumber) * i + TOP_PADDING, (width - LEFT_PADDING) - RIGHT_PADDING, ((height / imageNumber) - TOP_PADDING) - BOTTOM_PADDING);
+				images.get(playerState).add(img);
+			}
 		}
 	}
 }
