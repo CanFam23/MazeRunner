@@ -157,7 +157,6 @@ public abstract class Enemy implements GameVariables {
 	 * All directions the enemy can move.
 	 */
 	protected int[][] DELTAS;
-	protected int displacement = 4;
 
 	/**
 	 * draw count keeps track of how many times draw has been called before

@@ -24,6 +24,11 @@ import gameTools.GameVariables;
  * @see GameVariables
  */
 public class Visibility implements GameVariables {
+	
+	/**
+	 * The current instance of Visibility.
+	 */
+	private static Visibility single_instance = null;
 
 	/** Center x of the screen. */
 	private final int centerX = SCREEN_WIDTH / 2;
@@ -32,18 +37,10 @@ public class Visibility implements GameVariables {
 	private final int centerY = SCREEN_HEIGHT / 2;
 
 	/** Starting radius of the circle. */
-	private final int startingRadius = 500;
-
-	/** The minimum radius the circle is allowed to reach. */
-	private final int minRadius = 175;
+	private final int startingRadius = 400;
 
 	/** Amount to decrease the radius by. */
-	private final int decreaseAmount = 1;
-	
-	/**
-	 * Radius will decrease every 'delay' milliseconds
-	 */
-	private final int delay = startingRadius - minRadius;
+	private final int decreaseAmount = 100;
 
 	/**
 	 * New 'blank' color that is transparent. Used to make the gradient go from
@@ -60,39 +57,46 @@ public class Visibility implements GameVariables {
 
 	/** radius that will be updated and used to draw the circle. */
 	private int radius = startingRadius;
+	
+	GeneralPath rightSide = new GeneralPath();
+	
+	GeneralPath leftSide = new GeneralPath();
+	
+	RadialGradientPaint p;
 
 	/**
 	 * Constructs a new Visibility object.
 	 */
-	public Visibility() {
-		
+	private Visibility() {
+		reset();
 	}
 	
+	/**
+	 * Makes a new instance of Visibility.
+	 * Visibility is a singleton, which means only
+	 * one instance of Visibility can exist at a time. 
+	 * Visibility is a singleton because we only need one instance of it
+	 * for our game, and don't want multiple instances to be made. 
+	 * 
+	 * @return The current instance of ChunkManager.
+	 */
+	public static synchronized Visibility getInstance(){
+        if (single_instance == null)
+            single_instance = new Visibility();
+ 
+        return single_instance;
+    }
+	
 	public void updateRadius() {
-		//System.out.println(System.currentTimeMillis());
-		if (radius > minRadius && System.currentTimeMillis() % delay <= 20) {
-			radius -= decreaseAmount;
-		}
+		radius -= decreaseAmount;
 	}
 
 	/**
 	 * Resets radius.
 	 */
 	public void reset() {
-		radius = startingRadius;
-	}
-
-	/**
-	 * Draws the visibility circle around the player. Uses GeneralPath objects to
-	 * make it look like there is a circle around the player.
-	 * 
-	 * @param g2d the graphics to draw on.
-	 */
-	public void drawVision(Graphics2D g2d) {
-		final RadialGradientPaint p = new RadialGradientPaint(centerX, centerY, radius * 2, dist, colors);
-
 		// Drawing the right side
-		final GeneralPath rightSide = new GeneralPath();
+		rightSide = new GeneralPath();
 		// Move to the starting point (top point)
 		rightSide.moveTo(centerX, centerY - radius);
 
@@ -120,7 +124,7 @@ public class Visibility implements GameVariables {
 		rightSide.closePath();
 
 		// Left side general path
-		final GeneralPath leftSide = new GeneralPath();
+		leftSide = new GeneralPath();
 
 		// Move to the starting point (top point)
 		leftSide.moveTo(centerX, centerY - radius);
@@ -147,7 +151,17 @@ public class Visibility implements GameVariables {
 		leftSide.lineTo(centerX, centerY - radius);
 
 		leftSide.closePath();
+		
+		p = new RadialGradientPaint(centerX, centerY, radius * 2, dist, colors);
+	}
 
+	/**
+	 * Draws the visibility circle around the player. Uses GeneralPath objects to
+	 * make it look like there is a circle around the player.
+	 * 
+	 * @param g2d the graphics to draw on.
+	 */
+	public void drawVision(Graphics2D g2d) {
 		g2d.setPaint(p);
 		g2d.fill(rightSide);
 		g2d.fill(leftSide);
