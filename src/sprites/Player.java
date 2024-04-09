@@ -38,40 +38,6 @@ public class Player implements GameVariables {
 	private static final String FILE_LOCATION = "images/";
 
 	/**
-	 * Player States.
-	 */
-	public enum State {
-		/** Constant for when player is idle. */
-		Idle,
-		/** Constant for when player is moving. */
-		Move,
-		/** When the player is attacking. */
-		Attack;
-	}
-
-	/**
-	 * The direction the player is currently facing.
-	 */
-	public enum Facing {
-		/** Constant for the player facing south. */
-		S,
-		/** Constant for the player facing southeast. */
-		SE,
-		/** Constant for the player facing east. */
-		E,
-		/** Constant for the player facing northeast. */
-		NE,
-		/** Constant for the player facing north. */
-		N,
-		/** Constant for the player facing northwest. */
-		NW,
-		/** Constant for the player facing west. */
-		W,
-		/** Constant for the player facing southwest. */
-		SW
-	}
-
-	/**
 	 *  Tracks the health of our player
 	 */
     private int health = 8000;
@@ -127,16 +93,18 @@ public class Player implements GameVariables {
 	
 	private Set<Enemy> hitEnemies = new HashSet<>();
 	
+	private Facing attackFacing = Facing.N;
+	
 	public Player() {
 		//Add values to hitboxes
 		hitboxes.put(Facing.E, new Rectangle(PLAYER_X + PLAYER_WIDTH/2, PLAYER_Y, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
 		hitboxes.put(Facing.W, new Rectangle(PLAYER_X - PLAYER_WIDTH, PLAYER_Y, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
-		hitboxes.put(Facing.N, new Rectangle(PLAYER_X, PLAYER_Y-PLAYER_HEIGHT/2, PLAYER_WIDTH, PLAYER_HEIGHT));
-		hitboxes.put(Facing.S, new Rectangle(PLAYER_X, PLAYER_Y+PLAYER_HEIGHT/2, PLAYER_WIDTH, PLAYER_HEIGHT));
-		hitboxes.put(Facing.NE, new Rectangle(PLAYER_X+ PLAYER_WIDTH/2, PLAYER_Y-PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.25), PLAYER_HEIGHT));
-		hitboxes.put(Facing.SE, new Rectangle(PLAYER_X+ PLAYER_WIDTH/2, PLAYER_Y+PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.25), PLAYER_HEIGHT));
-		hitboxes.put(Facing.NW, new Rectangle(PLAYER_X- PLAYER_WIDTH, PLAYER_Y-PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.25), PLAYER_HEIGHT));
-		hitboxes.put(Facing.SW, new Rectangle(PLAYER_X- PLAYER_WIDTH, PLAYER_Y+PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.25), PLAYER_HEIGHT));
+		hitboxes.put(Facing.N, new Rectangle(PLAYER_X, PLAYER_Y-PLAYER_HEIGHT, PLAYER_WIDTH, (int) (PLAYER_HEIGHT*1.5)));
+		hitboxes.put(Facing.S, new Rectangle(PLAYER_X, PLAYER_Y+PLAYER_HEIGHT/2, PLAYER_WIDTH, (int) (PLAYER_HEIGHT*1.5)));
+		hitboxes.put(Facing.NE, new Rectangle(PLAYER_X+ PLAYER_WIDTH/2, PLAYER_Y-PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
+		hitboxes.put(Facing.SE, new Rectangle(PLAYER_X+ PLAYER_WIDTH/2, PLAYER_Y+PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
+		hitboxes.put(Facing.NW, new Rectangle(PLAYER_X- PLAYER_WIDTH, PLAYER_Y-PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
+		hitboxes.put(Facing.SW, new Rectangle(PLAYER_X- PLAYER_WIDTH, PLAYER_Y+PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
 
 	}
 
@@ -219,26 +187,21 @@ public class Player implements GameVariables {
 		}
 	}
 	
+	/**
+	 * TODO JavaDoc and testing
+	 */
 	public void attacking() {
-		Rectangle hitbox = hitboxes.get(currentFacing);
-		int x = (int) hitbox.getX();
-		int y = (int) hitbox.getY();
-		int width = (int) hitbox.getHeight();
-		int height = (int) hitbox.getWidth();
-		
-		final int[] xCoords = new int[] { x, x + width,
-				x + width, x };
-		final int[] yCoords = new int[] { y, y,
-				y + height, y + height };
-		
+		final Rectangle hitbox = hitboxes.get(currentFacing);
 		if (Enemy.activeEnemies.size() != 0 && Enemy.enemies.size() != 0) {
 			for(Enemy e: Enemy.activeEnemies) {
 				final int[] eCoords = e.getPosition();
-				final int[] eXCoords = new int[] {eCoords[0],eCoords[0]+e.getWidth(),eCoords[0]+e.getWidth(),eCoords[0]};
-				final int[] eYCoords = new int[] {eCoords[1],eCoords[1],eCoords[1]+e.getHeight(),eCoords[1]+e.getHeight()};
-				if(CollisionDetection.getCollision(xCoords, yCoords, eXCoords, eYCoords) != Collision.NO_COLLISION) {
-//					System.out.println("Hit Enemy " + e);
-					e.subtractHitCount(1);
+				final Rectangle eHitbox = new Rectangle(eCoords[0],eCoords[1],e.getWidth(),e.getHeight());
+				if(hitbox.intersects(eHitbox)) {
+//					e.subtractHitCount(1);
+//					e.knockback(currentFacing);
+//					System.out.println("Attacking enemy " + e);
+					hitEnemies.add(e);
+					attackFacing = currentFacing;
 					break;
 				}
 			}
@@ -246,12 +209,16 @@ public class Player implements GameVariables {
 	}
 	
 	public void handleAttack() {
-		if(hitEnemies.size() != 0 && currentState == State.Attack && attackCount == framesPerSwitch * 2) {
-			Enemy.enemiesHit(hitEnemies);
-			System.out.println("Hit Enemy ");
-
-			hitEnemies.clear();
+		for(Enemy e: hitEnemies) {
+//			e.subtractHitCount(1);
+			e.knockback(attackFacing);
+			System.out.println("Attacking enemy " + e);
 		}
+		hitEnemies.clear();
+	}
+	
+	public boolean hitEnemies() {
+		return hitEnemies.size() != 0;
 	}
 
 	/**
@@ -334,14 +301,14 @@ public class Player implements GameVariables {
 		
 		if (drawCount < framesPerSwitch - 1) { // For x ticks of the game loop, draw the same image.
 			g.drawImage(myImage, PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment, PLAYER_WIDTH + imageXAdjustment * 2,PLAYER_HEIGHT + imageYAdjustment * 2, null);
-			g.setColor(Color.red);
-			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
+//			g.setColor(Color.red);
+//			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 			drawCount++;
 		} else { // Then, switch the image to the next one in the sequence.
 			BufferedImage img = images.get(currentState).get(currentFacing).remove(0);
 			g.drawImage(img, PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment, PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
-			g.setColor(Color.red);
-			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
+//			g.setColor(Color.red);
+//			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 			images.get(currentState).get(currentFacing).add(img);
 			drawCount = 0;
 		}

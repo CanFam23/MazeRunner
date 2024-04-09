@@ -19,6 +19,7 @@ public class Mage extends Enemy {
 		position_x = x;
 		position_y = y;
 		speed = 2;
+		defaultSpeed = speed;
 		roamingSpeed = speed/2;
 		DELTAS = new int[][]{{-speed, 0}, {0, -speed}, {0, speed}, {speed, 0}, {speed, speed},{-speed, speed},{speed, -speed},{-speed, -speed}};
 	}
