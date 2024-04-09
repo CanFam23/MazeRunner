@@ -1,5 +1,6 @@
 package blocks;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.VolatileImage;
 
@@ -19,6 +20,8 @@ import java.awt.image.VolatileImage;
  */
 public class EndBlock extends PositionBlock {
 
+	private static VolatileImage image;
+	
 	/**
 	 * Constructs a new EndBlock with the given parameters.
 	 * 
@@ -30,8 +33,16 @@ public class EndBlock extends PositionBlock {
 	 * @param height             The height of the block.
 	 * @param positionBlockImage The color of the block.
 	 */
-	public EndBlock(int x, int y, int width, int height, VolatileImage positionBlockImage) {
-		super(x, y, width, height, positionBlockImage);
+	public EndBlock(int x, int y, int width, int height) {
+		super(x, y, width, height);
 	}
 
+	public static void setImage(VolatileImage positionBlockImage) {
+		image = positionBlockImage;
+	}
+	
+	@Override
+	public void draw(Graphics2D g, int chunkXPosition, int chunkYPosition) {
+		g.drawImage(image, x + chunkXPosition, y + chunkYPosition, width, height, null);
+	}
 }

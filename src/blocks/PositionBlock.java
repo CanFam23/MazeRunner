@@ -60,29 +60,34 @@ public class PositionBlock implements GameVariables {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		EmptyBlock.setImage(vImage);
+		EndBlock.setImage(vImage);
+		Wall.setImage(vImage);
+		StartingBlock.setImage(vImage);
 
 		// Testing a position block
-		PositionBlock pb = new PositionBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
+		PositionBlock pb = new PositionBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "????");
 
 		// Testing an empty block
-		pb = new EmptyBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
+		pb = new EmptyBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "empt");
 
 		// Testing a wall
-		pb = new Wall(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
+		pb = new Wall(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "wall");
 
 		// Testing a starting block
-		pb = new StartingBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
+		pb = new StartingBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "strt");
 
 		// Testing a end block
-		pb = new EndBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
+		pb = new EndBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "EndB");
 
@@ -96,8 +101,8 @@ public class PositionBlock implements GameVariables {
 	/** Height of the block. */
 	protected int height;
 
-	/** Block Image. */
-	private VolatileImage image;
+	/** Block Image. PositionBlock should never directly be drawn */
+	private VolatileImage image = null;
 
 	/** Width of the block. */
 	protected int width;
@@ -119,10 +124,9 @@ public class PositionBlock implements GameVariables {
 	 * @param height The height of the block.
 	 * @param c      The color of the block.
 	 */
-	public PositionBlock(int x, int y, int width, int height, VolatileImage image) {
+	public PositionBlock(int x, int y, int width, int height) {
 		this.x = x;
 		this.y = y;
-		this.image = image;
 		this.width = width;
 		this.height = height;
 	}
