@@ -116,6 +116,7 @@ public abstract class Enemy implements GameVariables {
 	 * How close the player can get to the enemy horizontally before it goes towards
 	 * the player.
 	 */
+
 	protected static final int X_DETECTION_RANGE = SCREEN_WIDTH / 3;
 	/**
 	 * How close the player can get to the enemy vertically before it goes towards
@@ -124,7 +125,7 @@ public abstract class Enemy implements GameVariables {
 	protected static final int Y_DETECTION_RANGE = (int) (SCREEN_HEIGHT / 2.5);
 
 	/** How many times the enemy is drawn before the next image is selected . */
-	protected static final int DRAW_FRAMES = 10;
+	protected static final int DRAW_FRAMES = 5;
 
 	/** Width of enemy. */
 	protected int WIDTH;
@@ -141,6 +142,8 @@ public abstract class Enemy implements GameVariables {
 
 	/** Speed of enemy. */
 	protected int speed;
+	
+	protected int NUMATTACKINGIMAGES;
 
 	/**
 	 * Speed used when not tracking player.
@@ -163,16 +166,24 @@ public abstract class Enemy implements GameVariables {
 	 * switching to the next image in the list.
 	 */
 	protected int drawCount = 0;
-
+	/** attackCount keeps track of the number of frames that have passed since attacking has started. */
+	protected int attackCount = 0;
+	
+	/** stateLocked and facingLocked decides if the enemy should continue to change the direction or the state */
+	protected boolean stateLocked = false;
+	protected boolean facingLocked = false;
+	
 	// Set initial direction faced and sprite state
-	protected State currentState = State.Idle;
+	protected State currentState = State.Attack;
 	protected Facing currentFacing = Facing.E;
 	/**
 	 * Holds all Buffered images for each state. Images do not change based on,
 	 * 'Facing' except for being flipped left and right.
 	 */
 	protected Map<State, List<BufferedImage>> images;
-
+	
+	protected int[] PADDING;
+	
 	protected boolean chasing = false;
 
 	/**
@@ -200,28 +211,33 @@ public abstract class Enemy implements GameVariables {
 		final int currentX = currentCoords[0];
 		final int currentY = currentCoords[1];
 
-		// Checks if player is in range of enemy
-		if (canAttack(currentX, currentY)) {
+		//Checks if player is in range of enemy
+		if(canAttack(currentX,currentY)) {
 			facePlayer();
-			// System.out.println("Attack");
-		} else {
-			// If player is within the detection range, enemy should move towards the player
-			if (inRangeOfPlayer()) {
+			if (currentState != State.Attack) {
+				stateLocked = true;
+				facingLocked = true;
+				currentState = State.Attack;
+				attackCount = 0;
+				drawCount = 0;
+			}
+		}else {
+		    //If player is within the detection range, enemy should move towards the player	
+			if(inRangeOfPlayer()) {
 				chasing = true;
 				final int[] newDeltas = newPosition();
-
+				
 				final int dx = newDeltas[0];
 				final int dy = newDeltas[1];
 
-				// Now that we have the movement that will happen, adjust the enemy's
-				// state/direction
-				changeState(dx, dy);
+				// Now that we have the movement that will happen, adjust the enemy's state/direction
+				changeState(dx,dy);
 				// Update position (movement)
 				update_coords(dx, dy);
-
-			} else {
+				
+			}else {
 				chasing = false;
-				changeState(roamingSpeed, 0);
+				changeState(roamingSpeed,0);
 				roam();
 			}
 		}
@@ -249,14 +265,18 @@ public abstract class Enemy implements GameVariables {
 	 * @param y y coordinate to check.
 	 */
 	public void changeState(int x, int y) {
-		if (x != 0 || y != 0)
-			currentState = State.Move;
-		else
-			currentState = State.Idle;
-		if (x > 0)
-			currentFacing = Facing.E;
-		else if (x < 0)
-			currentFacing = Facing.W;
+		if (!stateLocked) {
+			if (x != 0 || y != 0)
+				currentState = State.Move;
+			else
+				currentState = State.Idle;
+		}
+		if (!facingLocked) {
+			if (x > 0) 
+				currentFacing = Facing.E;
+			else if (x < 0)
+				currentFacing = Facing.W;
+		}
 	}
 
 	/**
@@ -464,35 +484,54 @@ public abstract class Enemy implements GameVariables {
 	}
 
 	// TODO: Implement more than two directions to be drawn
-	/** Draw the enemy */
 	public void draw(Graphics2D g) {
 		// Store position based on movement of the map
 		final int final_x = ChunkManager.xOffset + position_x;
 		final int final_y = ChunkManager.yOffset + position_y;
+		final int attackXAdjustment;
+		final int attackYAdjustment;
+		final int CONVERSION = 2;
+		if (currentState == State.Attack) {
+			attackXAdjustment = PADDING[1] * CONVERSION;
+			attackYAdjustment = PADDING[0] * CONVERSION;
+			attackCount++;
+		} else {
+			attackXAdjustment = 0;
+			attackYAdjustment = 0;
+		}
 		if (drawCount < DRAW_FRAMES) { // Draw the current image and increment drawCount
 			if (currentFacing == Facing.E) { // Facing right
-				g.drawImage(images.get(currentState).get(0), final_x + WIDTH, final_y, -WIDTH, HEIGHT, null);
+				g.drawImage(images.get(currentState).get(0), final_x + WIDTH + attackXAdjustment, final_y - attackYAdjustment, -(WIDTH + attackXAdjustment*2),
+						HEIGHT + attackYAdjustment*2, null);
 			} else { // Facing left
-				g.drawImage(images.get(currentState).get(0), final_x, final_y, WIDTH, HEIGHT, null);
+				g.drawImage(images.get(currentState).get(0), final_x - attackXAdjustment, final_y - attackYAdjustment, WIDTH + attackXAdjustment*2,
+						HEIGHT + attackYAdjustment*2, null);
 			}
 			drawCount++;
 		} else { // Draw the same thing as last time, then switch to the next image for next draw
 			BufferedImage img = images.get(currentState).remove(0);
 			if (currentFacing == Facing.E) { // Facing right
-				g.drawImage(img, final_x + WIDTH, final_y, -WIDTH, HEIGHT, null);
+				g.drawImage(img, final_x + WIDTH + attackXAdjustment, final_y - attackYAdjustment, -(WIDTH + attackXAdjustment*2),
+						HEIGHT + attackYAdjustment*2, null);
 			} else { // Facing left
-				g.drawImage(img, final_x, final_y, WIDTH, HEIGHT, null);
+				g.drawImage(img, final_x - attackXAdjustment, final_y - attackYAdjustment, WIDTH + attackXAdjustment*2,
+						HEIGHT + attackYAdjustment*2, null);
 			}
 			images.get(currentState).add(img); // Add the current image to the back of the list.
 			drawCount = 0;
 		}
-
-		// TODO remove
+		if (attackCount >= (DRAW_FRAMES + 1) * NUMATTACKINGIMAGES) {
+			attackCount = 0;
+			stateLocked = false;
+			facingLocked = false;
+			currentState = State.Idle;
+		}
+		
+		//TODO remove
 		g.setColor(Color.RED);
 		g.drawRect(final_x, final_y, WIDTH, HEIGHT);
-		if (chasing)
-			g.drawLine(final_x + WIDTH / 2, final_y + HEIGHT / 2, PLAYER_X + PLAYER_WIDTH / 2,
-					PLAYER_Y + PLAYER_HEIGHT / 2);
+		if(chasing)
+			g.drawLine(final_x + WIDTH/2, final_y + HEIGHT/2, PLAYER_X + PLAYER_WIDTH/2, PLAYER_Y + PLAYER_HEIGHT/2);
 	}
 
 	// Test enemy classes
