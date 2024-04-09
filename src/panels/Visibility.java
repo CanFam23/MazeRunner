@@ -24,7 +24,7 @@ import gameTools.GameVariables;
  * @see GameVariables
  */
 public class Visibility implements GameVariables {
-	
+
 	/**
 	 * The current instance of Visibility.
 	 */
@@ -57,11 +57,11 @@ public class Visibility implements GameVariables {
 
 	/** radius that will be updated and used to draw the circle. */
 	private int radius = startingRadius;
-	
+
 	GeneralPath rightSide = new GeneralPath();
-	
+
 	GeneralPath leftSide = new GeneralPath();
-	
+
 	RadialGradientPaint p;
 
 	/**
@@ -70,23 +70,22 @@ public class Visibility implements GameVariables {
 	private Visibility() {
 		reset();
 	}
-	
+
 	/**
-	 * Makes a new instance of Visibility.
-	 * Visibility is a singleton, which means only
-	 * one instance of Visibility can exist at a time. 
-	 * Visibility is a singleton because we only need one instance of it
-	 * for our game, and don't want multiple instances to be made. 
+	 * Makes a new instance of Visibility. Visibility is a singleton, which means
+	 * only one instance of Visibility can exist at a time. Visibility is a
+	 * singleton because we only need one instance of it for our game, and don't
+	 * want multiple instances to be made.
 	 * 
 	 * @return The current instance of ChunkManager.
 	 */
-	public static synchronized Visibility getInstance(){
-        if (single_instance == null)
-            single_instance = new Visibility();
- 
-        return single_instance;
-    }
-	
+	public static synchronized Visibility getInstance() {
+		if (single_instance == null)
+			single_instance = new Visibility();
+
+		return single_instance;
+	}
+
 	public void updateRadius() {
 		radius -= decreaseAmount;
 	}
@@ -151,7 +150,7 @@ public class Visibility implements GameVariables {
 		leftSide.lineTo(centerX, centerY - radius);
 
 		leftSide.closePath();
-		
+
 		p = new RadialGradientPaint(centerX, centerY, radius * 2, dist, colors);
 	}
 

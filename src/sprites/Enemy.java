@@ -1,6 +1,5 @@
 package sprites;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -16,8 +15,8 @@ import javax.swing.JPanel;
 
 import chunks.Chunk;
 import chunks.ChunkManager;
-import gameTools.GameVariables;
 import gameTools.CollisionDetection;
+import gameTools.GameVariables;
 
 /**
  * 
@@ -54,11 +53,11 @@ public abstract class Enemy implements GameVariables {
 	 * @param newX The x coordinate to use.
 	 * @param newY The y coordinate to use.
 	 * @return true if there's a collision.
-	 */	
+	 */
 	public static List<Enemy> enemyCollision(Enemy eOne, int newX, int newY) {
 		final int[] eOneXCoords = new int[] { newX, newX + eOne.getWidth(), newX + eOne.getWidth(), newX };
 		final int[] eOneYCoords = new int[] { newY, newY, newY + eOne.getHeight(), newY + eOne.getHeight() };
-		
+
 		List<Enemy> hits = new ArrayList<>();
 
 		for (Enemy eTwo : activeEnemies) {
@@ -72,35 +71,14 @@ public abstract class Enemy implements GameVariables {
 			final int[] eTwoYCoords = new int[] { eTwoCoords[1], eTwoCoords[1], eTwoCoords[1] + eTwo.getHeight(),
 					eTwoCoords[1] + eTwo.getHeight() };
 
-			final Collision c = CollisionDetection.getCollision(eOneXCoords, eOneYCoords, eTwoXCoords, eTwoYCoords);
+			final boolean c = CollisionDetection.getCollision(eOneXCoords, eOneYCoords, eTwoXCoords, eTwoYCoords);
 
-			if (c != Collision.NO_COLLISION) {
+			if (c) {
 				hits.add(eTwo);
 			}
 		}
 
 		return hits;
-	}
-
-	/**
-	 * 
-	 * TODO Add testing if needed
-	 * @param hitEnemies
-	 */
-	public static void enemiesHit(Set<Enemy> hitEnemies) {
-		/*
-		 * For each enemy: start with farthest away enemy If they can move back without
-		 * hitting a wall or enemy, move back. If not, dont move back Update health, or
-		 * die
-		 */
-
-		System.out.println("You hit " + hitEnemies.size() + " Enemies!");
-		for (Enemy e : hitEnemies) {
-			for (int i = 0; i < 50; i++) {
-				e.update_coords(e.getSpeed(), 0);
-			}
-		}
-
 	}
 
 	/**
@@ -144,12 +122,12 @@ public abstract class Enemy implements GameVariables {
 
 	/** Speed of enemy. */
 	protected int speed;
-	
+
 	/**
 	 * Default speed of enemy.
 	 */
 	protected int defaultSpeed;
-	
+
 	protected int NUMATTACKINGIMAGES;
 
 	/**
@@ -173,16 +151,22 @@ public abstract class Enemy implements GameVariables {
 	 * switching to the next image in the list.
 	 */
 	protected int drawCount = 0;
-	/** attackCount keeps track of the number of frames that have passed since attacking has started. */
+	/**
+	 * attackCount keeps track of the number of frames that have passed since
+	 * attacking has started.
+	 */
 	protected int attackCount = 0;
-	
-	/** stateLocked and facingLocked decides if the enemy should continue to change the direction or the state */
+
+	/**
+	 * stateLocked and facingLocked decides if the enemy should continue to change
+	 * the direction or the state
+	 */
 	protected boolean stateLocked = false;
 	protected boolean facingLocked = false;
-	
+
 	/** Set initial state. */
 	protected State currentState = State.Attack;
-	
+
 	/** Set initial state. */
 	protected Facing currentFacing = Facing.E;
 	/**
@@ -190,21 +174,40 @@ public abstract class Enemy implements GameVariables {
 	 * 'Facing' except for being flipped left and right.
 	 */
 	protected Map<State, List<BufferedImage>> images;
-	
+
+	/**
+	 * TODO Comment this, idk what it does
+	 */
 	protected int[] PADDING;
-	
+
+	/**
+	 * Keeps track if enemy is chasing player, only used for drawing a line between
+	 * enemy and player TODO remove
+	 */
 	protected boolean chasing = false;
-	
-	protected boolean knockback = false;
-	protected int knockbackCounter = 0;
-	protected final int maxKnockbackCount = 10;
-	protected Facing knockbackDir = Facing.N;
-	protected int knockbackDx = 0;
-	protected int knockbackDy = 0;
+
+	/** How many times the player is knocked back. */
+	private final int maxKnockbackCount = 10;
+
+	/** Used to check if player should be knocked back. */
+	private boolean knockback = false;
+
+	/** Keeps track of how many times player is knocked back. */
+	private int knockbackCounter = 0;
+
+	/** Displace player x coordinate by this amount. */
+	private int knockbackDx = 0;
+
+	/** Displace player y coordinate by this amount. */
+	private int knockbackDy = 0;
+
+	/** Direction to knock player back. */
+	private Facing knockbackDir = Facing.N;
 
 	/**
 	 * Move decides how the enemy should move based on the player position and
-	 * current position.
+	 * current position, if the enemy can see the player, and if the enemy has
+	 * gotten hit or not.
 	 */
 	public void move() {
 
@@ -213,45 +216,35 @@ public abstract class Enemy implements GameVariables {
 		final int currentX = currentCoords[0];
 		final int currentY = currentCoords[1];
 
-		if(knockback){
-			//If knockback would result in a collision with a wall, then end the knockback
-			if(wallCollision(position_x+ChunkManager.xOffset+knockbackDx,position_y+ChunkManager.yOffset+knockbackDy)) {
-				
-				knockback = false;
-				knockbackCounter = 0;
-				speed = defaultSpeed;
-				stateLocked = false;
-				facingLocked = false;
-				knockbackDx = 0;
-				knockbackDy = 0;
-			}else {
+		if (knockback) {
+			// If knockback would result in a collision with a wall, then end the knockback
+			if (wallCollision(position_x + ChunkManager.xOffset + knockbackDx,
+					position_y + ChunkManager.yOffset + knockbackDy)) {
+				resetKnockback();
+			} else {
 
-				//If knocking the enemy back would result in hitting another enemy, knock that enemy back too
-				List<Enemy> hitEnemies = enemyCollision(this,position_x+ChunkManager.xOffset+knockbackDx,position_y+ChunkManager.yOffset+knockbackDy);
-				if(hitEnemies.size() != 0) {
-					for(Enemy e: hitEnemies) {
+				// If knocking the enemy back would result in hitting another enemy, knock that
+				// enemy back too
+				List<Enemy> hitEnemies = enemyCollision(this, position_x + ChunkManager.xOffset + knockbackDx,
+						position_y + ChunkManager.yOffset + knockbackDy);
+				if (hitEnemies.size() != 0) {
+					for (Enemy e : hitEnemies) {
 						e.knockback(knockbackDir);
 					}
-				//Else just update the coords
-				}else {
-					update_coords(knockbackDx,knockbackDy);
+					// Else just update the coords
+				} else {
+					update_coords(knockbackDx, knockbackDy);
 				}
-				
+
 			}
-			
+
 			knockbackCounter++;
-			//Knockback limit, reset everything
-			if(knockbackCounter == maxKnockbackCount) {
-				knockback = false;
-				knockbackCounter = 0;
-				speed = defaultSpeed;
-				stateLocked = false;
-				facingLocked = false;
-				knockbackDx = 0;
-				knockbackDy = 0;
+			// Knockback limit, reset everything
+			if (knockbackCounter == maxKnockbackCount) {
+				resetKnockback();
 			}
-		//Checks if player is in range of enemy
-		}else if(canAttack(currentX,currentY)) {
+			// Checks if player is in range of enemy
+		} else if (canAttack(currentX, currentY)) {
 			facePlayer();
 			if (currentState != State.Attack) {
 				stateLocked = true;
@@ -259,29 +252,43 @@ public abstract class Enemy implements GameVariables {
 				currentState = State.Attack;
 				attackCount = 0;
 				drawCount = 0;
-				
-				ChunkManager.playerHit();
+
+				ChunkManager.playerHit(currentFacing);
 			}
-		}else {
-		    //If player is within the detection range, enemy should move towards the player	
-			if(inRangeOfPlayer()) {
+		} else {
+			// If player is within the detection range, enemy should move towards the player
+			if (inRangeOfPlayer()) {
 				chasing = true;
 				final int[] newDeltas = newPosition();
-				
+
 				final int dx = newDeltas[0];
 				final int dy = newDeltas[1];
 
-				// Now that we have the movement that will happen, adjust the enemy's state/direction
-				changeState(dx,dy);
+				// Now that we have the movement that will happen, adjust the enemy's
+				// state/direction
+				changeState(dx, dy);
 				// Update position (movement)
 				update_coords(dx, dy);
-				
-			}else {
+
+			} else {
 				chasing = false;
-				changeState(roamingSpeed,0);
+				changeState(roamingSpeed, 0);
 				roam();
 			}
 		}
+	}
+
+	/**
+	 * Stops and resets the knockback effect.
+	 */
+	public void resetKnockback() {
+		knockback = false;
+		knockbackCounter = 0;
+		speed = defaultSpeed;
+		stateLocked = false;
+		facingLocked = false;
+		knockbackDx = 0;
+		knockbackDy = 0;
 	}
 
 	/**
@@ -313,7 +320,7 @@ public abstract class Enemy implements GameVariables {
 				currentState = State.Idle;
 		}
 		if (!facingLocked) {
-			if (x > 0) 
+			if (x > 0)
 				currentFacing = Facing.E;
 			else if (x < 0)
 				currentFacing = Facing.W;
@@ -359,7 +366,7 @@ public abstract class Enemy implements GameVariables {
 	 * the move would result in a smaller distance to the player, and wouldn't
 	 * result in a collision between a wall or a enemy, then it's considered a valid
 	 * move.
-
+	 * 
 	 * @return A 2D array of integers, which are the enemies new coordinates.
 	 */
 	public int[] newPosition() {
@@ -396,8 +403,8 @@ public abstract class Enemy implements GameVariables {
 	 * Checks for a collision between the enemy and the walls in
 	 * ChunkManager.activeChunks.
 	 * 
-	 * @param x                         The x coordinate to use.
-	 * @param y                         The y coordinate to use.
+	 * @param x The x coordinate to use.
+	 * @param y The y coordinate to use.
 	 * @return true if there is a collision between any wall in any chunk.
 	 */
 	public boolean wallCollision(int x, int y) {
@@ -406,17 +413,18 @@ public abstract class Enemy implements GameVariables {
 
 		final int[] yCoords = new int[] { y, y, y + HEIGHT, y + HEIGHT };
 
-		final List<Collision> collisions = new ArrayList<Collision>();
-
 		// If a chunk contains any part of the square formed by the coordinates, check
 		// for a collision between it's walls and the coords.
 		for (Chunk c : ChunkManager.activeChunks) {
 			if (c.containsPoints(xCoords, yCoords)) {
-				collisions.addAll(c.checkCollision(xCoords, yCoords));
+				final boolean collided = c.checkCollision(xCoords, yCoords, new Integer[] { 0, 0 });
+				if (collided) {
+					return true;
+				}
 			}
 		}
 
-		return collisions.size() != 0;
+		return false;
 	}
 
 	/**
@@ -445,24 +453,24 @@ public abstract class Enemy implements GameVariables {
 		final int[] otherXCoords = new int[] { x, x + WIDTH, x + WIDTH, x };
 		final int[] otherYCoords = new int[] { y, position_y, y + HEIGHT, y + HEIGHT };
 
-		return CollisionDetection.getCollision(playerXCoords, playerYCoords, otherXCoords,
-				otherYCoords) != Collision.NO_COLLISION;
+		return CollisionDetection.getCollision(playerXCoords, playerYCoords, otherXCoords, otherYCoords);
 	}
 
-	
 	/**
-	 * TODO JavaDoc testing
-	 * @param d
+	 * Determines which direction to knockback the enemy, and sets knockback-related
+	 * variables to true;
+	 * 
+	 * @param d The direction to knockback the enemy.
 	 */
 	public void knockback(Facing d) {
-		if(!knockback) {
+		if (!knockback) {
 			stateLocked = true;
 			facingLocked = true;
 			speed += 10;
 			knockback = true;
 			knockbackDir = d;
-			
-			switch(knockbackDir) {
+
+			switch (knockbackDir) {
 			case N:
 				knockbackDy = -speed;
 				break;
@@ -494,7 +502,7 @@ public abstract class Enemy implements GameVariables {
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets the actual position of the enemy.
 	 * 
@@ -531,7 +539,7 @@ public abstract class Enemy implements GameVariables {
 		return HEIGHT;
 	}
 
-	//TODO Test
+	// TODO Test
 	/**
 	 * Subtract health from the player.
 	 * 
@@ -588,21 +596,22 @@ public abstract class Enemy implements GameVariables {
 		}
 		if (drawCount < DRAW_FRAMES) { // Draw the current image and increment drawCount
 			if (currentFacing == Facing.E) { // Facing right
-				g.drawImage(images.get(currentState).get(0), final_x + WIDTH + attackXAdjustment, final_y - attackYAdjustment, -(WIDTH + attackXAdjustment*2),
-						HEIGHT + attackYAdjustment*2, null);
+				g.drawImage(images.get(currentState).get(0), final_x + WIDTH + attackXAdjustment,
+						final_y - attackYAdjustment, -(WIDTH + attackXAdjustment * 2), HEIGHT + attackYAdjustment * 2,
+						null);
 			} else { // Facing left
-				g.drawImage(images.get(currentState).get(0), final_x - attackXAdjustment, final_y - attackYAdjustment, WIDTH + attackXAdjustment*2,
-						HEIGHT + attackYAdjustment*2, null);
+				g.drawImage(images.get(currentState).get(0), final_x - attackXAdjustment, final_y - attackYAdjustment,
+						WIDTH + attackXAdjustment * 2, HEIGHT + attackYAdjustment * 2, null);
 			}
 			drawCount++;
 		} else { // Draw the same thing as last time, then switch to the next image for next draw
 			BufferedImage img = images.get(currentState).remove(0);
 			if (currentFacing == Facing.E) { // Facing right
-				g.drawImage(img, final_x + WIDTH + attackXAdjustment, final_y - attackYAdjustment, -(WIDTH + attackXAdjustment*2),
-						HEIGHT + attackYAdjustment*2, null);
+				g.drawImage(img, final_x + WIDTH + attackXAdjustment, final_y - attackYAdjustment,
+						-(WIDTH + attackXAdjustment * 2), HEIGHT + attackYAdjustment * 2, null);
 			} else { // Facing left
-				g.drawImage(img, final_x - attackXAdjustment, final_y - attackYAdjustment, WIDTH + attackXAdjustment*2,
-						HEIGHT + attackYAdjustment*2, null);
+				g.drawImage(img, final_x - attackXAdjustment, final_y - attackYAdjustment,
+						WIDTH + attackXAdjustment * 2, HEIGHT + attackYAdjustment * 2, null);
 			}
 			images.get(currentState).add(img); // Add the current image to the back of the list.
 			drawCount = 0;
@@ -613,8 +622,8 @@ public abstract class Enemy implements GameVariables {
 			facingLocked = false;
 			currentState = State.Idle;
 		}
-		
-		//TODO remove
+
+		// TODO remove
 //		g.setColor(Color.RED);
 //		g.drawRect(final_x, final_y, WIDTH, HEIGHT);
 //		if(chasing)
@@ -649,8 +658,8 @@ public abstract class Enemy implements GameVariables {
 		frame.setVisible(true);
 
 		boolean allPassed = true;
-		
-		//Load the 0 level, it'll create two enemies
+
+		// Load the 0 level, it'll create two enemies
 		ChunkManager cmanager = ChunkManager.getInstance();
 		cmanager.loadLevel(0);
 
@@ -698,126 +707,152 @@ public abstract class Enemy implements GameVariables {
 			System.err.println("Enemy said it's visible on the screen, when it isn't!");
 			allPassed = false;
 		}
-		
+
 		/*
-		 * Testing facePlayer
-		 * The enemy isn't currently facing the player, so we'll make it 
+		 * Testing facePlayer The enemy isn't currently facing the player, so we'll make
+		 * it
 		 */
 		Facing d = tester.currentFacing;
 		tester.facePlayer();
 		Facing newD = tester.currentFacing;
-		if(d == newD) {
+		if (d == newD) {
 			System.err.println("Enemy failed to change direction!");
 			allPassed = false;
 		}
-		
+
 		// Testing canAttack
 		if (tester.canAttack(updatedCoords[0], updatedCoords[1])) {
 			System.err.println("Enemy said it can attack player, when it can't!");
 			allPassed = false;
 		}
-		
-		//Testing enemyCollision
-		if(enemyCollision(tester, updatedCoords[0], updatedCoords[1]).size() != 0) {
+
+		// Testing enemyCollision
+		if (enemyCollision(tester, updatedCoords[0], updatedCoords[1]).size() != 0) {
 			System.err.println("Enemy is colliding with another enemy, when it shouldn't be!");
 			allPassed = false;
 		}
-		
-		//Testing changeState
+
+		// Testing changeState
 		tester.changeState(0, 0);
-		if(tester.currentState != State.Idle) {
+		if (tester.currentState != State.Idle) {
 			System.err.println("Enemy should be in the Idle state, when it shouldn't be!");
 			allPassed = false;
 		}
-		
+
 		tester.changeState(2, 0);
-		if(tester.currentState == State.Idle) {
+		if (tester.currentState == State.Idle) {
 			System.err.println("Enemy should be in the moving state, when it shouldn't be!");
 			allPassed = false;
 		}
-		
-		//Testing wallCollision
-		if(tester.wallCollision(updatedCoords[0], updatedCoords[1])) {
+
+		// Testing wallCollision
+		if (tester.wallCollision(updatedCoords[0], updatedCoords[1])) {
 			System.err.println("wallCollision returned true, when it should've returned false!");
 			allPassed = false;
 		}
-		
-		//Testing getSpeed, getWidth, getHeight
-		for(Enemy e: enemies) {
-			if(e instanceof Mage) {
-				if(e.getSpeed() != 2) {
+
+		// Testing getSpeed, getWidth, getHeight
+		for (Enemy e : enemies) {
+			if (e instanceof Mage) {
+				if (e.getSpeed() != 2) {
 					System.err.println("Mage Enemy has the wrong speed!");
 					allPassed = false;
 				}
-				if(e.getHeight() != 70) {
+				if (e.getHeight() != 70) {
 					System.err.println("Mage Enemy has the wrong height!");
 					allPassed = false;
 				}
-				if(e.getWidth() != 70) {
+				if (e.getWidth() != 70) {
 					System.err.println("Mage Enemy has the wrong width!");
 					allPassed = false;
 				}
-			}else if(e instanceof Ghost) {
-				if(e.getSpeed() != 3) {
+			} else if (e instanceof Ghost) {
+				if (e.getSpeed() != 3) {
 					System.err.println("Ghost Enemy has the wrong speed!");
 					allPassed = false;
 				}
-				if(e.getHeight() != 60) {
+				if (e.getHeight() != 60) {
 					System.err.println("Ghost Enemy has the wrong height!");
 					allPassed = false;
 				}
-				if(e.getWidth() != 60) {
+				if (e.getWidth() != 60) {
 					System.err.println("Ghost Enemy has the wrong width!");
 					allPassed = false;
 				}
 			}
 		}
-		
+
 		cmanager.updateCoords(-WALL_WIDTH * 3, 0);
 		cmanager.updateEnemies();
 
-		//Move enemies
-		for(Enemy e: enemies) {
+		// Move enemies
+		for (Enemy e : enemies) {
 			e.move();
-			
+
 		}
 
-		//Testing some methods again now that the enemies are closer to the player
-		
+		// Testing some methods again now that the enemies are closer to the player
+
 		// Testing inRangeOfPlayer
 		if (!tester.inRangeOfPlayer()) {
 			System.err.println("Enemy said it's not in range of player, when it is!");
 			allPassed = false;
 		}
-		
+
 		// Testing isVisible
 		if (!tester.isVisible()) {
 			System.err.println("Enemy said it's not visible on the screen, when it is!");
 			allPassed = false;
 		}
-		
+
 		/*
-		 * Testing facePlayer
-		 * The enemy isn't currently facing the player, so we'll make it 
+		 * Testing facePlayer The enemy isn't currently facing the player, so we'll make
+		 * it
 		 */
 		d = tester.currentFacing;
 		tester.facePlayer();
 		newD = tester.currentFacing;
-		if(d != newD) {
+		if (d != newD) {
 			System.err.println("Enemy changed direction when it was already facing the player!");
 			allPassed = false;
 		}
-		
+
 		/*
-		 * Testing if newPosition works
-		 * Since the player is now in range of the enemy, new position should find a closer spot to move
+		 * Testing if newPosition works Since the player is now in range of the enemy,
+		 * new position should find a closer spot to move
 		 */
 		final int[] foundCoords = tester.newPosition();
-		if(foundCoords[0] == 0 && foundCoords[1] == 0) {
+		if (foundCoords[0] == 0 && foundCoords[1] == 0) {
 			System.err.println("newPosition said the enemy couldn't move closer to the player, when it could!");
 			allPassed = false;
 		}
-	
+
+		/*
+		 * Knockback resetKnockback
+		 * 
+		 */
+
+		// Testing knockback effect
+		final int[] preKnockbackCoords = tester.getPosition();
+		tester.knockback(Facing.E);
+		tester.move();
+		final int[] postKnockbackCoords = tester.getPosition();
+
+		if (preKnockbackCoords[0] == postKnockbackCoords[0] && preKnockbackCoords[1] == postKnockbackCoords[1]) {
+			System.err.println("Enemy didn't get knocked back when it should have!");
+			allPassed = false;
+		}
+
+		tester.resetKnockback();
+		tester.move();
+		final int[] newMoveCoords = tester.getPosition();
+		// Since we reset the knockback, and the enemy is already right next to the
+		// player, it shouldn't move.
+		if (newMoveCoords[0] != postKnockbackCoords[0] && newMoveCoords[1] != postKnockbackCoords[1]) {
+			System.err.println("Enemy move when it shouldn't have!");
+			allPassed = false;
+		}
+
 		if (allPassed) {
 			System.out.println("All cases passed!");
 		} else {
@@ -827,6 +862,7 @@ public abstract class Enemy implements GameVariables {
 
 	// Drawing panel used solely for testing purposes
 	static class DrawingPanel extends JPanel {
+		private static final long serialVersionUID = 1L;
 		private List<Enemy> drawables = new ArrayList<>();
 
 		public DrawingPanel() {

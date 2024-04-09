@@ -8,7 +8,9 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -54,13 +56,18 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	/** ArrayList used to track average fps. */
 	private final List<Integer> fpsTracker = new ArrayList<Integer>();
 
-	/** Number to displace character by when needed. */
-	private final int displacement = 1;
-
 	/** Speed of player. */
 	private final int speed = 6;
-	
-	private final int[][] DELTAS = new int[][]{{-speed, 0}, {0, -speed}, {0, speed}, {speed, 0}, {speed, speed},{-speed, speed},{speed, -speed},{-speed, -speed}};
+
+	@SuppressWarnings("serial")
+	Map<Facing, Integer[]> deltas = new HashMap<>() {
+		{
+			put(Facing.N, new Integer[] { 0, -speed });
+			put(Facing.S, new Integer[] { 0, speed });
+			put(Facing.E, new Integer[] { speed, 0 });
+			put(Facing.W, new Integer[] { -speed, 0 });
+		}
+	};
 
 	/** Number of levels in game. */
 	private final int NUM_LEVELS = 3;
@@ -90,7 +97,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 */
 	public GamePanel(Image backgroundImage) {
 		this.backgroundImage = backgroundImage;
-	    setPreferredSize(new Dimension(800, 600));
+		setPreferredSize(new Dimension(800, 600));
 		this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
 		this.setDoubleBuffered(true);
 
@@ -184,133 +191,64 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		if (ourPlayer.getHealth() <= 0) {
 //			ChunkManager.setStartLocation();
 		}
-		
 
 		// Move Player
 		int dx = 0;
 		int dy = 0;
 
-		boolean topCollided = false;
-		boolean botCollided = false;
-		boolean rightCollided = false;
-		boolean leftCollided = false;
+		if (cmanager.getKnockback()) {
+			cmanager.knockback();
+		} else {
 
-		List<Collision> collisions = cmanager.checkCollision();
-		
-		cmanager.updateEnemies();
+			// Check if moving in a direction would result in a collision. If so, the user
+			// can't move that way
+			boolean topCollided = cmanager.checkCollision(deltas.get(Facing.N));
+			boolean botCollided = cmanager.checkCollision(deltas.get(Facing.S));
+			boolean rightCollided = cmanager.checkCollision(deltas.get(Facing.E));
+			boolean leftCollided = cmanager.checkCollision(deltas.get(Facing.W));
 
-		// If theres at least one collision
-		if (collisions.size() > 0) {
-			for (Collision collisionNum : collisions) {
-				// Handle collision
-				switch (collisionNum) {
-				// Depending on what side is colliding, this changes dx or dy by one to make the
-				// player 'bounce off' the wall.
-				case LEFT_SIDE: // Collided from the left
-					if (!leftCollided) {
-						dx -= displacement;
-					}
-
-					leftCollided = true;
-					break;
-				case RIGHT_SIDE: // Collided from the right
-					if (!rightCollided) {
-						dx += displacement;
-					}
-
-					rightCollided = true;
-					break;
-				case TOP_SIDE: // Collided from the top
-					if (!topCollided) {
-						dy -= displacement;
-					}
-
-					topCollided = true;
-					break;
-				case BOTTOM_SIDE: // Collided from the bottom
-					if (!botCollided) {
-						dy += displacement;
-					}
-					botCollided = true;
-					break;
-				case BOTTOM_RIGHT_CORNER: // Collided from right and bottom
-					if (!botCollided && !rightCollided) {
-						dy += displacement * 2;
-						dx += displacement;
-					}
-					botCollided = true;
-					rightCollided = true;
-					break;
-				case BOTTOM_LEFT_CORNER: // Collided from left and bottom
-					if (!botCollided && !leftCollided) {
-						dy += displacement * 2;
-						dx -= displacement;
-					}
-					botCollided = true;
-					leftCollided = true;
-					break;
-				case TOP_RIGHT_CORNER: // Collided from right and top
-					if (!topCollided && !rightCollided) {
-						dy -= displacement * 2;
-						dx += displacement;
-					}
-					rightCollided = true;
-					topCollided = true;
-					break;
-				case TOP_LEFT_CORNER: // Collided from left and top
-					if (!topCollided && !leftCollided) {
-						dy -= displacement * 2;
-						dx -= displacement;
-					}
-					leftCollided = true;
-					topCollided = true;
-					break;
-				default:
-					break;
-				}
+			// Uses key presses to determine where to move walls
+			if (keyH.upPressed && !topCollided) {
+				dy += speed;
+			}
+			if (keyH.downPressed && !botCollided) {
+				dy -= speed;
+			}
+			if (keyH.rightPressed && !rightCollided) {
+				dx -= speed;
+			}
+			if (keyH.leftPressed && !leftCollided) {
+				dx += speed;
 			}
 
+			if (!ourPlayer.isStateLocked()) {
+				ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
+			}
+			if (keyH.spacePressed) {
+				if (ourPlayer.getState() != "Attack") {
+					// Set our player to be attacking
+					ourPlayer.setState(sprites.Player.State.Attack);
+					if (Enemy.activeEnemies.size() != 0 && Enemy.enemies.size() != 0) {
+						ourPlayer.resetDrawCount();
+					}
+				}
+				ourPlayer.lockState();
+				ourPlayer.lockFacing();
+			}
+			// If the player is attacking, check if they've hit anyone
+			if (ourPlayer.getState().equals("Attack")) {
+				ourPlayer.attacking();
+			}
+
+			// If the user isn't attacking but there are enemies that have been hit, deal
+			// with them
+			if (ourPlayer.hitEnemies() && !ourPlayer.getState().equals("Attack")) {
+				ourPlayer.handleAttack();
+			}
 		}
 
-		// Uses key presses to determine where to move walls
-		if (keyH.upPressed && !topCollided) {
-			dy += speed;
-		}
-		if (keyH.downPressed && !botCollided) {
-			dy -= speed;
-		}
-		if (keyH.rightPressed && !rightCollided) {
-			dx -= speed;
-		}
-		if (keyH.leftPressed && !leftCollided) {
-			dx += speed;
-		}
-		
-		if (!ourPlayer.isStateLocked()) {
-			ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
-		} 
-		if (keyH.spacePressed) {
-			if (ourPlayer.getState() != "Attack") {
-				// Set our player to be attacking
-				ourPlayer.setState(sprites.Player.State.Attack);
-		if (Enemy.activeEnemies.size() != 0 && Enemy.enemies.size() != 0) {
-					//ourPlayer.attacking();
-					ourPlayer.resetDrawCount();
-				}
-			}
-			ourPlayer.lockState();
-			ourPlayer.lockFacing();
-		}
-		if(ourPlayer.getState().equals("Attack")) {
-			ourPlayer.attacking();
-		}
-		
-		
-		if(ourPlayer.hitEnemies() && !ourPlayer.getState().equals("Attack")) {
-			ourPlayer.handleAttack();
-		}
-		
 		cmanager.updateCoords(dx, dy);
+		cmanager.updateEnemies();
 
 	}
 
@@ -332,24 +270,24 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
+
 		// Creates green grass background
-	    if (backgroundImage != null) {
-	        g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-	    } else {
-	        // If no image is available, fallback to a solid color background
-	        g.setColor(Color.RED); // Change to desired background color
-	        g.fillRect(0, 0, getWidth(), getHeight());
-	    }
-	    
+		if (backgroundImage != null) {
+			g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+		} else {
+			// If no image is available, fallback to a solid color background
+			g.setColor(Color.RED); // Change to desired background color
+			g.fillRect(0, 0, getWidth(), getHeight());
+		}
+
 		final Graphics2D g2 = (Graphics2D) g;
 
 		// Draw map
 		cmanager.draw(g2);
 		cmanager.drawEnemies(g2);
-		
+
 		v.drawVision(g2);
-		
+
 		if (ourPlayer.getHealth() < 10000) {
 			ourPlayer.addHealth(1);
 		}
@@ -361,7 +299,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		int healthBarY = padding; // Adjust Y coordinate to be near the top edge
 		int titleX = getWidth() - healthBarWidth - padding; // X coordinate of the title (aligned with health bar)
 		int titleY = padding - 5; // Y coordinate of the title (just above the health bar)
-		int healthPercentage = (int)(((float)ourPlayer.getHealth() / 10000) * 100); // Assuming maximum health is 10000
+		int healthPercentage = (int) (((float) ourPlayer.getHealth() / 10000) * 100); // Assuming maximum health is
+																						// 10000
 
 		// Draw title
 		g.setColor(Color.WHITE);
@@ -383,7 +322,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// Draw the health portion of the health bar
 		g.setColor(Color.GREEN); // Health color
 		g.fillRect(healthBarX, healthBarY, barWidth, healthBarHeight); // Health
-		
+
 		ourPlayer.draw(g2);
 
 		// Saves some memory
@@ -436,7 +375,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	}
 
 	public static void main(String[] args) {
-		
+
 		Image backgroundImage = null;
 		// Load Background Image
 		try {
