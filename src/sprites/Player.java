@@ -238,7 +238,6 @@ public class Player implements GameVariables {
 		for (Enemy e : hitEnemies) {
 			e.subtractHitCount(1);
 			e.knockback(attackFacing);
-			System.out.println("Attacking enemy " + e);
 		}
 		hitEnemies.clear();
 	}
@@ -348,14 +347,14 @@ public class Player implements GameVariables {
 		}
 
 		// TODO remove
-		g.setColor(Color.RED);
-		g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
-
-		g.setColor(Color.blue);
-		if (getState().equals("Attack")) {
-			g.draw(hitboxes.get(currentFacing));
-
-		}
+//		g.setColor(Color.RED);
+//		g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
+//
+//		g.setColor(Color.blue);
+//		if (getState().equals("Attack")) {
+//			g.draw(hitboxes.get(currentFacing));
+//
+//		}
 
 		if (attackCount == framesPerSwitch * 4) {
 			unlockState();
@@ -544,6 +543,11 @@ public class Player implements GameVariables {
 		} else {
 			System.out.println("At least one case failed");
 		}
+		
+		/*
+		 * handleAttack
+		 * hitEnemies
+		 */
 
 		// Start: Image testing
 		initializeGUI();

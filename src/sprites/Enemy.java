@@ -252,8 +252,35 @@ public abstract class Enemy implements GameVariables {
 				currentState = State.Attack;
 				attackCount = 0;
 				drawCount = 0;
+				
+				Facing dirToPlayer = Facing.N;
+				
+				int[] newDeltas = newPosition();
+				//Determine which direction the enemy is to the player.
+				if(newDeltas[0] < 0 && newDeltas[1] < 0) {
+					dirToPlayer = Facing.NW;
+				}else if(newDeltas[0] > 0 && newDeltas[1] < 0) {
+					dirToPlayer = Facing.NE;
+				}else if(newDeltas[0] > 0 && newDeltas[1] > 0) {
+					dirToPlayer = Facing.SE;
+				}else if(newDeltas[0] < 0 && newDeltas[1] > 0) {
+					dirToPlayer = Facing.SW;
+				}else if(newDeltas[0] > 0) {
+					dirToPlayer = Facing.W;
+				}else if(newDeltas[0] < 0) {
+					dirToPlayer = Facing.E;
+				}else if(newDeltas[1] > 0) {
+					dirToPlayer = Facing.S;
+				}else if(newDeltas[1] < 0) {
+					dirToPlayer = Facing.N;
+				}
 
-				ChunkManager.playerHit(currentFacing);
+				/*
+				 * Pass handling hitting the player to ChunkManager, with the direction to move the player.
+				 * Use oppositeDirection map to find the opposite direction the enemy is to the player, so 
+				 * we know which way to move the player.
+				 */
+				ChunkManager.playerHit(oppositeDirection.get(dirToPlayer));
 			}
 		} else {
 			// If player is within the detection range, enemy should move towards the player
