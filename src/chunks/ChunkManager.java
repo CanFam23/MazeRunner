@@ -394,8 +394,8 @@ public class ChunkManager implements GameVariables {
 	 * Adds all enemies currently visible on the screen to activeEnemies Set, so
 	 * they can be drawn. It then moves all enemies that are active.
 	 */
-	public void updateEnemies() {
-		// Get enemies that can be see on the screen right now
+	public synchronized void updateEnemies() {
+		//Get enemies that can be see on the screen right now
 		for (Enemy e : Enemy.enemies) {
 			if (e.isVisible()) {
 				Enemy.activeEnemies.add(e);
@@ -476,10 +476,14 @@ public class ChunkManager implements GameVariables {
 	 * 
 	 * @param g2d 2D graphics to draw on.
 	 */
-	public void draw(Graphics2D g2d) {
-		// Loop through active chunks, those are the only ones we need to draw
+	public synchronized void draw(Graphics2D g2d) {		
 		for (Chunk c : activeChunks) {
-			c.draw(g2d);
+			PositionBlock[][] pbs = c.getBlocks();
+			for (int y = 0; y < pbs.length; y++) {
+				for (int x = 0; x < pbs[0].length; x++) {
+					pbs[y][x].draw(g2d, c.getXPosition(), c.getYPosition());
+				}
+			}
 		}
 	}
 
@@ -489,7 +493,7 @@ public class ChunkManager implements GameVariables {
 	 * 
 	 * @param g2d The 2D graphics to draw on.
 	 */
-	public void drawEnemies(Graphics2D g2d) {
+	public synchronized void drawEnemies(Graphics2D g2d) {
 		for (Enemy e : Enemy.activeEnemies) {
 			e.draw(g2d);
 		}
