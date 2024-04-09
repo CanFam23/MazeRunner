@@ -123,10 +123,11 @@ public class PositionBlock implements GameVariables {
 	}
 
 	/**
+	 * Creates the hitbox for the positionBlock and returns it.
 	 * 
-	 * TODO ADD testing
-	 * 
-	 * @return
+	 * @param xPosition X Position to base coordinates off of.
+	 * @param yPosition Y Position to base coordinates off of.
+	 * @return A 2D int[] array that represent the hitbox of the block.
 	 */
 	public int[][] getBounds(int xPosition, int yPosition) {
 		final int newX = x + xPosition;
@@ -141,6 +142,8 @@ public class PositionBlock implements GameVariables {
 	}
 
 	/**
+	 * Gets coordinates of block.
+	 * 
 	 * @return the coordinates of the block.
 	 */
 	public int[] getCoords() {
@@ -148,6 +151,8 @@ public class PositionBlock implements GameVariables {
 	}
 
 	/**
+	 * Gets height of block.
+	 * 
 	 * @return height of block.
 	 */
 	public int getHeight() {
@@ -155,6 +160,8 @@ public class PositionBlock implements GameVariables {
 	}
 
 	/**
+	 * Gets width of block.
+	 * 
 	 * @return width of block.
 	 */
 	public int getWidth() {
@@ -162,6 +169,8 @@ public class PositionBlock implements GameVariables {
 	}
 
 	/**
+	 * Converts block to string.
+	 * 
 	 * @return string version of block.
 	 */
 	public String toString() {
@@ -239,6 +248,22 @@ public class PositionBlock implements GameVariables {
 		if (!toString().equals(blockStr)) {
 			System.err.format("toString should be %s, not %s!\n", blockStr, toString());
 			allPassed = false;
+		}
+
+		final int[] wallXCoords = new int[] { initX - HITBOX_BUFFER_AMOUNT, initX + WALL_WIDTH + HITBOX_BUFFER_AMOUNT,
+				initX + WALL_WIDTH + HITBOX_BUFFER_AMOUNT, initX - HITBOX_BUFFER_AMOUNT };
+		final int[] wallYCoords = new int[] { initY - HITBOX_BUFFER_AMOUNT, initY - HITBOX_BUFFER_AMOUNT,
+				initY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT, initY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT };
+		final int[][] checkCoords = new int[][] {wallXCoords,wallYCoords};
+		
+		final int[][] coords = getBounds(0,0);
+		for(int r = 0; r < coords.length; r++) {
+			for(int c = 0; c < coords[0].length; c++) {
+				if(checkCoords[r][c] != coords[r][c]) {
+					System.err.println("Hitbox coords are incorrect!");
+					allPassed = false;
+				}
+			}
 		}
 
 		return allPassed;

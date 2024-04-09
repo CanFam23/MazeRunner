@@ -827,11 +827,6 @@ public abstract class Enemy implements GameVariables {
 			allPassed = false;
 		}
 
-		/*
-		 * Knockback resetKnockback
-		 * 
-		 */
-
 		// Testing knockback effect
 		final int[] preKnockbackCoords = tester.getPosition();
 		tester.knockback(Facing.E);

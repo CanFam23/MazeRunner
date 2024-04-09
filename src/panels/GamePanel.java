@@ -73,7 +73,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private final int NUM_LEVELS = 3;
 
 	/** Current level the player is on. */
-	private int current_level = 0;
+	private int current_level = 1;
 
 	/**
 	 * Create our player. Initialize later to offer player selection of different

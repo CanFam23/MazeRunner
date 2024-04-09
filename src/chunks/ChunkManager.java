@@ -5,6 +5,7 @@ import java.awt.Image;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -319,9 +320,13 @@ public class ChunkManager implements GameVariables {
 		resetOffset();
 	}
 
-	// TODO Add testing
+	/**
+	 * Handles when the player is hit by a enemy. Sets knockback to true and decides which way to
+	 * knockback the player.
+	 * 
+	 * @param d The direction to move the player.
+	 */
 	public void handlePlayerHit(Facing d) {
-		System.out.println("Player Hit");
 		if (!knockback) {
 			knockback = true;
 			knockbackDir = d;
@@ -345,7 +350,6 @@ public class ChunkManager implements GameVariables {
 		}
 	}
 
-	// TODO Add testing
 	/**
 	 * Gets knockback variable, which represents if the player is getting knocked
 	 * back or not.
@@ -356,7 +360,6 @@ public class ChunkManager implements GameVariables {
 		return knockback;
 	}
 
-	// TODO Add testing
 	/**
 	 * Knockback the player when knockback is equal to true. If knocking back the
 	 * player would result in hitting a wall, the knockback effect stops.
@@ -377,7 +380,6 @@ public class ChunkManager implements GameVariables {
 		}
 	}
 
-	// TODO Add testing
 	/**
 	 * Stops knockback effect and resets variables.
 	 */
@@ -442,7 +444,6 @@ public class ChunkManager implements GameVariables {
 		}
 	}
 
-	// TODO add testing
 	/**
 	 * @return true if end has been found.
 	 */
@@ -563,19 +564,19 @@ public class ChunkManager implements GameVariables {
 		ChunkManager chunky = ChunkManager.getInstance();
 		chunky.loadLevel(1);
 
-		boolean all_passed = true;
+		boolean allPassed = true;
 		// Test that dimensions have been loaded correctly
 		if (chunky.levelXDimension != 4) {
 			System.out.println("The X-level dimension was not 4");
-			all_passed = false;
+			allPassed = false;
 		}
 		if (chunky.chunkXDimension != 10) {
 			System.out.println("The X Chunk size was not 10");
-			all_passed = false;
+			allPassed = false;
 		}
 		if (chunky.getActiveChunks().size() != 4) {
 			System.out.println("Originally, there should be four visible chunks");
-			all_passed = false;
+			allPassed = false;
 		}
 		// Move our player to the left border of the screen, now only two chunks should
 		// be visible
@@ -583,7 +584,7 @@ public class ChunkManager implements GameVariables {
 		if (chunky.getActiveChunks().size() != 2) {
 			System.out.println(
 					"The player has been moved to the left border of the maze, only two chunks should be visible");
-			all_passed = false;
+			allPassed = false;
 		}
 		// Move our player to the top left corner of the screen, now only one chunk
 		// should be visible
@@ -591,13 +592,13 @@ public class ChunkManager implements GameVariables {
 		if (chunky.getActiveChunks().size() != 1) {
 			System.out.println(
 					"The player has been moved to the top left border of the maze, only one chunk should be visible");
-			all_passed = false;
+			allPassed = false;
 		}
 		// Move our player way off the map, no chunks should be visible
 		chunky.updateCoords(-20000, 0);
 		if (chunky.getActiveChunks().size() != 0) {
 			System.out.println("The player has been moved way off the screen, no chunks should be visible.");
-			all_passed = false;
+			allPassed = false;
 		}
 
 		chunky.loadLevel(0);
@@ -608,7 +609,7 @@ public class ChunkManager implements GameVariables {
 		final int[] postResetOffset = new int[] { xOffset, yOffset };
 		if (preResetOffset[0] == postResetOffset[0] && preResetOffset[1] == postResetOffset[1]) {
 			System.out.println("Failed to reset offset.");
-			all_passed = false;
+			allPassed = false;
 		}
 
 		// Testing updateOffset
@@ -617,7 +618,7 @@ public class ChunkManager implements GameVariables {
 		final int[] postUpdateOffset = new int[] { xOffset, yOffset };
 		if (preUpdateOffset[0] == postUpdateOffset[0] && preUpdateOffset[1] == postUpdateOffset[1]) {
 			System.out.println("Failed to update offset.");
-			all_passed = false;
+			allPassed = false;
 		}
 
 		// Testing reset
@@ -625,15 +626,110 @@ public class ChunkManager implements GameVariables {
 		if (chunky.endFound == true || Enemy.activeEnemies.size() != 0 || Enemy.enemies.size() != 0
 				|| preUpdateOffset[0] == postUpdateOffset[0] && preUpdateOffset[1] == postUpdateOffset[1]) {
 			System.out.println("Failed to reset ChunkManager.");
-			all_passed = false;
+			allPassed = false;
 		}
 
-		/*
-		 * updateEnemies endFound stopKnockback knockback getKnockback handlePlayerHit
-		 * playerHIt
-		 */
+		chunky.loadLevel(0);
 
-		if (all_passed == true) {
+		// Testing update enemies
+		Set<Enemy> preUpdateEnemies = Set.copyOf(Enemy.activeEnemies);
+		chunky.updateCoords(-WALL_WIDTH * 3, 0);
+		chunky.updateEnemies();
+		Set<Enemy> postUpdateEnemies = Enemy.activeEnemies;
+		// Check each enemy to see if their coords changed
+		for (Enemy eOne : preUpdateEnemies) {
+			for (Enemy eTwo : postUpdateEnemies) {
+				if (eOne.equals(eTwo)) {
+					final int[] coordsOne = eOne.getPosition();
+					final int[] coordsTwo = eTwo.getPosition();
+					if (coordsOne[0] == coordsTwo[0] || coordsOne[1] == coordsTwo[1]) {
+						System.err.println(
+								"The coordinates of the enemy should've changed after updateEnemies is called!");
+						allPassed = false;
+					}
+					break;
+				}
+			}
+		}
+
+		// Checking if endFound works
+		if (chunky.endFound()) {
+			System.err.println("The end was found when it should've been!");
+			allPassed = false;
+		}
+		// Move the chunks enough so the end should be found at some point
+		for (int i = 0; i < 10; i++) {
+			chunky.updateCoords(-WALL_WIDTH, 0);
+		}
+		// End should be found now
+		if (!chunky.endFound()) {
+			System.err.println("The end wasn't found when it should've been!");
+			allPassed = false;
+		}
+
+		if (chunky.getKnockback()) {
+			System.err.println("Knockback should be set to false, but it's set to true!");
+			allPassed = false;
+		}
+
+		// Move chunks back
+		for (int i = 0; i < 10; i++) {
+			chunky.updateCoords(WALL_WIDTH, 0);
+		}
+
+		// Testing playerHit
+		ChunkManager.playerHit(Facing.E);
+		if (!chunky.getKnockback()) {
+			System.err.println("Knockback should be set to true, but it's set to false!");
+			allPassed = false;
+		}
+
+		// Testing if the knockback effect stops
+		chunky.stopKnockback();
+		if (chunky.getKnockback()) {
+			System.err.println("Knockback should be set to false, but it's set to true!");
+			allPassed = false;
+		}
+
+		// Testing handlePlayerHit
+		chunky.handlePlayerHit(Facing.S);
+		if (!chunky.getKnockback()) {
+			System.err.println("Knockback should be set to true, but it's set to false!");
+			allPassed = false;
+		}
+
+		// Getting the y coords of each chunk before the knockback effect
+		final int[] preKnockbackYs = new int[chunky.chunks.length * chunky.chunks[0].length];
+		int counter = 0;
+		for (int r = 0; r < chunky.chunks.length; r++) {
+			for (int c = 0; c < chunky.chunks[0].length; c++) {
+				preKnockbackYs[counter] = chunky.chunks[r][c].yPosition;
+				counter++;
+			}
+		}
+
+		// knockback the chunks
+		chunky.knockback();
+
+		// Getting the y coords of each chunk after the knockback effect
+		final int[] postKnockbackYs = new int[chunky.chunks.length * chunky.chunks[0].length];
+		counter = 0;
+		for (int r = 0; r < chunky.chunks.length; r++) {
+			for (int c = 0; c < chunky.chunks[0].length; c++) {
+				postKnockbackYs[counter] = chunky.chunks[r][c].yPosition;
+				counter++;
+			}
+		}
+
+		// The y coord should be changed now
+		for (int i = 0; i < preKnockbackYs.length; i++) {
+			if (preKnockbackYs[1] == postKnockbackYs[1]) {
+				System.err.println("Knockback didn't move the chunks!");
+				allPassed = false;
+			}
+		}
+
+		if (allPassed == true) {
 			System.out.println("All cases passed! :)");
 		} else {
 			System.out.println("At least one case failed! :(");

@@ -177,7 +177,6 @@ public class Chunk implements GameVariables {
 	}
 
 	/**
-	 * 
 	 * Checks for any collision between the given coordinates, and all walls in the
 	 * chunk. Deltas is used to displace the blocks if needed, to see if displacing
 	 * the blocks by those amounts would result in a collision.
