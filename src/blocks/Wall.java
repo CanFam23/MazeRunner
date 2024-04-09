@@ -2,6 +2,7 @@ package blocks;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.image.VolatileImage;
 
 /**
  * <p>
@@ -28,7 +29,7 @@ public class Wall extends PositionBlock {
 	 * @param height of the block.
 	 * @param positionBlockImage      color of the block.
 	 */
-	public Wall(int x, int y, int width, int height, Image positionBlockImage) {
+	public Wall(int x, int y, int width, int height, VolatileImage positionBlockImage) {
 		super(x, y, width, height, positionBlockImage);
 	}
 }

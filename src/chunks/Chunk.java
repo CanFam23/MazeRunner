@@ -1,7 +1,12 @@
 package chunks;
 
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -313,17 +318,27 @@ public class Chunk implements GameVariables {
 		int r = 0;
 		int c = 0;
 
-		Image positionBlockImage = null;
+		VolatileImage vImage = null;
+		
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+        GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
+		
 		try {
-			positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
+			vImage = graphicsConfig.createCompatibleVolatileImage(WALL_WIDTH, WALL_HEIGHT);
+			Graphics2D g = vImage.createGraphics();
+			final BufferedImage positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
+			g.drawImage(positionBlockImage, 0, 0, null);
+			g.dispose();
 		} catch (IOException e) {
-			System.out.println("Failed to load emptyBlock.png!");
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
+		
 		// Adding blocks to chunk
 		for (int i = 0; i < Math.pow(chunkLength, 2); i++) {
 			final PositionBlock pb = new Wall((r % chunkLength) * WALL_WIDTH, (c % chunkLength) * WALL_HEIGHT,
-					WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
+					WALL_WIDTH, WALL_HEIGHT, vImage);
 			chunk.add(r, c, pb);
 
 			if (r == chunkLength - 1) {
@@ -384,7 +399,7 @@ public class Chunk implements GameVariables {
 
 		// Checking collision function
 		Chunk newChunk = new Chunk(0, 0, 0, 0);
-		PositionBlock pb = new PositionBlock(PLAYER_X, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
+		PositionBlock pb = new PositionBlock(PLAYER_X, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT, vImage);
 
 		// Should find a collision because the PositiobBlock's coords are intersecting
 		// with the players
@@ -396,7 +411,7 @@ public class Chunk implements GameVariables {
 
 		// Should find a collision because the PositiobBlock's coords are intersecting
 		// with the players, this time they are slightly different
-		pb = new PositionBlock(PLAYER_X + WALL_WIDTH / 4, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
+		pb = new PositionBlock(PLAYER_X + WALL_WIDTH / 4, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT, vImage);
 		
 		tempBounds = pb.getBounds(0, 0);
 
@@ -406,7 +421,7 @@ public class Chunk implements GameVariables {
 		}
 
 		// Should not find a collision because the block is at 0,0
-		pb = new PositionBlock(0, 0, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
+		pb = new PositionBlock(0, 0, WALL_WIDTH, WALL_HEIGHT, vImage);
 		tempBounds = pb.getBounds(0, 0);
 
 		if (CollisionDetection.getCollision(tempBounds[0],tempBounds[1],playerXCoords,playerYCoords) != Collision.NO_COLLISION) {
