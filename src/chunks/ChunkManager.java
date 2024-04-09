@@ -134,12 +134,17 @@ public class ChunkManager implements GameVariables {
 			}
 
 			Image startImage = null;
-			Image endImage = null;
 			try {
 				startImage = ImageIO.read(new File("images/startBlock.png"));
-				endImage = ImageIO.read(new File("images/startBlock.png"));
 			} catch (IOException e) {
 				System.err.println("Failed to load startBlock.png!");
+			}
+			Image endImage = null;
+
+			try {
+				endImage = ImageIO.read(new File("images/endBlock.png"));
+			} catch (IOException e) {
+				System.err.println("Failed to load endBlock.png!");
 			}
 			
 			// Load the level data
