@@ -74,7 +74,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private Player ourPlayer;
 
 	/** Visibility object, used to change visibility as time goes on. */
-	private Visibility v = new Visibility();
+	private Visibility v = Visibility.getInstance();
 
 	/** Thread used for our game */
 	private Thread gameThread;
@@ -300,9 +300,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			ourPlayer.lockState();
 			ourPlayer.lockFacing();
 		}
-
-		v.updateRadius();
-
 	}
 
 	/**
@@ -311,6 +308,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	public void reset() { // TODO add testing?
 		ourPlayer.reset();
 		cmanager.reset();
+		v.updateRadius();
 		v.reset();
 	}
 
@@ -338,7 +336,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.draw(g2);
 		cmanager.drawEnemies(g2);
 		
-//		v.drawVision(g2);
+		v.drawVision(g2);
 		
 		if (ourPlayer.getHealth() < 10000) {
 			ourPlayer.addHealth(1);
