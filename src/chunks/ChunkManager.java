@@ -326,7 +326,7 @@ public class ChunkManager implements GameVariables {
 	/**TODO Add testing and javadoc
 	 * @param g2d
 	 */
-	public void drawEnemies(Graphics2D g2d) {
+	public synchronized void drawEnemies(Graphics2D g2d) {
 		for (Enemy e : Enemy.activeEnemies) {
 			e.draw(g2d);
 		}
