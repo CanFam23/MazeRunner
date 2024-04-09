@@ -396,7 +396,11 @@ public class Player implements GameVariables {
 	/**
 	 * Reset player state and direction
 	 */
-	public void reset() { // TODO add testing?
+	public synchronized void reset() { // TODO add testing?
+		stateLocked = false;
+		facingLocked = false;
+		attackCount = 0;
+		drawCount = 0;
 		setState(State.Idle);
 		setFacing(Facing.N);
 		health = 8000;
