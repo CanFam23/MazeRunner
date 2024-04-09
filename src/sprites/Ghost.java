@@ -12,8 +12,10 @@ import sprites.Enemy.State;
  */
 public class Ghost extends Enemy {
 	
-	public Ghost(int x, int y, Map<State, List<BufferedImage>> images) {
+	public Ghost(int x, int y, Map<State, List<BufferedImage>> images, int[] PADDING, int attackImages) {
 		this.images = images;
+		this.PADDING = PADDING;
+		this.NUMATTACKINGIMAGES = attackImages;
 		WIDTH = 60;
 		HEIGHT = 60;
 		position_x = x;
