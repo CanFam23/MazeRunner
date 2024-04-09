@@ -7,6 +7,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -62,7 +63,7 @@ public class Main {
 	private static GamePanel gamePanel;
 	
 	// Background image that is the same as the maze walls
-	private static Image backgroundImage = null;
+	private static BufferedImage backgroundImage = null;
 
 	private static GameOverWIN nextLevel;
 	
@@ -264,7 +265,7 @@ public class Main {
 	}
 	
 	public static void gameOverPanel(boolean show) {
-		String formattedString = String.format("Failed to complete the level in 120 seconds");
+		final String formattedString = String.format("Failed to complete the level in 120 seconds");
 		window.setTitle(formattedString);
 		window.setVisible(true);
 		window.getContentPane().add(timeOut);

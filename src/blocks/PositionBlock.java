@@ -1,11 +1,17 @@
 package blocks;
 
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 
 import gameTools.GameVariables;
 
@@ -39,7 +45,7 @@ public class PositionBlock implements GameVariables {
 	protected int height;
 
 	/** Block Image. */
-	private Image image;
+	private VolatileImage image;
 
 	/**
 	 * Constructs a new StartingBlock with the given parameters.
@@ -52,7 +58,7 @@ public class PositionBlock implements GameVariables {
 	 * @param height The height of the block.
 	 * @param c      The color of the block.
 	 */
-	public PositionBlock(int x, int y, int width, int height, Image image) {
+	public PositionBlock(int x, int y, int width, int height, VolatileImage image) {
 		this.x = x;
 		this.y = y;
 		this.image = image;
@@ -134,7 +140,8 @@ public class PositionBlock implements GameVariables {
 	 * @param chunkYPosition y coordinate of chunk.
 	 */
 	public void draw(Graphics2D g, int chunkXPosition, int chunkYPosition) {
-		g.drawImage(image, x + chunkXPosition, y + chunkYPosition, width, height, null);
+		g.drawImage(image, x + chunkXPosition,  y + chunkYPosition, width, height, null);
+		// g.drawImage(image, x + chunkXPosition, y + chunkYPosition, width, height, null); // To draw a BufferedImage or regular Image.
 	}
 
 	/**
@@ -199,41 +206,52 @@ public class PositionBlock implements GameVariables {
 	 * @param args arguements passed
 	 */
 	public static void main(String[] args) {
+		JFrame myFrame = new JFrame();
+		
 		boolean allPassed = true;
 
 		final int initialX = 0;
 		final int initialY = 0;
 
-		Image positionBlockImage = null;
+		VolatileImage vImage = null;
+		
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+        GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
+		
 		try {
-			positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
+			vImage = graphicsConfig.createCompatibleVolatileImage(WALL_WIDTH, WALL_HEIGHT);
+			Graphics2D g = vImage.createGraphics();
+			final BufferedImage positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
+			g.drawImage(positionBlockImage, 0, 0, null);
+			g.dispose();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		// Testing a position block
-		PositionBlock pb = new PositionBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
+		PositionBlock pb = new PositionBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "????");
 
 		// Testing an empty block
-		pb = new EmptyBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
+		pb = new EmptyBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "empt");
 
 		// Testing a wall
-		pb = new Wall(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
+		pb = new Wall(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "wall");
 
 		// Testing a starting block
-		pb = new StartingBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
+		pb = new StartingBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "strt");
 
 		// Testing a end block
-		pb = new EndBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, positionBlockImage);
+		pb = new EndBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
 
 		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "EndB");
 

@@ -1,7 +1,12 @@
 package chunks;
 
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -119,30 +124,30 @@ public class ChunkManager implements GameVariables {
 			}
 			
 			// Load Images
-			Image positionBlockImage = null;
+			VolatileImage positionBlockImage = null;
 			try {
-				positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
+				positionBlockImage = convertToVolatile(ImageIO.read(new File("images/emptyBlock.png")));
 			} catch (IOException e) {
 				System.err.println("Failed to load emptyBlock.png!");
 			}
 
-			Image wallImage = null;
+			VolatileImage wallImage = null;
 			try {
-				wallImage = ImageIO.read(new File("images/wall.png"));
+				wallImage = convertToVolatile(ImageIO.read(new File("images/wall.png")));
 			} catch (IOException e) {
 				System.err.println("Failed to load wall.png!");
 			}
 
-			Image startImage = null;
+			VolatileImage startImage = null;
 			try {
-				startImage = ImageIO.read(new File("images/startBlock.png"));
+				startImage = convertToVolatile(ImageIO.read(new File("images/startBlock.png")));
 			} catch (IOException e) {
 				System.err.println("Failed to load startBlock.png!");
 			}
-			Image endImage = null;
+			VolatileImage endImage = null;
 
 			try {
-				endImage = ImageIO.read(new File("images/endBlock.png"));
+				endImage = convertToVolatile(ImageIO.read(new File("images/endBlock.png")));
 			} catch (IOException e) {
 				System.err.println("Failed to load endBlock.png!");
 			}
@@ -210,6 +215,39 @@ public class ChunkManager implements GameVariables {
 		}
 		return false;
 	}
+	
+	private VolatileImage convertToVolatile(BufferedImage originalImage) {
+		final GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		final GraphicsDevice device = env.getDefaultScreenDevice();
+		final GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
+		VolatileImage vImage = null;
+		vImage = graphicsConfig.createCompatibleVolatileImage(originalImage.getWidth(), originalImage.getHeight());
+		Graphics2D g = vImage.createGraphics();
+		g.drawImage(originalImage, 0, 0, null);
+		g.dispose();
+		return vImage;
+	}
+	
+//	VolatileImage vImage = null;
+//	BufferedImage positionBlockImage = null;
+//	
+//	GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//    GraphicsDevice device = env.getDefaultScreenDevice();
+//    GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
+//	
+//	try {
+//		vImage = graphicsConfig.createCompatibleVolatileImage(WALL_WIDTH, WALL_HEIGHT);
+//		Graphics2D g = vImage.createGraphics();
+//		positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
+//		g.drawImage(positionBlockImage, 0, 0, null);
+//		g.dispose();
+//	} catch (IOException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
+//	
+//	// Testing a position block
+//	PositionBlock pb = new PositionBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
 
 	/**
 	 * Resets ChunkManager.

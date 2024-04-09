@@ -2,6 +2,7 @@ package blocks;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.image.VolatileImage;
 
 /**
  * <p>
@@ -30,7 +31,7 @@ public class EmptyBlock extends PositionBlock {
 	 * @param height The height of the block.
 	 * @param positionBlockImage      The color of the block.
 	 */
-	public EmptyBlock(int x, int y, int width, int height, Image positionBlockImage) {
+	public EmptyBlock(int x, int y, int width, int height, VolatileImage positionBlockImage) {
 		super(x, y, width, height, positionBlockImage);
 	}
 
