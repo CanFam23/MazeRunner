@@ -6,10 +6,11 @@ import java.util.Map;
 
 /**
  * Mage is a child of Enemy with attributes and unique images.
+ * 
  * @author Andrew Denegar
  */
 public class Mage extends Enemy {
-	
+
 	public Mage(int x, int y, Map<State, List<BufferedImage>> images, int[] PADDING, int attackImages) {
 		this.images = images;
 		this.PADDING = PADDING;
@@ -20,7 +21,8 @@ public class Mage extends Enemy {
 		position_y = y;
 		speed = 2;
 		defaultSpeed = speed;
-		roamingSpeed = speed/2;
-		DELTAS = new int[][]{{-speed, 0}, {0, -speed}, {0, speed}, {speed, 0}, {speed, speed},{-speed, speed},{speed, -speed},{-speed, -speed}};
+		roamingSpeed = speed / 2;
+		DELTAS = new int[][] { { -speed, 0 }, { 0, -speed }, { 0, speed }, { speed, 0 }, { speed, speed },
+				{ -speed, speed }, { speed, -speed }, { -speed, -speed } };
 	}
 }

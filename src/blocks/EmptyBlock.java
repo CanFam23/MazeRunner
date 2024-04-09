@@ -21,13 +21,13 @@ public class EmptyBlock extends PositionBlock {
 	/**
 	 * Constructs a new EmptyBlock with the given parameters.
 	 * 
-	 * @param x      The x-coordinate relative to the top-left coordinate of the
-	 *               chunk.
-	 * @param y      The y-coordinate relative to the top-left coordinate of the
-	 *               chunk.
-	 * @param width  The width of the block.
-	 * @param height The height of the block.
-	 * @param positionBlockImage      The color of the block.
+	 * @param x                  The x-coordinate relative to the top-left
+	 *                           coordinate of the chunk.
+	 * @param y                  The y-coordinate relative to the top-left
+	 *                           coordinate of the chunk.
+	 * @param width              The width of the block.
+	 * @param height             The height of the block.
+	 * @param positionBlockImage The color of the block.
 	 */
 	public EmptyBlock(int x, int y, int width, int height, Image positionBlockImage) {
 		super(x, y, width, height, positionBlockImage);

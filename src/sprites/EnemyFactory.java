@@ -10,29 +10,33 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 /**
- * EnemyFactory will be used to create up to five enemy factory classes: Beaver, Ghost, Mage, Necromancer, and Salamander.
- * 	Extensions of EnemyFactories will load the static images for each of the classes
+ * EnemyFactory will be used to create up to five enemy factory classes: Beaver,
+ * Ghost, Mage, Necromancer, and Salamander. Extensions of EnemyFactories will
+ * load the static images for each of the classes
  * 
  */
 public abstract class EnemyFactory {
-	
+
 	// Function that can be used by a user.
 	public abstract Enemy createEnemy(int x, int y);
-	
+
 	// Store the padding for each enemy within it's factory class.
 	public int TOP_PADDING;
 	public int RIGHT_PADDING;
 	public int BOTTOM_PADDING;
 	public int LEFT_PADDING;
-	
-	/** Padding will hold all the padding values which will be passed to the enemy */
+
+	/**
+	 * Padding will hold all the padding values which will be passed to the enemy
+	 */
 	public int[] PADDING;
-	
+
 	/** load_images should be implemented separately for each enemy */
 	protected abstract void load_images();
-	
+
 	/** load_spritesheet should be the same for each enemy. */
-	protected void load_spritesheet(String FILE_LOCATION, String character_name, sprites.Enemy.State playerState, int imageNumber, Map<sprites.Enemy.State, List<BufferedImage>> images) {
+	protected void load_spritesheet(String FILE_LOCATION, String character_name, sprites.Enemy.State playerState,
+			int imageNumber, Map<sprites.Enemy.State, List<BufferedImage>> images) {
 		BufferedImage spriteSheet = null;
 		// Load the spritesheet file
 		if (playerState.toString() != null) {
@@ -54,7 +58,9 @@ public abstract class EnemyFactory {
 			}
 		} else {
 			for (int i = 0; i < imageNumber; i++) {
-				BufferedImage img = spriteSheet.getSubimage(LEFT_PADDING, (height / imageNumber) * i + TOP_PADDING, (width - LEFT_PADDING) - RIGHT_PADDING, ((height / imageNumber) - TOP_PADDING) - BOTTOM_PADDING);
+				BufferedImage img = spriteSheet.getSubimage(LEFT_PADDING, (height / imageNumber) * i + TOP_PADDING,
+						(width - LEFT_PADDING) - RIGHT_PADDING,
+						((height / imageNumber) - TOP_PADDING) - BOTTOM_PADDING);
 				images.get(playerState).add(img);
 			}
 		}

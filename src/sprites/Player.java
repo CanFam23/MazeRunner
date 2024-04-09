@@ -1,9 +1,12 @@
 package sprites;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -11,14 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.*;
-
-import gameTools.CollisionDetection;
-import gameTools.GameVariables;
-
-import java.awt.*;
-
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import gameTools.GameVariables;
 
 /**
  * <p>
@@ -38,35 +38,37 @@ public class Player implements GameVariables {
 	private static final String FILE_LOCATION = "images/";
 
 	/**
-	 *  Tracks the health of our player
+	 * Tracks the health of our player
 	 */
-    private int health = 8000;
+	private int health = 8000;
 
 	/**
-	 * Draw count is used to track the number of draws that have occurred since the last animation update.
+	 * Draw count is used to track the number of draws that have occurred since the
+	 * last animation update.
 	 */
 	private int drawCount = 0;
-	
+
 	/**
 	 * Count of frames that attack has been drawn.
 	 */
 	private int attackCount = 0;
-	
+
 	/**
-	 * Size of the player (this controls the drawn size while PLAYER_WIDTH/HEIGHT controls the hit box).
+	 * Size of the player (this controls the drawn size while PLAYER_WIDTH/HEIGHT
+	 * controls the hit box).
 	 */
 	public static final int SIZE = 3;
-	
+
 	/**
 	 * Default the player to be holding a weapon.
 	 */
 	private boolean holdingWeapon = true;
-		
+
 	/**
 	 * True if an animation has started that must be completed.
 	 */
 	private boolean stateLocked = false;
-	
+
 	/**
 	 * True if an animation has started that must be completed.
 	 */
@@ -77,7 +79,7 @@ public class Player implements GameVariables {
 
 	/** Set initial player direction. */
 	private Facing currentFacing = Facing.N;
-	
+
 	private final int framesPerSwitch = 6;
 
 	/**
@@ -85,26 +87,44 @@ public class Player implements GameVariables {
 	 * direction faced.
 	 */
 	private Map<State, Map<Facing, List<BufferedImage>>> images = new HashMap<>();
-	
+
+	/**
+	 * Enemies the player hit
+	 */
+	private Set<Enemy> hitEnemies = new HashSet<>();
+
 	/**
 	 * A map of Facing enumerators and Rectangles
 	 */
-	private Map<Facing,Rectangle> hitboxes = new HashMap<>();
-	
-	private Set<Enemy> hitEnemies = new HashSet<>();
-	
+	@SuppressWarnings("serial")
+	Map<Facing, Rectangle> hitboxes = new HashMap<>() {
+		{
+			put(Facing.E,
+					new Rectangle(PLAYER_X + PLAYER_WIDTH / 2, PLAYER_Y, (int) (PLAYER_WIDTH * 1.5), PLAYER_HEIGHT));
+			put(Facing.W, new Rectangle(PLAYER_X - PLAYER_WIDTH, PLAYER_Y, (int) (PLAYER_WIDTH * 1.5), PLAYER_HEIGHT));
+			put(Facing.N, new Rectangle(PLAYER_X, PLAYER_Y - PLAYER_HEIGHT, PLAYER_WIDTH, (int) (PLAYER_HEIGHT * 1.5)));
+			put(Facing.S,
+					new Rectangle(PLAYER_X, PLAYER_Y + PLAYER_HEIGHT / 2, PLAYER_WIDTH, (int) (PLAYER_HEIGHT * 1.5)));
+			put(Facing.NE, new Rectangle(PLAYER_X + PLAYER_WIDTH / 2, PLAYER_Y - PLAYER_HEIGHT / 3,
+					(int) (PLAYER_WIDTH * 1.5), PLAYER_HEIGHT));
+			put(Facing.SE, new Rectangle(PLAYER_X + PLAYER_WIDTH / 2, PLAYER_Y + PLAYER_HEIGHT / 3,
+					(int) (PLAYER_WIDTH * 1.5), PLAYER_HEIGHT));
+			put(Facing.NW, new Rectangle(PLAYER_X - PLAYER_WIDTH, PLAYER_Y - PLAYER_HEIGHT / 3,
+					(int) (PLAYER_WIDTH * 1.5), PLAYER_HEIGHT));
+			put(Facing.SW, new Rectangle(PLAYER_X - PLAYER_WIDTH, PLAYER_Y + PLAYER_HEIGHT / 3,
+					(int) (PLAYER_WIDTH * 1.5), PLAYER_HEIGHT));
+		}
+	};
+
+	/**
+	 * Which way the player is looking when attacking
+	 */
 	private Facing attackFacing = Facing.N;
-	
+
+	/**
+	 * Constructor
+	 */
 	public Player() {
-		//Add values to hitboxes
-		hitboxes.put(Facing.E, new Rectangle(PLAYER_X + PLAYER_WIDTH/2, PLAYER_Y, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
-		hitboxes.put(Facing.W, new Rectangle(PLAYER_X - PLAYER_WIDTH, PLAYER_Y, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
-		hitboxes.put(Facing.N, new Rectangle(PLAYER_X, PLAYER_Y-PLAYER_HEIGHT, PLAYER_WIDTH, (int) (PLAYER_HEIGHT*1.5)));
-		hitboxes.put(Facing.S, new Rectangle(PLAYER_X, PLAYER_Y+PLAYER_HEIGHT/2, PLAYER_WIDTH, (int) (PLAYER_HEIGHT*1.5)));
-		hitboxes.put(Facing.NE, new Rectangle(PLAYER_X+ PLAYER_WIDTH/2, PLAYER_Y-PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
-		hitboxes.put(Facing.SE, new Rectangle(PLAYER_X+ PLAYER_WIDTH/2, PLAYER_Y+PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
-		hitboxes.put(Facing.NW, new Rectangle(PLAYER_X- PLAYER_WIDTH, PLAYER_Y-PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
-		hitboxes.put(Facing.SW, new Rectangle(PLAYER_X- PLAYER_WIDTH, PLAYER_Y+PLAYER_HEIGHT/3, (int)(PLAYER_WIDTH*1.5), PLAYER_HEIGHT));
 
 	}
 
@@ -160,7 +180,7 @@ public class Player implements GameVariables {
 			final int height = spriteSheet.getHeight();
 			final int width = spriteSheet.getWidth();
 			final int framesPerAnim = xDim * yDim / Facing.values().length;
-			
+
 			// Count and direction will be changed based on the number of the image being
 			// loaded.
 			int count = 0;
@@ -186,20 +206,22 @@ public class Player implements GameVariables {
 			}
 		}
 	}
-	
+
+	// TODO Testing
 	/**
-	 * TODO JavaDoc and testing
+	 * Checks if the player hits any enemies when they attack.
+	 * 
+	 * Uses the attack hitboxes and enemy hitbox to make rectangles and check for
+	 * collision between the two. If there is a collision, add the enemy to hit
+	 * enemies set.
 	 */
 	public void attacking() {
 		final Rectangle hitbox = hitboxes.get(currentFacing);
 		if (Enemy.activeEnemies.size() != 0 && Enemy.enemies.size() != 0) {
-			for(Enemy e: Enemy.activeEnemies) {
+			for (Enemy e : Enemy.activeEnemies) {
 				final int[] eCoords = e.getPosition();
-				final Rectangle eHitbox = new Rectangle(eCoords[0],eCoords[1],e.getWidth(),e.getHeight());
-				if(hitbox.intersects(eHitbox)) {
-//					e.subtractHitCount(1);
-//					e.knockback(currentFacing);
-//					System.out.println("Attacking enemy " + e);
+				final Rectangle eHitbox = new Rectangle(eCoords[0], eCoords[1], e.getWidth(), e.getHeight());
+				if (hitbox.intersects(eHitbox)) {
 					hitEnemies.add(e);
 					attackFacing = currentFacing;
 					break;
@@ -207,16 +229,26 @@ public class Player implements GameVariables {
 			}
 		}
 	}
-	
+
+	// TODO Testing
+	/**
+	 * Handles the player attack and knocks back all enemies the player hit.
+	 */
 	public void handleAttack() {
-		for(Enemy e: hitEnemies) {
-//			e.subtractHitCount(1);
+		for (Enemy e : hitEnemies) {
+			e.subtractHitCount(1);
 			e.knockback(attackFacing);
 			System.out.println("Attacking enemy " + e);
 		}
 		hitEnemies.clear();
 	}
-	
+
+	// TODO Testing
+	/**
+	 * Checks if any enemies are in hitEnemies Set.
+	 * 
+	 * @return If any enemies are in hitEnemies Set.
+	 */
 	public boolean hitEnemies() {
 		return hitEnemies.size() != 0;
 	}
@@ -292,39 +324,39 @@ public class Player implements GameVariables {
 	 * 
 	 * @param g 2Dgraphics to draw on
 	 */
-	public void draw(Graphics2D g) {		
+	public void draw(Graphics2D g) {
 		final BufferedImage myImage = images.get(currentState).get(currentFacing).get(0);
 		final int imageXAdjustment = (int) ((myImage.getWidth() * SIZE - PLAYER_WIDTH) / 2);
 		final int imageYAdjustment = (int) ((myImage.getHeight() * SIZE - PLAYER_HEIGHT) / 2);
 		if (currentState == State.Attack)
 			attackCount += 1;
-		
+
 		if (drawCount < framesPerSwitch - 1) { // For x ticks of the game loop, draw the same image.
-			g.drawImage(myImage, PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment, PLAYER_WIDTH + imageXAdjustment * 2,PLAYER_HEIGHT + imageYAdjustment * 2, null);
+			g.drawImage(myImage, PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment,
+					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
 //			g.setColor(Color.red);
 //			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 			drawCount++;
 		} else { // Then, switch the image to the next one in the sequence.
 			BufferedImage img = images.get(currentState).get(currentFacing).remove(0);
-			g.drawImage(img, PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment, PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
+			g.drawImage(img, PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment,
+					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
 //			g.setColor(Color.red);
 //			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 			images.get(currentState).get(currentFacing).add(img);
 			drawCount = 0;
 		}
-		
-		//TODO remove
+
+		// TODO remove
 		g.setColor(Color.RED);
 		g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
-		
+
 		g.setColor(Color.blue);
-		if(getState().equals("Attack")) {
+		if (getState().equals("Attack")) {
 			g.draw(hitboxes.get(currentFacing));
-			
 
 		}
-		
-		
+
 		if (attackCount == framesPerSwitch * 4) {
 			unlockState();
 			unlockFacing();
@@ -343,78 +375,78 @@ public class Player implements GameVariables {
 		setFacing(Facing.N);
 		health = 8000;
 	}
-	
+
 	public void resetDrawCount() {
 		drawCount = 0;
 	}
-	
+
 	public boolean isStateLocked() {
 		return stateLocked;
 	}
-	
+
 	public boolean isFacingLocked() {
 		return facingLocked;
 	}
-	
+
 	/**
 	 * Set the state to be fixed
 	 */
 	public void lockState() {
 		stateLocked = true;
 	}
-	
+
 	/**
 	 * Set facing to be fixed
 	 */
 	public void lockFacing() {
 		facingLocked = true;
 	}
-	
+
 	/**
 	 * Allow state to be changed
 	 */
 	public void unlockState() {
 		stateLocked = false;
 	}
-	
+
 	/**
 	 * Allow facing to be changed
 	 */
 	public void unlockFacing() {
 		facingLocked = false;
 	}
-	
+
 	/**
-     * Subtract health from the player.
-     * 
-     * @param amount The amount of health to subtract.
-     */
-    public void subtractHealth(int amount) {
-        health -= amount;
-    }
-    
+	 * Subtract health from the player.
+	 * 
+	 * @param amount The amount of health to subtract.
+	 */
+	public void subtractHealth(int amount) {
+		health -= amount;
+	}
+
 	/**
-     * Subtract health from the player.
-     * 
-     * @param amount The amount of health to subtract.
-     */
-    public void addHealth(int amount) {
-        health += amount;
-    }
-    
+	 * Subtract health from the player.
+	 * 
+	 * @param amount The amount of health to subtract.
+	 */
+	public void addHealth(int amount) {
+		health += amount;
+	}
+
 	/**
-     * Set player health back to 100 
-     */
-    public void resetHealth() {
-    	health = 100; 
-    }
-    
+	 * Set player health back to 100
+	 */
+	public void resetHealth() {
+		health = 100;
+	}
+
 	/**
-     * Return the current health of player 
-     */
-    public int getHealth() {
-    	return health;
-    }
+	 * Return the current health of player
+	 */
+	public int getHealth() {
+		return health;
+	}
 
 	///////////////// BELOW CODE IS USED JUST FOR TESTING PURPOSES
 	///////////////// //////////////////
@@ -469,7 +501,6 @@ public class Player implements GameVariables {
 		image = newImage;
 		panel.repaint(); // This will trigger paintComponent to redraw the image
 	}
-	
 
 	/**
 	 * Main method
