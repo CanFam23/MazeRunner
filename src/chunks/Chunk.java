@@ -342,7 +342,7 @@ public class Chunk implements GameVariables {
 		// Adding blocks to chunk
 		for (int i = 0; i < Math.pow(chunkLength, 2); i++) {
 			final PositionBlock pb = new Wall((r % chunkLength) * WALL_WIDTH, (c % chunkLength) * WALL_HEIGHT,
-					WALL_WIDTH, WALL_HEIGHT, vImage);
+					WALL_WIDTH, WALL_HEIGHT);
 			chunk.add(r, c, pb);
 
 			if (r == chunkLength - 1) {
@@ -396,7 +396,7 @@ public class Chunk implements GameVariables {
 
 		// Checking collision function
 		Chunk newChunk = new Chunk(0, 0, 0, 0);
-		PositionBlock pb = new PositionBlock(PLAYER_X, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT, vImage);
+		PositionBlock pb = new PositionBlock(PLAYER_X, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT);
 
 		// Should find a collision because the PositiobBlock's coords are intersecting
 		// with the players
@@ -408,7 +408,7 @@ public class Chunk implements GameVariables {
 
 		// Should find a collision because the PositiobBlock's coords are intersecting
 		// with the players, this time they are slightly different
-		pb = new PositionBlock(PLAYER_X + WALL_WIDTH / 4, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT, vImage);
+		pb = new PositionBlock(PLAYER_X + WALL_WIDTH / 4, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT);
 		
 		tempBounds = pb.getBounds(0, 0);
 
@@ -418,7 +418,7 @@ public class Chunk implements GameVariables {
 		}
 
 		// Should not find a collision because the block is at 0,0
-		pb = new PositionBlock(0, 0, WALL_WIDTH, WALL_HEIGHT, vImage);
+		pb = new PositionBlock(0, 0, WALL_WIDTH, WALL_HEIGHT);
 		tempBounds = pb.getBounds(0, 0);
 
 		if (CollisionDetection.getCollision(tempBounds[0], tempBounds[1], playerXCoords, playerYCoords)) {
