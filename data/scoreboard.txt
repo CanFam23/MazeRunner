@@ -1,0 +1,27 @@
+Level 1 top times:
+1.;NickClouse;60
+2.;MollyOConn:62
+3.;AndrewDene:63
+4.;ILoveJavaL:72
+5.;NathanAwes:89
+
+Level 2 top times:
+1.;MollyOConn;74
+2.;AndrewDene:77
+3.;NickClouse:79
+4.;ILoveJavaL:84
+5.;NathanAwes:92
+
+Level 3 top times:
+1.;AndrewDene;70
+2.;MollyOConn:84
+3.;NickClouse:86
+4.;ILoveJavaL:88
+5.;NathanAwes:93
+
+Overall scores
+1.;NickClouse:225
+2.;MollyOConn:227
+3.;AndrewDene:210
+4.;ILoveJavaL:244
+5.;NathanAwes:274
