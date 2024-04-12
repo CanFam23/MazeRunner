@@ -342,7 +342,7 @@ public class ChunkManager implements GameVariables {
 
 	/**
 	 * Resets ChunkManager. Sets variables like endFound and x/y offsets to their
-	 * starting values, and clears Enemy arrays.
+	 * starting values, and clears Enemy lists.
 	 */
 	public void reset() {
 		endFound = false;
