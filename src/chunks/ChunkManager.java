@@ -24,7 +24,6 @@ import blocks.StartingBlock;
 import blocks.Wall;
 import gameTools.CollisionDetection;
 import gameTools.GameVariables;
-import panels.GamePanel;
 import sprites.Enemy;
 import sprites.EnemyFactory;
 import sprites.GhostFactory;
@@ -367,7 +366,6 @@ public class ChunkManager implements GameVariables {
 	 * @param d The direction to move the player.
 	 */
 	public void handlePlayerHit(Facing d) {
-		GamePanel.ourPlayer.subtractHealth(1000);
 		if (!knockback) {
 			knockback = true;
 			knockbackDir = d;
