@@ -7,19 +7,22 @@ import java.util.Map;
 
 /**
  * MageFactory will load the Mage images and create Mage instances using the
- * createEnemy function.
+ * createEnemy function. Testing is found in Enemy.java.
  *
  */
 public class MageFactory extends EnemyFactory {
 
+	/** Singleton: Only one MageFactory should be created. */
+	private static MageFactory single_instance = null;
+	
 	/** Hold images (which should be the same for all Mages) */
-	static private Map<sprites.Enemy.State, List<BufferedImage>> images = new HashMap<>();
+	static private Map<Enemy.State, List<BufferedImage>> images = new HashMap<>();
 
 	static private int NUMATTACKINGIMAGES = 6;
 
 	static private int[] PADDING;
 
-	public MageFactory() {
+	private MageFactory() {
 		// Store the padding for each enemy within it's factory class.
 		TOP_PADDING = 12;
 		RIGHT_PADDING = 12;
@@ -27,6 +30,13 @@ public class MageFactory extends EnemyFactory {
 		LEFT_PADDING = 12;
 		PADDING = new int[] { TOP_PADDING, RIGHT_PADDING, BOTTOM_PADDING, LEFT_PADDING };
 		load_images();
+	}
+	
+	public static synchronized MageFactory getInstance() {
+		if (single_instance == null)
+			single_instance = new MageFactory();
+
+		return single_instance;
 	}
 
 	@Override

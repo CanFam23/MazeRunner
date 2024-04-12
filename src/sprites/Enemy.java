@@ -108,6 +108,9 @@ public abstract class Enemy implements GameVariables {
 
 	/** How many times the enemy is drawn before the next image is selected . */
 	protected static final int DRAW_FRAMES = 5;
+	
+	/** Conversion is a constant used to resize our enemy to our liking */
+	private static final int IMAGESIZECONVERSION = 2; 
 
 	/** Width of enemy. */
 	protected int WIDTH;
@@ -141,7 +144,7 @@ public abstract class Enemy implements GameVariables {
 	/**
 	 * Tracks the hit count of our enemy
 	 */
-	private int hitCount = 5; // 5 hits to make an enemy die? change number?
+	private int hitCount = 3; // 3 hits to make an enemy die? change number?
 
 	/**
 	 * All directions the enemy can move.
@@ -385,10 +388,7 @@ public abstract class Enemy implements GameVariables {
 		final int tempX = position_x + ChunkManager.xOffset;
 		final int tempY = position_y + ChunkManager.yOffset;
 
-		if ((tempX + WIDTH > 0 && tempX < SCREEN_WIDTH) && (tempY + HEIGHT > 0 && tempY < SCREEN_HEIGHT)) {
-			return true;
-		}
-		return false;
+		return (tempX + WIDTH > 0 && tempX < SCREEN_WIDTH) && (tempY + HEIGHT > 0 && tempY < SCREEN_HEIGHT);
 	}
 
 	/**
@@ -611,18 +611,21 @@ public abstract class Enemy implements GameVariables {
 		position_x += dx;
 		position_y += dy;
 	}
-
-	// TODO: Implement more than two directions to be drawn
+	
+	/**
+	 * Draw the enemy to the screen.
+	 * 
+	 * @param g Graphics2D object used for drawing
+	 */
 	public void draw(Graphics2D g) {
 		// Store position based on movement of the map
 		final int final_x = ChunkManager.xOffset + position_x;
 		final int final_y = ChunkManager.yOffset + position_y;
 		final int attackXAdjustment;
 		final int attackYAdjustment;
-		final int CONVERSION = 2;
 		if (currentState == State.Attack) {
-			attackXAdjustment = PADDING[1] * CONVERSION;
-			attackYAdjustment = PADDING[0] * CONVERSION;
+			attackXAdjustment = PADDING[1] * IMAGESIZECONVERSION;
+			attackYAdjustment = PADDING[0] * IMAGESIZECONVERSION;
 			attackCount++;
 		} else {
 			attackXAdjustment = 0;
@@ -667,8 +670,8 @@ public abstract class Enemy implements GameVariables {
 	// Test enemy classes
 	public static void main(String[] args) {
 		// Create factories that will create our images.
-		EnemyFactory mageCreator = new MageFactory();
-		EnemyFactory ghostCreator = new GhostFactory();
+		EnemyFactory mageCreator = MageFactory.getInstance();
+		EnemyFactory ghostCreator = GhostFactory.getInstance();
 
 		// Create enemy instances using 'magic' numbers for x and y positions.
 		Enemy merlin = mageCreator.createEnemy(10, 10);
