@@ -205,6 +205,9 @@ public abstract class Enemy implements GameVariables {
 
 	/** Displace player y coordinate by this amount. */
 	private int knockbackDy = 0;
+	
+	/** Damage dealt to player when enemy hits the player. */
+	protected int damage = 0;
 
 	/** Direction to knock player back. */
 	private Facing knockbackDir = Facing.N;
@@ -286,7 +289,7 @@ public abstract class Enemy implements GameVariables {
 				 * we know which way to move the player.
 				 */
 				GamePanel.ourPlayer.setGettingAttacked(true);
-				ChunkManager.playerHit(oppositeDirection.get(dirToPlayer));
+				ChunkManager.playerHit(oppositeDirection.get(dirToPlayer), this.damage);
 			}
 		} else {
 			// If player is within the detection range, enemy should move towards the player
