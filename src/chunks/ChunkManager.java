@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -194,7 +195,11 @@ public class ChunkManager implements GameVariables {
 	 * @return true If level was loaded correctly.
 	 */
 	public boolean loadLevel(int levelNum) {
+		Random random = new Random();
+        // Generate a random number between 1 and 3 (inclusive)
+        int randomNumber = random.nextInt(5) + 1;
 		levelName = "level_" + levelNum;
+//		levelName = "level_" + levelNum + "_v" + randomNumber;
 		try (final Scanner input = new Scanner(new File(FILE_LOCATION + levelName + ".txt"))) {
 			input.nextLine(); // Discard data description
 			final String[] levelStrings = input.nextLine().split(":")[1].split("x"); // Save the dimension of the chunks
