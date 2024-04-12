@@ -94,6 +94,11 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 	private Image backgroundImage;
 
+	// Health bar properties
+	int healthBarWidth = 200; // Make the health bar width slightly smaller than the panel width
+	int healthBarHeight = 20; // Reduce the height of the health bar
+	int padding = 30; // Padding from the top and right edges of the panel
+	
 	/**
 	 * Constructs a GamePanel object.
 	 */
@@ -293,10 +298,16 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		if (ourPlayer.getHealth() < 10000) {
 			ourPlayer.addHealth(1);
 		}
-		// Health bar properties
-		int healthBarWidth = 200; // Make the health bar width slightly smaller than the panel width
-		int healthBarHeight = 20; // Reduce the height of the health bar
-		int padding = 30; // Padding from the top and right edges of the panel
+
+		drawHealthBar(g);
+		
+		ourPlayer.draw(g2);
+
+		// Saves some memory
+		g2.dispose();
+	}
+
+	private void drawHealthBar(Graphics g) {
 		int healthBarX = getWidth() - healthBarWidth - padding; // Adjust X coordinate to be near the right edge
 		int healthBarY = padding; // Adjust Y coordinate to be near the top edge
 		int titleX = getWidth() - healthBarWidth - padding; // X coordinate of the title (aligned with health bar)
@@ -324,13 +335,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// Draw the health portion of the health bar
 		g.setColor(Color.GREEN); // Health color
 		g.fillRect(healthBarX, healthBarY, barWidth, healthBarHeight); // Health
-
-		ourPlayer.draw(g2);
-
-		// Saves some memory
-		g2.dispose();
 	}
-
+	
 	/**
 	 * @return the average FPS count during the programs duration
 	 */
