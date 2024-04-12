@@ -92,6 +92,7 @@ public class HomeScreen extends JPanel {
         JPanel nameInputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         nameInputPanel.setBackground(Color.BLACK); // Adjust as needed
         JLabel nameLabel = new JLabel("Enter Your Name: ");
+		nameLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
         nameLabel.setForeground(Color.WHITE); // Set label text color
         nameField = new JTextField(10);; // 10 columns for the text field
         nameInputPanel.add(nameLabel);
