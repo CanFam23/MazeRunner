@@ -1,7 +1,6 @@
 package panels;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -10,14 +9,9 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-
-import main.Main;
 
 /**
  * <p>
@@ -46,11 +40,6 @@ public class GameOverWIN extends JPanel {
 	 */
 	private boolean isRunning = true;
 
-    private JPanel mainPanel;
-    private JButton nextLevelButton;
-    private JButton exitButton;
-    private JButton scoreButton;
-    private JButton backButton;
 	/**
 	 * Constructs new GameOverWIN panel
 	 */
@@ -63,91 +52,38 @@ public class GameOverWIN extends JPanel {
 		}
 
 		setLayout(new BorderLayout());
-		mainPanel = createMainPanel();
-		add(mainPanel, BorderLayout.CENTER);
-		
-	}
-	
-	private JPanel createMainPanel() {
+
 		JPanel panel = new JPanel() {
-	        @Override
-	        protected void paintComponent(Graphics g) {
-	            super.paintComponent(g);
-	            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-	        }
-	        };
-	        
-	        JPanel buttonPanel = new JPanel();
-	        buttonPanel.setBackground(Color.BLACK);
-	        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // top, left, bottom, right
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+			}
+		};
 
-	        exitButton = createButton("EXIT");
-	        nextLevelButton = createButton("NEXT LEVEL");
-	        scoreButton = createButton("SCOREBOARD");
+		JButton endGame = new JButton("EXIT");
+		endGame.setFont(new Font("Arial", Font.PLAIN, 24));
+		endGame.addActionListener(e -> {
+			isRunning = false;
+			System.exit(0);
+		});
 
-	        buttonPanel.add(exitButton);
-	        buttonPanel.add(nextLevelButton);
-	        buttonPanel.add(scoreButton);
+		JButton playAgain = new JButton("NEXT LEVEL");
+		playAgain.setFont(new Font("Arial", Font.PLAIN, 24));
+		playAgain.addActionListener(e -> {
+			isRunning = false;
+			// You can handle what happens when "NEXT LEVEL" button is clicked here
+		});
 
-	        // Add buttons with horizontal gap of 20 pixels
-	        buttonPanel.add(exitButton);
-	        buttonPanel.add(Box.createRigidArea(new Dimension(30, 0))); // Add space between buttons
-	        buttonPanel.add(nextLevelButton);
-	        buttonPanel.add(Box.createRigidArea(new Dimension(30, 0))); // Add space between buttons
-	        buttonPanel.add(scoreButton);
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(playAgain);
+		buttonPanel.add(endGame);
 
-	        panel.setLayout(new BorderLayout());
-	        panel.add(buttonPanel, BorderLayout.SOUTH);
-
-	        return panel;
-
-	    }
-	        
-	    private JButton createButton(String text) {
-	    	Dimension buttonSize = new Dimension(225,50);
-	        JButton button = new JButton(text);
-	        button.setPreferredSize(buttonSize);
-	        button.setFont(new Font("Monospaced", Font.PLAIN, 24));
-	        button.setForeground(Color.WHITE);
-	        button.setBackground(Color.BLACK);
-	        button.setFocusable(false);
-	        
-	        // Set the content area background color
-	        button.setContentAreaFilled(false);
-	        button.setOpaque(false);
-	       
-	        // Create a line border with white color and 2 pixels thickness
-	        Color brighterPurple = new Color(120, 0, 200); // Adjusted RGB values for brighter purple
-	        Border border = BorderFactory.createLineBorder(brighterPurple, 1);
-	        
-	        // Set the border for the button
-	        button.setBorder(border);
-
-	        button.addMouseListener(new java.awt.event.MouseAdapter() {
-	            public void mouseEntered(java.awt.event.MouseEvent evt) {
-	                button.setForeground(Color.BLUE);
-	                button.setBackground(Color.WHITE);
-	            }
-
-	            public void mouseExited(java.awt.event.MouseEvent evt) {
-	                button.setForeground(Color.WHITE);
-	            }
-	        });
-	        
-	        if (text.equals("SCOREBOARD")) {
-//	            button.addActionListener(e -> showInstructionsPanel());
-	        }
-	        
-	        if (text.equals("NEXT LEVEL")) {
-	        	button.addActionListener(e -> setIsGameOverRunning(false));	
-	        }
-	        
-	        if (text.equals("EXIT")) {
-	        	button.addActionListener(e -> System.exit(0));
-	        }
-	        return button;
-	    }	
-
+		// Add components to this panel
+		add(panel, BorderLayout.CENTER);
+		add(buttonPanel, BorderLayout.SOUTH);
+		isRunning = true;
+	}
 
 	/**
 	 * Returns true if the game over panel is running, false otherwise.
@@ -169,11 +105,11 @@ public class GameOverWIN extends JPanel {
 //	 * @param args arguements passed
 //	 */
 	public static void main(String[] args) {
-		JFrame frame = new JFrame("Next Level Test");
+		JFrame frame = new JFrame("Game Over Window Test");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		GameOverWIN gameOverPanel = new GameOverWIN();
-		gameOverPanel.setPreferredSize(new Dimension(1000, 800));
+		gameOverPanel.setPreferredSize(new Dimension(800, 600));
 
 		frame.add(gameOverPanel);
 
@@ -182,3 +118,32 @@ public class GameOverWIN extends JPanel {
 		frame.setVisible(true);
 	}
 }
+//    public static void main(String[] args) {
+//        boolean allCasesPassed = true;
+//
+//        // Set up the test frame
+//        testFrame = new JFrame();
+//        
+//        // Call the method under test
+//        GameOverWIN.GameOverWIN();
+//
+//        // Check if the frame has any child components (i.e., if it's displaying the game over screen)
+//        Container contentPane = testFrame.getContentPane();
+//        if (contentPane.getComponentCount() <= 0) {
+//            allCasesPassed = false;
+//            System.err.println("Game over screen not displayed!");
+//        }
+//
+//        // Check if the frame is visible
+//        if (!testFrame.isVisible()) {
+//            allCasesPassed = false;
+//            System.err.println("Frame is not visible!");
+//        }
+//
+//        if (allCasesPassed) {
+//            System.out.println("All cases passed!");
+//        } else {
+//            System.err.println("At least one case failed!");
+//        }
+//    }
+//}

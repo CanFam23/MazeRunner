@@ -14,8 +14,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
+import gameTools.Leaderboard;
 import panels.GameOverLOSE;
 import panels.GameOverWIN;
 import panels.GamePanel;
@@ -50,7 +52,9 @@ public class Main {
 	// Window used to display the game
 	private static JFrame window;
 
-	// Total elapsed seconds
+	private static int secondsTotal = 0;
+	
+	// Total elapsed seconds for each level
 	private static int seconds = 0;
 
 	// Remaining seconds left for the player
@@ -73,6 +77,10 @@ public class Main {
 	
 	private static int totalEnemiesKilled = 0;
 
+	private static String playerName = "";
+
+	public final static Leaderboard leaderboard = new Leaderboard("leaderboards/overall_time_leaderboard.txt");
+	
 	/**
 	 * Main method to start the game.
 	 * 
@@ -93,8 +101,16 @@ public class Main {
 		homePanel.getStartButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				homePanel.setVisible(false);
-				runMainCode();
+				String name = homePanel.getName();
+				if(name.isBlank()) {
+					JOptionPane.showMessageDialog(window, "Please enter a name!");
+				}else if(name.length() > 10) {
+					JOptionPane.showMessageDialog(window, "Name can't be longer than 10 characters!");
+				}else {
+					playerName = name;
+					homePanel.setVisible(false);
+					runMainCode();
+				}
 			}
 		});
 	}
@@ -138,6 +154,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				seconds++;
+				secondsTotal++;
 				seconds_left = timeAmount - seconds;
 
 				if (seconds_left <= 0) {
@@ -189,6 +206,19 @@ public class Main {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				System.out.println("Average FPS: " + gamePanel.getFPS());
+				final int added = leaderboard.addEntry(playerName, secondsTotal);
+				//Check if user found the end of the maze
+				if(gamePanel.wonGame()) {
+					//If they did, add their score to the leaderboard if it was low enough
+					if(added == -1) {
+						JOptionPane.showMessageDialog(window, "You didn't make the leaderboard :( Womp Womp");
+					}else {
+						JOptionPane.showMessageDialog(window, String.format("Nice job! You're #%d on the leaderboard!", added+1));
+						leaderboard.updateleaderboardFile();
+					}
+				}else {
+					JOptionPane.showMessageDialog(window, "Why didn't you finish the game???");
+				}
 				window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				window.dispose(); // Close the window
 
@@ -294,6 +324,7 @@ public class Main {
 			return false;
 		}
 	}
+
 	public static void restartGame() {
 	    // Dispose of the current window
 	    window.dispose();
