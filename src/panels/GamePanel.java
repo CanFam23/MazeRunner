@@ -202,7 +202,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 		
 		if (ourPlayer.getHealth() <= 0) {
-
+			ourPlayer.reset();
+			cmanager.reset();
+			cmanager.loadLevel(current_level);
 		}
 
 		// Move Player
