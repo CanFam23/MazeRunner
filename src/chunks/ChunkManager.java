@@ -181,9 +181,9 @@ public class ChunkManager implements GameVariables {
 	 * 
 	 * @param d The direction the player should be knocked back.
 	 */
-	public static void playerHit(Facing d) {
+	public static void playerHit(Facing d, int damage) {
 		if (single_instance != null) {
-			single_instance.handlePlayerHit(d);
+			single_instance.handlePlayerHit(d, damage);
 		}
 	}
 
@@ -198,8 +198,8 @@ public class ChunkManager implements GameVariables {
 		Random random = new Random();
         // Generate a random number between 1 and 3 (inclusive)
         int randomNumber = random.nextInt(5) + 1;
-		levelName = "level_" + levelNum;
-//		levelName = "level_" + levelNum + "_v" + randomNumber;
+//		levelName = "level_" + levelNum;
+		levelName = "level_" + levelNum + "_v" + randomNumber;
 		try (final Scanner input = new Scanner(new File(FILE_LOCATION + levelName + ".txt"))) {
 			input.nextLine(); // Discard data description
 			final String[] levelStrings = input.nextLine().split(":")[1].split("x"); // Save the dimension of the chunks
@@ -358,8 +358,8 @@ public class ChunkManager implements GameVariables {
 	 * 
 	 * @param d The direction to move the player.
 	 */
-	public void handlePlayerHit(Facing d) {
-		GamePanel.ourPlayer.subtractHealth(500);
+	public void handlePlayerHit(Facing d, int damage) {
+		GamePanel.ourPlayer.subtractHealth(damage);
 		if (!knockback) {
 			knockback = true;
 			knockbackDir = d;
@@ -715,7 +715,7 @@ public class ChunkManager implements GameVariables {
 		}
 
 		// Testing playerHit
-		ChunkManager.playerHit(Facing.E);
+		ChunkManager.playerHit(Facing.E, 50);
 		if (!chunky.getKnockback()) {
 			System.err.println("Knockback should be set to true, but it's set to false!");
 			allPassed = false;
@@ -729,7 +729,7 @@ public class ChunkManager implements GameVariables {
 		}
 
 		// Testing handlePlayerHit
-		chunky.handlePlayerHit(Facing.S);
+		chunky.handlePlayerHit(Facing.S, 50);
 		if (!chunky.getKnockback()) {
 			System.err.println("Knockback should be set to true, but it's set to false!");
 			allPassed = false;

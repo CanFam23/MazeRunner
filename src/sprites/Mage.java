@@ -25,6 +25,7 @@ public class Mage extends Enemy {
 		this.images = images;
 		this.PADDING = PADDING;
 		this.NUMATTACKINGIMAGES = attackImages;
+		this.damage = 2500;
 		WIDTH = 70;
 		HEIGHT = 70;
 		position_x = x;

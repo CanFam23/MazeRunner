@@ -25,6 +25,7 @@ public class Ghost extends Enemy {
 		this.images = images;
 		this.PADDING = PADDING;
 		this.NUMATTACKINGIMAGES = attackImages;
+		this.damage = 2000;
 		WIDTH = 60;
 		HEIGHT = 60;
 		position_x = x;
