@@ -81,6 +81,8 @@ public class Player implements GameVariables {
 	private Facing currentFacing = Facing.N;
 
 	private final int framesPerSwitch = 6;
+	
+	private boolean gettingAttacked = false;
 
 	/**
 	 * A map of images that can be accessed by first specifying the player state and
@@ -450,6 +452,16 @@ public class Player implements GameVariables {
 	public int getHealth() {
 		return health;
 	}
+	
+	public boolean isGettingAttacked() {
+		return gettingAttacked;
+	}
+	
+	public void setGettingAttacked(boolean t) {
+		gettingAttacked = t;
+	}
+	
+	
 
 	///////////////// BELOW CODE IS USED JUST FOR TESTING PURPOSES
 	///////////////// //////////////////

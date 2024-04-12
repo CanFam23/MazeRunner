@@ -17,6 +17,8 @@ import chunks.Chunk;
 import chunks.ChunkManager;
 import gameTools.CollisionDetection;
 import gameTools.GameVariables;
+import main.Main;
+import panels.GamePanel;
 
 /**
  * 
@@ -280,6 +282,7 @@ public abstract class Enemy implements GameVariables {
 				 * Use oppositeDirection map to find the opposite direction the enemy is to the player, so 
 				 * we know which way to move the player.
 				 */
+				GamePanel.ourPlayer.setGettingAttacked(true);
 				ChunkManager.playerHit(oppositeDirection.get(dirToPlayer));
 			}
 		} else {
@@ -298,6 +301,7 @@ public abstract class Enemy implements GameVariables {
 				update_coords(dx, dy);
 
 			} else {
+				GamePanel.ourPlayer.setGettingAttacked(false);
 				chasing = false;
 				changeState(roamingSpeed, 0);
 				roam();
@@ -575,8 +579,11 @@ public abstract class Enemy implements GameVariables {
 	public void subtractHitCount(int amount) {
 		hitCount -= amount;
 		if (hitCount <= 0) {
+			GamePanel.ourPlayer.setGettingAttacked(false);
 			enemies.remove(this);
 			activeEnemies.remove(this);
+			Main.addTime(15);
+			Main.enemyKilled();
 		}
 	}
 

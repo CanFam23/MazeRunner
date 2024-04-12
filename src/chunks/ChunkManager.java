@@ -367,7 +367,7 @@ public class ChunkManager implements GameVariables {
 	 * @param d The direction to move the player.
 	 */
 	public void handlePlayerHit(Facing d) {
-		GamePanel.ourPlayer.subtractHealth(1000);
+		GamePanel.ourPlayer.subtractHealth(500);
 		if (!knockback) {
 			knockback = true;
 			knockbackDir = d;
@@ -431,6 +431,7 @@ public class ChunkManager implements GameVariables {
 		knockbackCounter = 0;
 		knockbackDx = 0;
 		knockbackDy = 0;
+
 	}
 
 	/**
@@ -589,7 +590,7 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * Sets the starting location to the start chunk.
 	 */
-	private void setStartLocation() {
+	public void setStartLocation() {
 		// Move all chunks so the start chunk is the first one on the screen
 		int dx = -startChunk.xPosition;
 		int dy = -startChunk.yPosition;

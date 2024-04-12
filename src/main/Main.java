@@ -70,6 +70,8 @@ public class Main {
 	private static GameOverLOSE timeOut;
 
 	private static HomeScreen homePanel;
+	
+	private static int totalEnemiesKilled = 0;
 
 	/**
 	 * Main method to start the game.
@@ -142,7 +144,7 @@ public class Main {
 					timer.stop();
 					gameOverPanel(true);
 				} else {
-					window.setTitle("Maze Runner - Time Left: " + seconds_left + " seconds");
+					window.setTitle("Time Left: " + seconds_left + " seconds - Enemy Kill Count:" + totalEnemiesKilled);
 				}
 			}
 		});
@@ -212,6 +214,7 @@ public class Main {
 	public static void resetTime() {
 		seconds = 0;
 		seconds_left = 0;
+	    totalEnemiesKilled = 0;
 		window.setTitle("Maze Runner - Use Arrows to start time");
 		gamePanel.addKeyListener(new KeyAdapter() {
 			private boolean timerStarted = false;
@@ -235,6 +238,15 @@ public class Main {
 
 	public static void stopTime() {
 		timer.stop();
+	}
+	
+	public static void addTime(int t) {
+		window.setTitle("Adding Time");
+		seconds -= t; // this is what is removed from the total seconds to represent time left 
+	}
+	
+	public static void enemyKilled() {
+		totalEnemiesKilled += 1;
 	}
 
 	public static void showNextLevelPanel(boolean show) {
@@ -289,6 +301,7 @@ public class Main {
 	    // Reset game variables
 	    seconds = 0;
 	    seconds_left = 0;
+	    totalEnemiesKilled = 0;
 	    
 	    // Create a new instance of the HomeScreen
 	    homePanel = new HomeScreen();
