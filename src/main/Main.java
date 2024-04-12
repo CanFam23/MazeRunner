@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
+import gameTools.Leaderboard;
 import panels.GameOverLOSE;
 import panels.GameOverWIN;
 import panels.GamePanel;
@@ -50,7 +51,9 @@ public class Main {
 	// Window used to display the game
 	private static JFrame window;
 
-	// Total elapsed seconds
+	private static int secondsTotal = 0;
+	
+	// Total elapsed seconds for each level
 	private static int seconds = 0;
 
 	// Remaining seconds left for the player
@@ -70,7 +73,18 @@ public class Main {
 	private static GameOverLOSE timeOut;
 
 	private static HomeScreen homePanel;
+	
+	private static String playerName = "";
+	
+	private final static Leaderboard levelOneLeaderboard = new Leaderboard("level_one_leaderboard");
+	private final static Leaderboard levelTwoLeaderboard = new Leaderboard("level_two_leaderboard");
+	private final static Leaderboard levelThreeLeaderboard = new Leaderboard("level_three_leaderboard");
+	private final static Leaderboard overallTimeLeaderboard = new Leaderboard("overall_time_leaderboard");
+	
+	private final static Leaderboard[] leaderboards = new Leaderboard[] {levelOneLeaderboard,levelTwoLeaderboard,levelThreeLeaderboard,overallTimeLeaderboard};
 
+	private static int currentLevel = 0;
+	
 	/**
 	 * Main method to start the game.
 	 * 
@@ -136,6 +150,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				seconds++;
+				secondsTotal++;
 				seconds_left = timeAmount - seconds;
 
 				if (seconds_left <= 0) {
