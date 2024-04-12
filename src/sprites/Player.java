@@ -40,7 +40,7 @@ public class Player implements GameVariables {
 	/**
 	 * Tracks the health of our player
 	 */
-	private int health = 10000;
+	private int health = 500;
 
 	/**
 	 * Draw count is used to track the number of draws that have occurred since the

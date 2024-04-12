@@ -433,6 +433,7 @@ public class ChunkManager implements GameVariables {
 	public synchronized void updateEnemies() {
 		//Get enemies that can be see on the screen right now
 		for (Enemy e : Enemy.enemies) {
+			System.out.println(e.getPosition()[0]+" " +e.getPosition()[1]);
 			if (e.isVisible()) {
 				Enemy.activeEnemies.add(e);
 			} else {
@@ -444,6 +445,8 @@ public class ChunkManager implements GameVariables {
 		for (Enemy e : Enemy.activeEnemies) {
 			e.move();
 		}
+		System.out.println(Enemy.activeEnemies.size());
+		
 
 	}
 
