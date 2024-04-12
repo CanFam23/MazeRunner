@@ -2,33 +2,23 @@ package panels;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
 
 import main.Main;
 
@@ -62,7 +52,6 @@ public class HomeScreen extends JPanel {
     private JButton instructionButton;
     private JButton scoreButton;
     private JButton backButton;
-    private JButton scorebackButton;
     
     private JPanel currentPanel;
     
@@ -201,7 +190,7 @@ public class HomeScreen extends JPanel {
 		}
 		scoreboard += "<html>";
 		
-		// Create label for instructions text
+		// Create label for scoreboard text
 		JLabel scoreboardLabel = new JLabel(scoreboard);
 		scoreboardLabel.setForeground(Color.WHITE);
 		scoreboardLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
