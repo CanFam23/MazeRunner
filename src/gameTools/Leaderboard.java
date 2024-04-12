@@ -41,7 +41,7 @@ public class Leaderboard implements GameVariables {
 	public static void main(String[] args) {
 		boolean allPassed = true;
 
-		final String fileName = "leaderboards/level_one_leaderboard.txt";
+		final String fileName = "leaderboards/overall_time_leaderboard.txt";
 		final Leaderboard leaders = new Leaderboard(fileName);
 		final String[] entries = Arrays.copyOf(leaders.getleaderboard(), leaders.getleaderboard().length);
 		final String name = leaders.getleaderboardName();
