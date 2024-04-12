@@ -496,10 +496,7 @@ public class ChunkManager implements GameVariables {
 
 		final int[][] pbBounds = pb.getBounds(c.xPosition, c.yPosition);
 
-		if (CollisionDetection.getCollision(pbBounds[0], pbBounds[1], playerXCoords, playerYCoords)) {
-			return true;
-		}
-		return false;
+		return CollisionDetection.fullCollision(pbBounds[0], pbBounds[1], playerXCoords, playerYCoords);
 	}
 
 	/**
