@@ -104,10 +104,10 @@ public class ChunkManager implements GameVariables {
 	private Chunk[][] chunks;
 
 	/** Used to make mage enemies. */
-	private final EnemyFactory mageCreator = new MageFactory();
+	private final EnemyFactory mageCreator = MageFactory.getInstance();
 
 	/** Used to make ghost enemies. */
-	private final EnemyFactory ghostCreator = new GhostFactory();
+	private final EnemyFactory ghostCreator = GhostFactory.getInstance();
 
 	/** How many times the player is knocked back. */
 	private final int maxKnockbackCount = 14;
@@ -218,7 +218,7 @@ public class ChunkManager implements GameVariables {
 				}
 			}
 
-			// Load Images
+			// Load Images for each type of PositionBlock.
 			VolatileImage EmptyImage = null;
 			try {
 				EmptyImage = convertToVolatile(ImageIO.read(new File("images/emptyBlock.png")));
@@ -314,38 +314,25 @@ public class ChunkManager implements GameVariables {
 		return false;
 	}
 	
+	/**
+	 * Convert original images to volatile images because they are going to be loaded over and over again.
+	 * 
+	 * @param originalImage the image to be converted to volatile
+	 * @return VolatileImage same image, but now volatile which increases performance when drawn over and over again.
+	 */
 	private VolatileImage convertToVolatile(BufferedImage originalImage) {
+		// Volatile image loading utilities
 		final GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		final GraphicsDevice device = env.getDefaultScreenDevice();
 		final GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
 		VolatileImage vImage = null;
+		// Conversion
 		vImage = graphicsConfig.createCompatibleVolatileImage(originalImage.getWidth(), originalImage.getHeight());
 		Graphics2D g = vImage.createGraphics();
 		g.drawImage(originalImage, 0, 0, null);
 		g.dispose();
 		return vImage;
 	}
-	
-//	VolatileImage vImage = null;
-//	BufferedImage positionBlockImage = null;
-//	
-//	GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//    GraphicsDevice device = env.getDefaultScreenDevice();
-//    GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
-//	
-//	try {
-//		vImage = graphicsConfig.createCompatibleVolatileImage(WALL_WIDTH, WALL_HEIGHT);
-//		Graphics2D g = vImage.createGraphics();
-//		positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
-//		g.drawImage(positionBlockImage, 0, 0, null);
-//		g.dispose();
-//	} catch (IOException e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//	}
-//	
-//	// Testing a position block
-//	PositionBlock pb = new PositionBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, vImage);
 
 	/**
 	 * Resets ChunkManager. Sets variables like endFound and x/y offsets to their

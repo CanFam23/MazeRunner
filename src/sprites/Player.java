@@ -86,18 +86,18 @@ public class Player implements GameVariables {
 	 * A map of images that can be accessed by first specifying the player state and
 	 * direction faced.
 	 */
-	private Map<State, Map<Facing, List<BufferedImage>>> images = new HashMap<>();
+	private static final Map<State, Map<Facing, List<BufferedImage>>> images = new HashMap<>();
 
 	/**
 	 * Enemies the player hit
 	 */
-	private Set<Enemy> hitEnemies = new HashSet<>();
+	private final Set<Enemy> hitEnemies = new HashSet<>();
 
 	/**
 	 * A map of Facing enumerators and Rectangles
 	 */
 	@SuppressWarnings("serial")
-	Map<Facing, Rectangle> hitboxes = new HashMap<>() {
+	private final Map<Facing, Rectangle> hitboxes = new HashMap<>() {
 		{
 			put(Facing.E,
 					new Rectangle(PLAYER_X + PLAYER_WIDTH / 2, PLAYER_Y, (int) (PLAYER_WIDTH * 1.5), PLAYER_HEIGHT));
@@ -193,10 +193,11 @@ public class Player implements GameVariables {
 					// Read image
 					BufferedImage subImage = spriteSheet.getSubimage(x * width / xDim, y * height / yDim, width / xDim,
 							height / yDim);
-					// Now that we have the image split from the other part, let's remove the
-					// whitespace
+
+					// Add to the map
 					images.get(playerState).get(direction).add(subImage);
 
+					// Update the count of images added to this particular direction
 					count++;
 					if (count % framesPerAnim == 0 && count != xDim * yDim) {
 						direction = Facing.values()[count / framesPerAnim];
@@ -548,10 +549,6 @@ public class Player implements GameVariables {
 			System.out.println("At least one case failed");
 		}
 		
-		/*
-		 * handleAttack
-		 * hitEnemies
-		 */
 
 		// Start: Image testing
 		initializeGUI();
