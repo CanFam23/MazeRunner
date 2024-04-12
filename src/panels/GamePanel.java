@@ -182,6 +182,13 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			if (current_level == NUM_LEVELS) {
 				System.out.print("");
 				Main.gameOverPanel(true);
+				/*
+				 * 
+				 * 
+				 * Make this show gameOverWin screen
+				 * 
+				 * 
+				 */
 			} else {
 				Main.showNextLevelPanel(true);
 				while (Main.otherPanelRunning()) {
@@ -267,6 +274,17 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.reset();
 		v.updateRadius();
 		v.reset();
+	}
+	
+	
+	//TODO Test
+	/**
+	 * Checks if the user completed the last level, and won the game.
+	 * 
+	 * @return true if user completed all levels.
+	 */
+	public boolean wonGame() {
+		return current_level == NUM_LEVELS;
 	}
 
 	/**

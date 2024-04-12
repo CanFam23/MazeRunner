@@ -207,7 +207,7 @@ public class Leaderboard implements GameVariables {
 	 * @param score The score to add.
 	 * @return true if the entry was added to the leaderboard.
 	 */
-	public boolean addEntry(String name, int score) {
+	public int addEntry(String name, int score) {
 		int index = -1;
 
 		// Check each entry in the array
@@ -226,7 +226,7 @@ public class Leaderboard implements GameVariables {
 		}
 		// If a spot for the score isn't found, no need to go past this point
 		if (index == -1)
-			return false;
+			return index;
 
 		// Shift each entry after the index to the right
 		for (int i = leaderboard.length - 1; i > index; i--) {
@@ -237,7 +237,7 @@ public class Leaderboard implements GameVariables {
 		final String newEntry = name + " " + score;
 		leaderboard[index] = newEntry;
 
-		return true;
+		return index;
 	}
 
 	/**
