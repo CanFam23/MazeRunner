@@ -698,7 +698,7 @@ public abstract class Enemy implements GameVariables {
 
 		// Load the 0 level, it'll create two enemies
 		ChunkManager cmanager = ChunkManager.getInstance();
-		cmanager.loadLevel(0);
+		cmanager.loadLevel(0,0);
 
 		final int x1 = 20;
 		final int x2 = 40;
