@@ -76,10 +76,10 @@ public class Main {
 	
 	private static String playerName = "";
 	
-	private final static Leaderboard levelOneLeaderboard = new Leaderboard("level_one_leaderboard");
-	private final static Leaderboard levelTwoLeaderboard = new Leaderboard("level_two_leaderboard");
-	private final static Leaderboard levelThreeLeaderboard = new Leaderboard("level_three_leaderboard");
-	private final static Leaderboard overallTimeLeaderboard = new Leaderboard("overall_time_leaderboard");
+	private final static Leaderboard levelOneLeaderboard = new Leaderboard("leaderboards/level_one_leaderboard.txt");
+	private final static Leaderboard levelTwoLeaderboard = new Leaderboard("leaderboards/level_two_leaderboard.txt");
+	private final static Leaderboard levelThreeLeaderboard = new Leaderboard("leaderboards/level_three_leaderboard.txt");
+	private final static Leaderboard overallTimeLeaderboard = new Leaderboard("leaderboards/overall_time_leaderboard.txt");
 	
 	private final static Leaderboard[] leaderboards = new Leaderboard[] {levelOneLeaderboard,levelTwoLeaderboard,levelThreeLeaderboard,overallTimeLeaderboard};
 
