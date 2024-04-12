@@ -46,21 +46,24 @@ public class PositionBlock implements GameVariables {
 
 		VolatileImage vImage = null;
 		
+		// Create utilities for Volatile Image loading
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice device = env.getDefaultScreenDevice();
         GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
 		
+        // TODO: For image testing, all block types would need to be loaded and set.
 		try {
 			vImage = graphicsConfig.createCompatibleVolatileImage(WALL_WIDTH, WALL_HEIGHT);
 			Graphics2D g = vImage.createGraphics();
 			final BufferedImage positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
 			g.drawImage(positionBlockImage, 0, 0, null);
 			g.dispose();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (IOException e) { // Something went wrong loading our image
 			e.printStackTrace();
+			System.err.println("Problem loading Volatile image");
 		}
 		
+		// Set the static images of each type of position block
 		EmptyBlock.setImage(vImage);
 		EndBlock.setImage(vImage);
 		Wall.setImage(vImage);
@@ -68,29 +71,49 @@ public class PositionBlock implements GameVariables {
 
 		// Testing a position block
 		PositionBlock pb = new PositionBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
-
-		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "????");
-
+		
+		String blockType = "????";
+		
+		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
+			allPassed = false;
+		}
+		
 		// Testing an empty block
 		pb = new EmptyBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
-
-		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "empt");
-
+		
+		blockType = "empt";
+		
+		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
+			allPassed = false;
+		}
+		
 		// Testing a wall
 		pb = new Wall(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
 
-		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "wall");
-
+		blockType = "wall";
+		
+		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
+			allPassed = false;
+		}
+				
 		// Testing a starting block
 		pb = new StartingBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
 
-		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "strt");
-
+		blockType = "strt";
+		
+		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
+			allPassed = false;
+		}
+		
 		// Testing a end block
 		pb = new EndBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
 
-		allPassed = pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, "EndB");
-
+		blockType = "EndB";
+		
+		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
+			allPassed = false;
+		}
+		
 		if (allPassed) {
 			System.out.println("All cases passed!");
 		} else {
@@ -259,10 +282,11 @@ public class PositionBlock implements GameVariables {
 			allPassed = false;
 		}
 		// Checking for correct image assignment
-		if (!this.image.equals(image)) {
-			System.err.println("Image assignment failed!");
-			allPassed = false;
-		}
+		// TODO: Now that we are using a static VolatileImage, this image loading test would have to be different
+//		if (!this.image.equals(image)) {
+//			System.err.println("Image assignment failed!");
+//			allPassed = false;
+//		}
 
 		// Checking for correct toString conversion
 		if (!toString().equals(blockStr)) {
