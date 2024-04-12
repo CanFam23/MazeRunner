@@ -55,7 +55,7 @@ public class HomeScreen extends JPanel {
 
     public HomeScreen() {
         try {
-            backgroundImage = ImageIO.read(new File("images/HomeScreen5.png"));
+            backgroundImage = ImageIO.read(new File("images/HomeScreen.png"));
         } catch (IOException e) {
             System.err.println("Failed to load home screen background image!");
         }
@@ -71,11 +71,11 @@ public class HomeScreen extends JPanel {
 
 	private JPanel createMainPanel() {
         JPanel panel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-            }
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
         };
         
         JPanel buttonPanel = new JPanel();
