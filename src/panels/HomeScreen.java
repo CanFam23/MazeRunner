@@ -95,28 +95,6 @@ public class HomeScreen extends JPanel {
             }
         };
         
-//        JPanel buttonPanel = new JPanel();
-//        buttonPanel.setBackground(Color.BLACK);
-//        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // top, left, bottom, right
-//
-//        startButton = createButton("START");
-//        instructionButton = createButton("INSTRUCTIONS");
-//        scoreButton = createButton("SCOREBOARD");
-//
-//        buttonPanel.add(instructionButton);
-//        buttonPanel.add(startButton);
-//        buttonPanel.add(scoreButton);
-//
-//        // Add buttons with horizontal gap of 20 pixels
-//        buttonPanel.add(instructionButton);
-//        buttonPanel.add(Box.createRigidArea(new Dimension(30, 0))); // Add space between buttons
-//        buttonPanel.add(startButton);
-//        buttonPanel.add(Box.createRigidArea(new Dimension(30, 0))); // Add space between buttons
-//        buttonPanel.add(scoreButton);
-//        
-//        JLabel nameLbl = new JLabel("Enter a name:");
-//        buttonPanel.add(nameLbl);
-        
         JPanel buttonPanel = new JPanel(new BorderLayout()); // Use BorderLayout for buttonPanel
         buttonPanel.setBackground(Color.BLACK);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // top, left, bottom, right
@@ -229,14 +207,13 @@ public class HomeScreen extends JPanel {
 		scoreboardLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
 		scoreboardLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		scoreboardLabel.setVerticalAlignment(SwingConstants.TOP); // Align text to the top
-		//scoreboardLabel.setPreferredSize(new Dimension(400, 200)); // Set preferred width, 0 for unlimited height (auto-wrap)
 
 		JLabel scoreboardTxtLabel = new JLabel("<html><br>-The leaderboard keeps track of the fastest time (In seconds) it takes"
 				+ " to complete all 3 levels.<br>" +"<br>-Want to be among the greats? Go back to the home page and press start!<br><html>");
 		scoreboardTxtLabel.setForeground(Color.WHITE);
 		scoreboardTxtLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
 		scoreboardTxtLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		scoreboardTxtLabel.setVerticalAlignment(SwingConstants.TOP); // Align text to the top
+		scoreboardTxtLabel.setVerticalAlignment(SwingConstants.CENTER); // Align text to the top
 		
 		// Add instructions label to the center of the instructions box panel
 		scoreboardBoxPanel.add(scoreboardLabel, BorderLayout.NORTH);
