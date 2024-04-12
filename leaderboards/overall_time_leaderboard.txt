@@ -1,4 +1,4 @@
-Top times total
+Leaderboard
 NickClouse;225
 MollyOConn;227
 AndrewDene;210
