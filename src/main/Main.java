@@ -207,6 +207,7 @@ public class Main {
 			public void windowClosing(WindowEvent e) {
 				System.out.println("Average FPS: " + gamePanel.getFPS());
 				final int added = leaderboard.addEntry(playerName, secondsTotal);
+				gamePanel.stopLoop();
 				//Check if user found the end of the maze
 				if(gamePanel.wonGame()) {
 					//If they did, add their score to the leaderboard if it was low enough
