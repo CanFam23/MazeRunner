@@ -44,18 +44,22 @@ public class HomeScreen extends JPanel {
 	/**
 	 * Background image to use.
 	 */
-    private BufferedImage backgroundImage;
+	private BufferedImage backgroundImage;
     private JPanel mainPanel;
     private JPanel instructionsPanel;
+    private JPanel scoreboardPanel;
     private JButton startButton;
     private JButton instructionButton;
     private JButton scoreButton;
     private JButton backButton;
+    private JButton scorebackButton;
+    
+    private JPanel currentPanel;
 
 
     public HomeScreen() {
         try {
-            backgroundImage = ImageIO.read(new File("images/HomeScreen5.png"));
+            backgroundImage = ImageIO.read(new File("images/HomeScreen.png"));
         } catch (IOException e) {
             System.err.println("Failed to load home screen background image!");
         }
@@ -64,8 +68,10 @@ public class HomeScreen extends JPanel {
 
         mainPanel = createMainPanel();
         instructionsPanel = createInstructionsPanel();
+        scoreboardPanel = createScoreboardPanel();
 
         add(mainPanel, BorderLayout.CENTER);
+        currentPanel = mainPanel;
     }
 
 
@@ -147,6 +153,44 @@ public class HomeScreen extends JPanel {
 
 	    return panel;
     }
+	
+	private JPanel createScoreboardPanel(){
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.setBackground(Color.BLACK);
+
+		// Create panel for the instructions box
+		JPanel scoreboardBoxPanel = new JPanel(new BorderLayout());
+		scoreboardBoxPanel.setBackground(Color.BLACK);
+		scoreboardBoxPanel.setBorder(BorderFactory.createEmptyBorder(25, 50, 50, 50)); // Add padding
+
+		// Create label for instructions text
+		JLabel scoreboardLabel = new JLabel("Scoreboard goes here");
+		scoreboardLabel.setForeground(Color.WHITE);
+		scoreboardLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
+		scoreboardLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		scoreboardLabel.setVerticalAlignment(SwingConstants.TOP); // Align text to the top
+		scoreboardLabel.setPreferredSize(new Dimension(600, 0)); // Set preferred width, 0 for unlimited height (auto-wrap)
+
+		// Add instructions label to the center of the instructions box panel
+		scoreboardBoxPanel.add(scoreboardLabel, BorderLayout.CENTER);
+		
+	    // Create exit button
+	    backButton = createButton("BACK");
+
+	    backButton.addActionListener(e -> showMainPanel());
+
+	    // Create a panel to hold the back button and center it
+	    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,0,0));
+	    buttonPanel.setBackground(Color.BLACK);
+	    buttonPanel.add(backButton);
+
+	    // Add button panel to the bottom of the instructions box panel
+	    scoreboardBoxPanel.add(buttonPanel, BorderLayout.SOUTH);
+	    // Add instructions box panel to the center of the main panel
+	    panel.add(scoreboardBoxPanel, BorderLayout.CENTER);
+
+	    return panel;
+    }
 
     
     private JButton createButton(String text) {
@@ -182,6 +226,8 @@ public class HomeScreen extends JPanel {
         
         if (text.equals("INSTRUCTIONS")) {
             button.addActionListener(e -> showInstructionsPanel());
+        }else if(text.equals("SCOREBOARD")) {
+        	 button.addActionListener(e -> showScoreboardPanel());
         }
         
         return button;
@@ -190,14 +236,25 @@ public class HomeScreen extends JPanel {
     private void showInstructionsPanel() {
         remove(mainPanel);
         add(instructionsPanel, BorderLayout.CENTER);
+        currentPanel = instructionsPanel;
         revalidate();
         repaint();
         instructionButton.setForeground(Color.WHITE);
     }
     
+    private void showScoreboardPanel() {
+        remove(mainPanel);
+        add(scoreboardPanel, BorderLayout.CENTER);
+        currentPanel = scoreboardPanel;
+        revalidate();
+        repaint();
+        scoreButton.setForeground(Color.WHITE);
+    }
+    
     private void showMainPanel() {
 	    backButton.setForeground(Color.WHITE);
-        remove(instructionsPanel);
+        remove(currentPanel);
+        currentPanel = mainPanel;
         add(mainPanel, BorderLayout.CENTER);
         revalidate();
         repaint();
