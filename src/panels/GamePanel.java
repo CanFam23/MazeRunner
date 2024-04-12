@@ -195,8 +195,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			Main.resetTime();
 			continueLoop();
 		}
+		
 		if (ourPlayer.getHealth() <= 0) {
-//			ChunkManager.setStartLocation();
+
 		}
 
 		// Move Player
@@ -294,8 +295,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.drawEnemies(g2);
 
 		v.drawVision(g2);
-
-		if (ourPlayer.getHealth() < 10000) {
+		if (ourPlayer.getHealth() < 10000 && ourPlayer.isGettingAttacked() == false) {
 			ourPlayer.addHealth(1);
 		}
 
