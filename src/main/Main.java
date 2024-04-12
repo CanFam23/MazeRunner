@@ -282,4 +282,33 @@ public class Main {
 			return false;
 		}
 	}
+	public static void restartGame() {
+	    // Dispose of the current window
+	    window.dispose();
+	    
+	    // Reset game variables
+	    seconds = 0;
+	    seconds_left = 0;
+	    
+	    // Create a new instance of the HomeScreen
+	    homePanel = new HomeScreen();
+	    
+	    // Set up the window and display the HomeScreen panel
+	    window = new JFrame();
+	    window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    window.setPreferredSize(new Dimension(1000, 800));
+	    window.getContentPane().add(homePanel);
+	    window.pack();
+	    window.setLocationRelativeTo(null);
+	    window.setVisible(true);
+
+	    // Add action listener to the button in HomeScreen
+	    homePanel.getStartButton().addActionListener(new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            homePanel.setVisible(false);
+	            runMainCode(); // Start the game again
+	        }
+	    });
+	}
 }
