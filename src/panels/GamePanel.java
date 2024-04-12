@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -79,7 +80,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 * Create our player. Initialize later to offer player selection of different
 	 * characters.
 	 */
-	public static Player ourPlayer;
+	public static Player ourPlayer = new Player();
 
 	/** Visibility object, used to change visibility as time goes on. */
 	private Visibility v = Visibility.getInstance();
@@ -91,6 +92,10 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private boolean isRunning = true;
 
 	private Image backgroundImage;
+	
+	private int levelVersionNumber;
+	
+	private final Random random = new Random();
 
 	// Health bar properties
 	int healthBarWidth = 200; // Make the health bar width slightly smaller than the panel width
@@ -101,6 +106,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 * Constructs a GamePanel object.
 	 */
 	public GamePanel(Image backgroundImage) {
+		
 		this.backgroundImage = backgroundImage;
 		setPreferredSize(new Dimension(800, 600));
 		this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -110,10 +116,11 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		this.setFocusable(true);
 
 		cmanager = ChunkManager.getInstance();
-		cmanager.loadLevel(current_level);
+        // Generate a random number between 1 and 5 (inclusive)
+        levelVersionNumber = random.nextInt(1,5);
+		cmanager.loadLevel(current_level, levelVersionNumber);
 
 		// Create our player and load the images
-		ourPlayer = new Player();
 		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)
 
 	}
@@ -195,14 +202,18 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			}
 			reset();
 			current_level++;
-			cmanager.loadLevel(current_level);
+			levelVersionNumber = random.nextInt(1,5);
+			cmanager.loadLevel(current_level, levelVersionNumber);
 			Main.showGamePanel();
 			Main.resetTime();
 			continueLoop();
 		}
 		
 		if (ourPlayer.getHealth() <= 0) {
-
+			cmanager.stopKnockback();
+			ourPlayer.reset();
+			cmanager.reset();
+			cmanager.loadLevel(current_level, levelVersionNumber);
 		}
 
 		// Move Player
