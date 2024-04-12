@@ -198,8 +198,10 @@ public class ChunkManager implements GameVariables {
 		Random random = new Random();
         // Generate a random number between 1 and 3 (inclusive)
         int randomNumber = random.nextInt(5) + 1;
-		levelName = "level_" + levelNum;
-//		levelName = "level_" + levelNum + "_v" + randomNumber;
+		levelName = "level_" + levelNum + "_v" + randomNumber;
+		if (levelNum == 0) {
+			levelName = "level_0";
+		}
 		try (final Scanner input = new Scanner(new File(FILE_LOCATION + levelName + ".txt"))) {
 			input.nextLine(); // Discard data description
 			final String[] levelStrings = input.nextLine().split(":")[1].split("x"); // Save the dimension of the chunks
@@ -433,7 +435,6 @@ public class ChunkManager implements GameVariables {
 	public synchronized void updateEnemies() {
 		//Get enemies that can be see on the screen right now
 		for (Enemy e : Enemy.enemies) {
-			System.out.println(e.getPosition()[0]+" " +e.getPosition()[1]);
 			if (e.isVisible()) {
 				Enemy.activeEnemies.add(e);
 			} else {
@@ -444,10 +445,7 @@ public class ChunkManager implements GameVariables {
 		// Move enemies that are active
 		for (Enemy e : Enemy.activeEnemies) {
 			e.move();
-		}
-		System.out.println(Enemy.activeEnemies.size());
-		
-
+		}	
 	}
 
 	/**
