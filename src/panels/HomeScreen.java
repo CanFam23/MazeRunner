@@ -6,22 +6,22 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
+
+import main.Main;
+
 
 /**
  * <p>
@@ -44,13 +44,18 @@ public class HomeScreen extends JPanel {
 	/**
 	 * Background image to use.
 	 */
-    private BufferedImage backgroundImage;
+	private BufferedImage backgroundImage;
     private JPanel mainPanel;
     private JPanel instructionsPanel;
+    private JPanel scoreboardPanel;
     private JButton startButton;
     private JButton instructionButton;
     private JButton scoreButton;
     private JButton backButton;
+    
+    private JPanel currentPanel;
+    
+    JTextField nameField;
 
 
     public HomeScreen() {
@@ -64,43 +69,60 @@ public class HomeScreen extends JPanel {
 
         mainPanel = createMainPanel();
         instructionsPanel = createInstructionsPanel();
+        scoreboardPanel = createScoreboardPanel();
 
         add(mainPanel, BorderLayout.CENTER);
+        currentPanel = mainPanel;
     }
-
 
 	private JPanel createMainPanel() {
         JPanel panel = new JPanel() {
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-        }
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            }
         };
         
-        JPanel buttonPanel = new JPanel();
+        JPanel buttonPanel = new JPanel(new BorderLayout()); // Use BorderLayout for buttonPanel
         buttonPanel.setBackground(Color.BLACK);
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // top, left, bottom, right
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // top, left, bottom, right
 
-        startButton = createButton("START");
+        // Create a panel for the nameLabel and nameField
+        JPanel nameInputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        nameInputPanel.setBackground(Color.BLACK); // Adjust as needed
+        JLabel nameLabel = new JLabel("Enter Your Name: ");
+        nameLabel.setForeground(Color.WHITE); // Set label text color
+        nameField = new JTextField(10);; // 10 columns for the text field
+        nameInputPanel.add(nameLabel);
+        nameInputPanel.add(nameField);
+
+        // Add nameInputPanel to the CENTER of buttonPanel
+        buttonPanel.add(nameInputPanel, BorderLayout.CENTER);
+
+        // Create a panel for the buttons with FlowLayout (horizontal)
+        JPanel buttonsFlowPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
+        buttonsFlowPanel.setBackground(Color.BLACK); // Adjust as needed
+
         instructionButton = createButton("INSTRUCTIONS");
+        startButton = createButton("START");
         scoreButton = createButton("SCOREBOARD");
 
-        buttonPanel.add(instructionButton);
-        buttonPanel.add(startButton);
-        buttonPanel.add(scoreButton);
+        buttonsFlowPanel.add(instructionButton);
+        buttonsFlowPanel.add(startButton);
+        buttonsFlowPanel.add(scoreButton);
 
-        // Add buttons with horizontal gap of 20 pixels
-        buttonPanel.add(instructionButton);
-        buttonPanel.add(Box.createRigidArea(new Dimension(30, 0))); // Add space between buttons
-        buttonPanel.add(startButton);
-        buttonPanel.add(Box.createRigidArea(new Dimension(30, 0))); // Add space between buttons
-        buttonPanel.add(scoreButton);
+        // Add buttonsFlowPanel to the SOUTH of buttonPanel
+        buttonPanel.add(buttonsFlowPanel, BorderLayout.SOUTH);
 
+        // Set BorderLayout for the main panel
         panel.setLayout(new BorderLayout());
+
+        // Add the buttonPanel to the SOUTH
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
         return panel;
+
 
     }
 	
@@ -147,6 +169,62 @@ public class HomeScreen extends JPanel {
 
 	    return panel;
     }
+	
+	private JPanel createScoreboardPanel(){
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.setBackground(Color.BLACK);
+
+		// Create panel for the instructions box
+		JPanel scoreboardBoxPanel = new JPanel(new BorderLayout());
+		scoreboardBoxPanel.setBackground(Color.BLACK);
+		scoreboardBoxPanel.setBorder(BorderFactory.createEmptyBorder(25, 50, 50, 50)); // Add padding
+
+		String levelName = Main.leaderboard.getleaderboardName();
+		String[] entries = Main.leaderboard.getleaderboard();
+		
+		String scoreboard = "<html>";
+		scoreboard += "<br>" + levelName + "<br>";
+		
+		for(int i = 0; i < entries.length; i++) {
+			scoreboard += "<br>" + (i+1) + ". " + entries[i] + "<br>";
+		}
+		scoreboard += "<html>";
+		
+		// Create label for scoreboard text
+		JLabel scoreboardLabel = new JLabel(scoreboard);
+		scoreboardLabel.setForeground(Color.WHITE);
+		scoreboardLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
+		scoreboardLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		scoreboardLabel.setVerticalAlignment(SwingConstants.TOP); // Align text to the top
+
+		JLabel scoreboardTxtLabel = new JLabel("<html><br>-The leaderboard keeps track of the fastest time (In seconds) it takes"
+				+ " to complete all 3 levels.<br>" +"<br>-Want to be among the greats? Go back to the home page and press start!<br><html>");
+		scoreboardTxtLabel.setForeground(Color.WHITE);
+		scoreboardTxtLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
+		scoreboardTxtLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		scoreboardTxtLabel.setVerticalAlignment(SwingConstants.CENTER); // Align text to the top
+		
+		// Add instructions label to the center of the instructions box panel
+		scoreboardBoxPanel.add(scoreboardLabel, BorderLayout.NORTH);
+		scoreboardBoxPanel.add(scoreboardTxtLabel, BorderLayout.CENTER);
+		
+	    // Create exit button
+	    backButton = createButton("BACK");
+
+	    backButton.addActionListener(e -> showMainPanel());
+
+	    // Create a panel to hold the back button and center it
+	    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,0,0));
+	    buttonPanel.setBackground(Color.BLACK);
+	    buttonPanel.add(backButton);
+
+	    // Add button panel to the bottom of the instructions box panel
+	    scoreboardBoxPanel.add(buttonPanel, BorderLayout.SOUTH);
+	    // Add instructions box panel to the center of the main panel
+	    panel.add(scoreboardBoxPanel, BorderLayout.CENTER);
+
+	    return panel;
+    }
 
     
     private JButton createButton(String text) {
@@ -182,6 +260,8 @@ public class HomeScreen extends JPanel {
         
         if (text.equals("INSTRUCTIONS")) {
             button.addActionListener(e -> showInstructionsPanel());
+        }else if(text.equals("SCOREBOARD")) {
+        	 button.addActionListener(e -> showScoreboardPanel());
         }
         
         return button;
@@ -190,14 +270,25 @@ public class HomeScreen extends JPanel {
     private void showInstructionsPanel() {
         remove(mainPanel);
         add(instructionsPanel, BorderLayout.CENTER);
+        currentPanel = instructionsPanel;
         revalidate();
         repaint();
         instructionButton.setForeground(Color.WHITE);
     }
     
+    private void showScoreboardPanel() {
+        remove(mainPanel);
+        add(scoreboardPanel, BorderLayout.CENTER);
+        currentPanel = scoreboardPanel;
+        revalidate();
+        repaint();
+        scoreButton.setForeground(Color.WHITE);
+    }
+    
     private void showMainPanel() {
 	    backButton.setForeground(Color.WHITE);
-        remove(instructionsPanel);
+        remove(currentPanel);
+        currentPanel = mainPanel;
         add(mainPanel, BorderLayout.CENTER);
         revalidate();
         repaint();
@@ -207,6 +298,10 @@ public class HomeScreen extends JPanel {
 	// Method to get the startButton instance
 	public JButton getStartButton() {
 		return startButton;
+	}
+	
+	public String getName() {
+		return nameField.getText();
 	}
 
 	/**
