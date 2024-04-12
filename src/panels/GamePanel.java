@@ -81,7 +81,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 * Create our player. Initialize later to offer player selection of different
 	 * characters.
 	 */
-	public static Player ourPlayer;
+	private Player ourPlayer;
 
 	/** Visibility object, used to change visibility as time goes on. */
 	private Visibility v = Visibility.getInstance();

@@ -40,7 +40,7 @@ public class Player implements GameVariables {
 	/**
 	 * Tracks the health of our player
 	 */
-	private int health = 10000;
+	private int health = 8000;
 
 	/**
 	 * Draw count is used to track the number of draws that have occurred since the
@@ -376,7 +376,7 @@ public class Player implements GameVariables {
 		drawCount = 0;
 		setState(State.Idle);
 		setFacing(Facing.N);
-		health = 10000;
+		health = 8000;
 	}
 
 	public void resetDrawCount() {
