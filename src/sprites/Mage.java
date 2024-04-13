@@ -7,14 +7,14 @@ import java.util.Map;
 /**
  * Mage is a child of Enemy with attributes and unique images.
  * Testing is found in Enemy.java.
- * 
+ *
  * @author Andrew Denegar
  */
 public class Mage extends Enemy {
 
 	/**
 	 * Create a Mage, which should be done through a MageFactory.
-	 * 
+	 *
 	 * @param x starting x position
 	 * @param y starting y position
 	 * @param images static images for mage

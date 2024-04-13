@@ -13,11 +13,11 @@ import sprites.Player;
  * need. Instead of storing a copy of each variable in each class, they can just
  * implement this interface and have access to all the variables.
  * </p>
- * 
+ *
  * @author Nick Clouse
  * @author Andrew Denegar
  * @author Molly O'Connor
- * 
+ *
  * @since March 5, 2024
  */
 public interface GameVariables {
@@ -58,7 +58,7 @@ public interface GameVariables {
 	}
 
 	@SuppressWarnings("serial")
-	final Map<Facing, Facing> oppositeDirection = new HashMap<Facing, Facing>() {
+	final Map<Facing, Facing> oppositeDirection = new HashMap<>() {
 		{
 			put(Facing.N, Facing.S);
 			put(Facing.S, Facing.N);
@@ -78,28 +78,28 @@ public interface GameVariables {
 
 	/**
 	 * Width of the player.
-	 * 
+	 *
 	 * @see Player
 	 */
 	final int PLAYER_WIDTH = 50;
 
 	/**
 	 * Height of the player.
-	 * 
+	 *
 	 * @see Player
 	 */
 	final int PLAYER_HEIGHT = 50;
 
 	/**
 	 * X coordinate of the player.
-	 * 
+	 *
 	 * @see Player
 	 */
 	final int PLAYER_X = SCREEN_WIDTH / 2 - PLAYER_WIDTH / 2;
 
 	/**
 	 * Y coordinate of the player.
-	 * 
+	 *
 	 * @see Player
 	 */
 	final int PLAYER_Y = SCREEN_HEIGHT / 2 - PLAYER_HEIGHT / 2;
@@ -113,7 +113,7 @@ public interface GameVariables {
 
 	/**
 	 * Height of each PositionBlock.
-	 * 
+	 *
 	 * @see PositionBlock
 	 */
 	final int WALL_HEIGHT = SCREEN_HEIGHT / 5;

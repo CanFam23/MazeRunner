@@ -14,13 +14,13 @@ import gameTools.GameVariables;
  * goes on, the circle gets smaller, making it harder for the player to see the
  * maze.
  * </p>
- * 
+ *
  * @author Nick Clouse
  * @author Andrew Denegar
  * @author Molly O'Connor
- * 
+ *
  * @since March 25, 2024
- * 
+ *
  * @see GameVariables
  */
 public class Visibility implements GameVariables {
@@ -52,17 +52,32 @@ public class Visibility implements GameVariables {
 	 * New float[], used to determine the distribution of colors along the gradient.
 	 */
 	private final float[] dist = { 0.2f, 1.0f };
+
 	/** Array of colors to use in the gradient. */
 	private final Color[] colors = { c, Color.BLACK };
 
 	/** radius that will be updated and used to draw the circle. */
 	private int radius = startingRadius;
 
-	GeneralPath rightSide = new GeneralPath();
+	/**
+	 * Stores the right side of the visibility shape.
+	 * They are split into two sides so they are easier to draw.
+	 * When they come together, they form a circle in the middle.
+	 */
+	private GeneralPath rightSide = new GeneralPath();
 
-	GeneralPath leftSide = new GeneralPath();
+	/**
+	 * Stores the right side of the visibility shape.
+	 * They are split into two sides so they are easier to draw.
+	 * When they come together, they form a circle in the middle.
+	 */
+	private GeneralPath leftSide = new GeneralPath();
 
-	RadialGradientPaint p;
+	/**
+	 * Color used for drawing the visibility.
+	 * It's a gradient that goes from black to transparent.
+	 */
+	private RadialGradientPaint p;
 
 	/**
 	 * Constructs a new Visibility object.
@@ -76,16 +91,20 @@ public class Visibility implements GameVariables {
 	 * only one instance of Visibility can exist at a time. Visibility is a
 	 * singleton because we only need one instance of it for our game, and don't
 	 * want multiple instances to be made.
-	 * 
-	 * @return The current instance of ChunkManager.
+	 *
+	 * @return The current instance of Visibility.
 	 */
 	public static synchronized Visibility getInstance() {
-		if (single_instance == null)
+		if (single_instance == null) {
 			single_instance = new Visibility();
+		}
 
 		return single_instance;
 	}
 
+	/**
+	 * Decreases the radius by preset amount.
+	 */
 	public void updateRadius() {
 		radius -= decreaseAmount;
 	}
@@ -151,13 +170,14 @@ public class Visibility implements GameVariables {
 
 		leftSide.closePath();
 
+		//Update the gradient to match the size of the visibility circle
 		p = new RadialGradientPaint(centerX, centerY, radius * 2, dist, colors);
 	}
 
 	/**
 	 * Draws the visibility circle around the player. Uses GeneralPath objects to
 	 * make it look like there is a circle around the player.
-	 * 
+	 *
 	 * @param g2d the graphics to draw on.
 	 */
 	public void drawVision(Graphics2D g2d) {
@@ -168,7 +188,7 @@ public class Visibility implements GameVariables {
 
 	/**
 	 * Main method
-	 * 
+	 *
 	 * @param args arguements passed
 	 */
 	public static void main(String[] args) {
