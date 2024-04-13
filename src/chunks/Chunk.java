@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.File;
@@ -25,13 +24,13 @@ import gameTools.GameVariables;
  * It handles collision detection of each block within itself, keeps track of
  * its x and y position, and determines if it's a starting or ending chunk.
  * Implements the GameVariables interface.
- * 
+ *
  * @author Nick Clouse
  * @author Andrew Denegar
  * @author Molly O'Connor
- * 
+ *
  * @since March 2, 2024
- * 
+ *
  * @see GameVariables
  * @see PositionBlock
  */
@@ -60,7 +59,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Constructs a new Chunk with given dimensions and coordinates.
-	 * 
+	 *
 	 * @param xDimension number of rows in chunk.
 	 * @param yDimension number of columns in chunk.
 	 * @param xPosition  the top left x of the chunk relative to all other chunks.
@@ -77,7 +76,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Adds a position block to the chunk with position xPosition and yPosition.
-	 * 
+	 *
 	 * @param xPosition is the x position that the block appears in the chunk.
 	 * @param yPosition is the y position that the block appears in the chunk.
 	 * @param Block     can be any of the PositionBlock types (EmptyBlock, EndBlock,
@@ -96,7 +95,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Update the coordinates of the chunk.
-	 * 
+	 *
 	 * @param dx is the change in the x direction to the position of the chunk.
 	 * @param dy is the change in the y direction to the position of the chunk.
 	 */
@@ -107,14 +106,14 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Draw every PositionBlock in the chunk.
-	 * 
+	 *
 	 * @param g is the Graphics2D object that will be drawn with.
 	 */
 	public void draw(Graphics2D g) {
-		for (int i = 0; i < blocks.length; i++) {
-			for (int j = 0; j < blocks[i].length; j++) {
-				if (blocks[i][j] != null) {
-					blocks[i][j].draw(g, xPosition, yPosition);
+		for (PositionBlock[] block : blocks) {
+			for (int j = 0; j < block.length; j++) {
+				if (block[j] != null) {
+					block[j].draw(g, xPosition, yPosition);
 				}
 			}
 		}
@@ -122,7 +121,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Returns a boolean which represents if the chunk contains the start block.
-	 * 
+	 *
 	 * @return true if chunk is start chunk.
 	 */
 	public boolean isStartChunk() {
@@ -131,7 +130,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Returns a boolean which represents if the chunk contains the end block.
-	 * 
+	 *
 	 * @return true if chunk is end chunk.
 	 */
 	public boolean isEndChunk() {
@@ -140,7 +139,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Gets the coordinates of each corner of the chunk.
-	 * 
+	 *
 	 * @return 2D array of integers, which represent each 'corner' of a chunk.
 	 */
 	public int[][] getCoords() {
@@ -150,7 +149,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Gets the current y position of the chunk.
-	 * 
+	 *
 	 * @return y position of chunk.
 	 */
 	public int getXPosition() {
@@ -159,7 +158,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Gets the current x position of the chunk.
-	 * 
+	 *
 	 * @return x position of chunk.
 	 */
 	public int getYPosition() {
@@ -168,7 +167,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Checks if the chunk contains the given coordinates.
-	 * 
+	 *
 	 * @param xCoords The y coordinates to use.
 	 * @param yCoords The x coordinates to use.
 	 * @return true if the chunk contains those points.
@@ -185,7 +184,7 @@ public class Chunk implements GameVariables {
 	 * Checks for any collision between the given coordinates, and all walls in the
 	 * chunk. Deltas is used to displace the blocks if needed, to see if displacing
 	 * the blocks by those amounts would result in a collision.
-	 * 
+	 *
 	 * @param xCoords X coordinates to use.
 	 * @param yCoords Y coordinates to use.
 	 * @param deltas  Displacement of x and y.
@@ -195,9 +194,9 @@ public class Chunk implements GameVariables {
 
 		boolean collided = false;
 		// Check each wall in the chunk, if a wall chunk and colliding, return true;
-		for (int r = 0; r < blocks.length; r++) {
+		for (PositionBlock[] block : blocks) {
 			for (int c = 0; c < blocks[0].length; c++) {
-				final PositionBlock temp = blocks[r][c];
+				final PositionBlock temp = block[c];
 				if (temp instanceof Wall) {
 
 					final int[][] tempCoords = temp.getBounds(xPosition - deltas[0], yPosition - deltas[1]);
@@ -217,7 +216,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Gets all blocks in the chunk.
-	 * 
+	 *
 	 * @return The 2D array of blocks.
 	 */
 	public PositionBlock[][] getBlocks() {
@@ -226,7 +225,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Gets the width of the chunk.
-	 * 
+	 *
 	 * @return chunkWidth.
 	 */
 	public int getChunkWidth() {
@@ -235,7 +234,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Gets the height of the chunk.
-	 * 
+	 *
 	 * @return chunkHeight.
 	 */
 	public int getChunkHeight() {
@@ -244,14 +243,15 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Converts chunk to string.
-	 * 
+	 *
 	 * @return String format of chunk.
 	 */
+	@Override
 	public String toString() {
 		String ret = "";
-		for (int y = 0; y < blocks.length; y++) {
-			for (int x = 0; x < blocks[y].length; x++) {
-				ret += blocks[y][x].toString();
+		for (PositionBlock[] block : blocks) {
+			for (int x = 0; x < block.length; x++) {
+				ret += block[x].toString();
 			}
 			ret += "\n";
 		}
@@ -260,7 +260,7 @@ public class Chunk implements GameVariables {
 
 	/**
 	 * Main Method.
-	 * 
+	 *
 	 * @param args Arguements passed.
 	 */
 	public static void main(String[] args) {
@@ -323,11 +323,11 @@ public class Chunk implements GameVariables {
 		int c = 0;
 
 		VolatileImage vImage = null;
-		
+
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice device = env.getDefaultScreenDevice();
         GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
-		
+
 		try {
 			vImage = graphicsConfig.createCompatibleVolatileImage(WALL_WIDTH, WALL_HEIGHT);
 			Graphics2D g = vImage.createGraphics();
@@ -338,7 +338,7 @@ public class Chunk implements GameVariables {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		// Adding blocks to chunk
 		for (int i = 0; i < Math.pow(chunkLength, 2); i++) {
 			final PositionBlock pb = new Wall((r % chunkLength) * WALL_WIDTH, (c % chunkLength) * WALL_HEIGHT,
@@ -409,7 +409,7 @@ public class Chunk implements GameVariables {
 		// Should find a collision because the PositiobBlock's coords are intersecting
 		// with the players, this time they are slightly different
 		pb = new PositionBlock(PLAYER_X + WALL_WIDTH / 4, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT);
-		
+
 		tempBounds = pb.getBounds(0, 0);
 
 		if (!CollisionDetection.getCollision(tempBounds[0], tempBounds[1], playerXCoords, playerYCoords)) {

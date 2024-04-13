@@ -7,7 +7,7 @@ public class CollisionDetection implements GameVariables {
 	/**
 	 * Checks for collision between the given coordinates, which represent a square.
 	 * The coordinates are ordered top left, top right, bottom right, bottom left.
-	 * 
+	 *
 	 * @param xCoordsOne The first set of x coordinates.
 	 * @param yCoordsOne The first set of y coordinates.
 	 * @param xCoordsTwo The second set of x coordinates.
@@ -29,19 +29,19 @@ public class CollisionDetection implements GameVariables {
 
 		return false;
 	}
-	
+
 	/**
-	 * Checks for collision between the given coordinates, which represent a square. 
+	 * Checks for collision between the given coordinates, which represent a square.
 	 * The coordinates are ordered top left, top right, bottom right, bottom left.
-	 * Compares the first set to second set, this checks if there is a full collision, 
+	 * Compares the first set to second set, this checks if there is a full collision,
 	 * which is when all of x/yCoordsTwo are inside of x/yCoords one.
-	 * 
+	 *
 	 * @param xCoordsOne The first set of x coordinates.
 	 * @param yCoordsOne The first set of y coordinates.
 	 * @param xCoordsTwo The second set of x coordinates.
 	 * @param yCoordsTwo The second set of y coordinates.
 	 * @return true if there is a full collision.
-	 * 
+	 *
 	 */
 	public static boolean fullCollision(int[] xCoordsOne, int[] yCoordsOne, int[] xCoordsTwo, int[] yCoordsTwo) {
 		// if player top left x < wall bottom right x
@@ -64,7 +64,7 @@ public class CollisionDetection implements GameVariables {
 					&& overlapBottom > FULL_COLLISION_INT) {
 				return true;
 			}
-			
+
 		}
 		return false;
 	}

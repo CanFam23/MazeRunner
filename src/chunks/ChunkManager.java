@@ -4,15 +4,12 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -34,13 +31,13 @@ import sprites.MageFactory;
 /**
  * ChunkManager loads and holds the chunks that will be used in the game. The
  * chunks are basically building blocks of the level.
- * 
+ *
  * @author Nick Clouse
  * @author Andrew Denegar
  * @author Molly O'Connor
- * 
+ *
  * @since March 2, 2024
- * 
+ *
  * @see Chunk
  */
 public class ChunkManager implements GameVariables {
@@ -145,19 +142,20 @@ public class ChunkManager implements GameVariables {
 	 * means only one instance of ChunkManager can exist at a time. ChunkManager is
 	 * a singleton because we only need one instance of it for our game, and don't
 	 * want multiple instances to be made.
-	 * 
+	 *
 	 * @return The current instance of ChunkManager.
 	 */
 	public static synchronized ChunkManager getInstance() {
-		if (single_instance == null)
+		if (single_instance == null) {
 			single_instance = new ChunkManager();
+		}
 
 		return single_instance;
 	}
 
 	/**
 	 * Update the offsets.
-	 * 
+	 *
 	 * @param dx The number to update x offset by.
 	 * @param dy The number to update y offset by.
 	 */
@@ -178,7 +176,7 @@ public class ChunkManager implements GameVariables {
 	 * When the player is hit, this function tells the current instance of
 	 * ChunkManager to handle it. It's static so other classes can call it without
 	 * having to use a single instance of ChunkManager.
-	 * 
+	 *
 	 * @param d The direction the player should be knocked back.
 	 */
 	public static void playerHit(Facing d, int damage) {
@@ -190,7 +188,7 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * Loads level from levelNum and creates a 2D array of chunks, which represent
 	 * each chunk of the maze.
-	 * 
+	 *
 	 * @param levelNum the level to load.
 	 * @return true If level was loaded correctly.
 	 */
@@ -248,7 +246,7 @@ public class ChunkManager implements GameVariables {
 				System.err.println("Failed to load startBlock.png!");
 			}
 			StartingBlock.setImage(startImage);
-			
+
 			VolatileImage endImage = null;
 			try {
 				endImage = convertToVolatile(ImageIO.read(new File("images/endBlock.png")));
@@ -319,10 +317,10 @@ public class ChunkManager implements GameVariables {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Convert original images to volatile images because they are going to be loaded over and over again.
-	 * 
+	 *
 	 * @param originalImage the image to be converted to volatile
 	 * @return VolatileImage same image, but now volatile which increases performance when drawn over and over again.
 	 */
@@ -355,7 +353,7 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * Handles when the player is hit by a enemy. Sets knockback to true and decides which way to
 	 * knockback the player.
-	 * 
+	 *
 	 * @param d The direction to move the player.
 	 */
 	public void handlePlayerHit(Facing d, int damage) {
@@ -388,7 +386,7 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * Gets knockback variable, which represents if the player is getting knocked
 	 * back or not.
-	 * 
+	 *
 	 * @return knockback
 	 */
 	public boolean getKnockback() {
@@ -443,13 +441,13 @@ public class ChunkManager implements GameVariables {
 		// Move enemies that are active
 		for (Enemy e : Enemy.activeEnemies) {
 			e.move();
-		}	
+		}
 	}
 
 	/**
 	 * Update coordinates of all chunks, if the chunk is visible, add to active
 	 * chunks.
-	 * 
+	 *
 	 * @param dx integer to change x by.
 	 * @param dy integer to change y by.
 	 */
@@ -457,9 +455,9 @@ public class ChunkManager implements GameVariables {
 
 		updateOffset(dx, dy);
 
-		for (int x = 0; x < chunks.length; x++) {
+		for (Chunk[] chunk : chunks) {
 			for (int y = 0; y < chunks[0].length; y++) {
-				Chunk temp = chunks[x][y]; // Select a chunk
+				Chunk temp = chunk[y]; // Select a chunk
 				temp.updateCoords(dx, dy); // Update the chunk's coordinates
 				// Now, decide if the chunk should be added to or removed from the activeChunks
 				// list
@@ -480,6 +478,8 @@ public class ChunkManager implements GameVariables {
 	}
 
 	/**
+	 * Checks if the end has been found.
+	 *
 	 * @return true if end has been found.
 	 */
 	public boolean endFound() {
@@ -489,11 +489,11 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * Returns true if the player is in the given block, same idea used for
 	 * collisions.
-	 * 
+	 *
 	 * @param c  Chunk to check for collision.
 	 * @param pb PositionBlock to check for collision.
 	 * @return true if there is a full collision.
-	 * 
+	 *
 	 * @see {@link Chunk#collision(PositionBlock)}
 	 */
 	public boolean containsPlayer(Chunk c, PositionBlock pb) {
@@ -505,15 +505,15 @@ public class ChunkManager implements GameVariables {
 
 	/**
 	 * Calls each chunk to draw itself.
-	 * 
+	 *
 	 * @param g2d 2D graphics to draw on.
 	 */
-	public synchronized void draw(Graphics2D g2d) {		
+	public synchronized void draw(Graphics2D g2d) {
 		for (Chunk c : activeChunks) {
 			PositionBlock[][] pbs = c.getBlocks();
-			for (int y = 0; y < pbs.length; y++) {
+			for (PositionBlock[] pb : pbs) {
 				for (int x = 0; x < pbs[0].length; x++) {
-					pbs[y][x].draw(g2d, c.getXPosition(), c.getYPosition());
+					pb[x].draw(g2d, c.getXPosition(), c.getYPosition());
 				}
 			}
 		}
@@ -522,7 +522,7 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * Draws all active enemies to the screen. A enemy is considered active if it's
 	 * current position is visible on the screen.
-	 * 
+	 *
 	 * @param g2d The 2D graphics to draw on.
 	 */
 	public synchronized void drawEnemies(Graphics2D g2d) {
@@ -534,7 +534,7 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * Checks for collision between the player and all blocks in the current active
 	 * chunks.
-	 * 
+	 *
 	 * @param deltas The change in x and y.
 	 * @return true if there is any collision.
 	 */
@@ -551,6 +551,8 @@ public class ChunkManager implements GameVariables {
 	}
 
 	/**
+	 * Gets all the chunks in the level.
+	 *
 	 * @return All chunks in the level.
 	 */
 	public Chunk[][] getChunks() {
@@ -559,7 +561,7 @@ public class ChunkManager implements GameVariables {
 
 	/**
 	 * Return a list of the chunks that appear on the screen.
-	 * 
+	 *
 	 * @return the list of chunks that are visible on the screen.
 	 */
 	public Set<Chunk> getActiveChunks() {
@@ -567,6 +569,8 @@ public class ChunkManager implements GameVariables {
 	}
 
 	/**
+	 * Checks if the given chunk is currently visible on the screen.
+	 *
 	 * @param chunk the chunk to check.
 	 * @return If chunk is currently visible on screen.
 	 */
@@ -595,6 +599,11 @@ public class ChunkManager implements GameVariables {
 
 	}
 
+	/**
+	 * Main method. Used for testing.
+	 *
+	 * @param args Arguments passed.
+	 */
 	public static void main(String[] args) {
 		// Create a chunk manager and load the level data.
 		ChunkManager chunky = ChunkManager.getInstance();
@@ -659,7 +668,7 @@ public class ChunkManager implements GameVariables {
 
 		// Testing reset
 		chunky.reset();
-		if (chunky.endFound == true || Enemy.activeEnemies.size() != 0 || Enemy.enemies.size() != 0
+		if (chunky.endFound || Enemy.activeEnemies.size() != 0 || Enemy.enemies.size() != 0
 				|| preUpdateOffset[0] == postUpdateOffset[0] && preUpdateOffset[1] == postUpdateOffset[1]) {
 			System.out.println("Failed to reset ChunkManager.");
 			allPassed = false;
@@ -737,9 +746,9 @@ public class ChunkManager implements GameVariables {
 		// Getting the y coords of each chunk before the knockback effect
 		final int[] preKnockbackYs = new int[chunky.chunks.length * chunky.chunks[0].length];
 		int counter = 0;
-		for (int r = 0; r < chunky.chunks.length; r++) {
+		for (Chunk[] chunk : chunky.chunks) {
 			for (int c = 0; c < chunky.chunks[0].length; c++) {
-				preKnockbackYs[counter] = chunky.chunks[r][c].yPosition;
+				preKnockbackYs[counter] = chunk[c].yPosition;
 				counter++;
 			}
 		}
@@ -750,9 +759,9 @@ public class ChunkManager implements GameVariables {
 		// Getting the y coords of each chunk after the knockback effect
 		final int[] postKnockbackYs = new int[chunky.chunks.length * chunky.chunks[0].length];
 		counter = 0;
-		for (int r = 0; r < chunky.chunks.length; r++) {
+		for (Chunk[] chunk : chunky.chunks) {
 			for (int c = 0; c < chunky.chunks[0].length; c++) {
-				postKnockbackYs[counter] = chunky.chunks[r][c].yPosition;
+				postKnockbackYs[counter] = chunk[c].yPosition;
 				counter++;
 			}
 		}
@@ -765,7 +774,7 @@ public class ChunkManager implements GameVariables {
 			}
 		}
 
-		if (allPassed == true) {
+		if (allPassed) {
 			System.out.println("All cases passed! :)");
 		} else {
 			System.out.println("At least one case failed! :(");

@@ -4,27 +4,25 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 
 import gameTools.GameVariables;
 
 /**
  * PositionBlock creates a individual block of the maze, which could be a wall,
  * empty space, start block, or end block.
- * 
+ *
  * @author Nick Clouse
  * @author Andrew Denegar
  * @author Molly O'Connor
- * 
+ *
  * @since March 2, 2024
- * 
+ *
  * @see GameVariables
  * @see Wall
  * @see EmptyBlock
@@ -35,7 +33,7 @@ public class PositionBlock implements GameVariables {
 
 	/**
 	 * Main method
-	 * 
+	 *
 	 * @param args arguements passed
 	 */
 	public static void main(String[] args) {
@@ -45,12 +43,12 @@ public class PositionBlock implements GameVariables {
 		final int initialY = 0;
 
 		VolatileImage vImage = null;
-		
+
 		// Create utilities for Volatile Image loading
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice device = env.getDefaultScreenDevice();
         GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
-		
+
         // TODO: For image testing, all block types would need to be loaded and set.
 		try {
 			vImage = graphicsConfig.createCompatibleVolatileImage(WALL_WIDTH, WALL_HEIGHT);
@@ -62,7 +60,7 @@ public class PositionBlock implements GameVariables {
 			e.printStackTrace();
 			System.err.println("Problem loading Volatile image");
 		}
-		
+
 		// Set the static images of each type of position block
 		EmptyBlock.setImage(vImage);
 		EndBlock.setImage(vImage);
@@ -71,49 +69,49 @@ public class PositionBlock implements GameVariables {
 
 		// Testing a position block
 		PositionBlock pb = new PositionBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
-		
+
 		String blockType = "????";
-		
+
 		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
 			allPassed = false;
 		}
-		
+
 		// Testing an empty block
 		pb = new EmptyBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
-		
+
 		blockType = "empt";
-		
+
 		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
 			allPassed = false;
 		}
-		
+
 		// Testing a wall
 		pb = new Wall(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
 
 		blockType = "wall";
-		
+
 		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
 			allPassed = false;
 		}
-				
+
 		// Testing a starting block
 		pb = new StartingBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
 
 		blockType = "strt";
-		
+
 		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
 			allPassed = false;
 		}
-		
+
 		// Testing a end block
 		pb = new EndBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
 
 		blockType = "EndB";
-		
+
 		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
 			allPassed = false;
 		}
-		
+
 		if (allPassed) {
 			System.out.println("All cases passed!");
 		} else {
@@ -138,7 +136,7 @@ public class PositionBlock implements GameVariables {
 
 	/**
 	 * Constructs a new StartingBlock with the given parameters.
-	 * 
+	 *
 	 * @param x      The x-coordinate relative to the top-left coordinate of the
 	 *               chunk.
 	 * @param y      The y-coordinate relative to the top-left coordinate of the
@@ -167,7 +165,7 @@ public class PositionBlock implements GameVariables {
 
 	/**
 	 * Creates the hitbox for the positionBlock and returns it.
-	 * 
+	 *
 	 * @param xPosition X Position to base coordinates off of.
 	 * @param yPosition Y Position to base coordinates off of.
 	 * @return A 2D int[] array that represent the hitbox of the block.
@@ -186,7 +184,7 @@ public class PositionBlock implements GameVariables {
 
 	/**
 	 * Gets coordinates of block.
-	 * 
+	 *
 	 * @return the coordinates of the block.
 	 */
 	public int[] getCoords() {
@@ -195,7 +193,7 @@ public class PositionBlock implements GameVariables {
 
 	/**
 	 * Gets height of block.
-	 * 
+	 *
 	 * @return height of block.
 	 */
 	public int getHeight() {
@@ -204,7 +202,7 @@ public class PositionBlock implements GameVariables {
 
 	/**
 	 * Gets width of block.
-	 * 
+	 *
 	 * @return width of block.
 	 */
 	public int getWidth() {
@@ -213,20 +211,22 @@ public class PositionBlock implements GameVariables {
 
 	/**
 	 * Converts block to string.
-	 * 
+	 *
 	 * @return string version of block.
 	 */
+	@Override
 	public String toString() {
-		if (this instanceof EmptyBlock)
+		if (this instanceof EmptyBlock) {
 			return "empt";
-		else if (this instanceof Wall)
+		} else if (this instanceof Wall) {
 			return "wall";
-		else if (this instanceof StartingBlock)
+		} else if (this instanceof StartingBlock) {
 			return "strt";
-		else if (this instanceof EndBlock) {
+		} else if (this instanceof EndBlock) {
 			return "EndB";
-		} else
+		} else {
 			return "????";
+		}
 	}
 
 	/**
@@ -299,7 +299,7 @@ public class PositionBlock implements GameVariables {
 		final int[] wallYCoords = new int[] { initY - HITBOX_BUFFER_AMOUNT, initY - HITBOX_BUFFER_AMOUNT,
 				initY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT, initY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT };
 		final int[][] checkCoords = new int[][] {wallXCoords,wallYCoords};
-		
+
 		final int[][] coords = getBounds(0,0);
 		for(int r = 0; r < coords.length; r++) {
 			for(int c = 0; c < coords[0].length; c++) {
