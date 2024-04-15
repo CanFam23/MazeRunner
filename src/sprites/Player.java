@@ -43,7 +43,7 @@ public class Player implements GameVariables {
 	/**
 	 * Tracks the health of our player
 	 */
-	private int health = 500;
+	private int health = 10000;
 
 	/**
 	 * Draw count is used to track the number of draws that have occurred since the
@@ -353,14 +353,14 @@ public class Player implements GameVariables {
 		}
 
 		// TODO remove
-//		g.setColor(Color.RED);
-//		g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
-//
-//		g.setColor(Color.blue);
-//		if (getState().equals("Attack")) {
-//			g.draw(hitboxes.get(currentFacing));
-//
-//		}
+		g.setColor(Color.RED);
+		g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
+
+		g.setColor(Color.blue);
+		if (getState().equals("Attack")) {
+			g.draw(hitboxes.get(currentFacing));
+
+		}
 
 		if (attackCount == framesPerSwitch * 4) {
 			unlockState();

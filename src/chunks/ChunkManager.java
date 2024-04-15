@@ -128,6 +128,11 @@ public class ChunkManager implements GameVariables {
 
 	/** Direction to knock player back. */
 	private Facing knockbackDir = Facing.N;
+	
+	/**
+	 * Keeps track of if the player has completed the game at least once.
+	 */
+	private boolean hasWon = false;
 
 	/**
 	 * Constructor for ChunkManager. This is private because ChunkManager is a
@@ -194,6 +199,7 @@ public class ChunkManager implements GameVariables {
 	 */
 	public boolean loadLevel(int levelNum, int levelVersionNumber) {
 
+		levelNum = 0;
 		levelName = "level_" + levelNum + "_v" + levelVersionNumber;
 		if (levelNum == 0) {
 			levelName = "level_0";
@@ -473,6 +479,7 @@ public class ChunkManager implements GameVariables {
 		if (activeChunks.contains(endChunk)) {
 			if (containsPlayer(endChunk, endBlock)) {
 				endFound = true;
+				hasWon = true;
 			}
 		}
 	}
@@ -484,6 +491,15 @@ public class ChunkManager implements GameVariables {
 	 */
 	public boolean endFound() {
 		return endFound;
+	}
+	
+	/**
+	 * Checks if the user has won the game at least one time.
+	 * 
+	 * @return true if the user has won at least once.
+	 */
+	public boolean hasWon() {
+		return hasWon;
 	}
 
 	/**
@@ -498,7 +514,7 @@ public class ChunkManager implements GameVariables {
 	 */
 	public boolean containsPlayer(Chunk c, PositionBlock pb) {
 
-		final int[][] pbBounds = pb.getBounds(c.xPosition, c.yPosition);
+		final int[][] pbBounds = pb.getHitbox(c.xPosition, c.yPosition);
 
 		return CollisionDetection.fullCollision(pbBounds[0], pbBounds[1], playerXCoords, playerYCoords);
 	}

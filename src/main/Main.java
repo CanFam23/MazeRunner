@@ -63,6 +63,9 @@ public class Main {
 
 	/** Time elapsed for level. */
 	private static int timeAmount = 120;
+	
+	/** Users best time. Starts off with the max value a int can be, since user has never completed game. */
+	private static int bestTime = Integer.MAX_VALUE;
 
 	/** The main game panel where the game is rendered. */
 	private static GamePanel gamePanel;
@@ -134,6 +137,14 @@ public class Main {
 			System.err.println("Failed to load backgroundBlock.png!");
 		}
 
+		/*
+		 * Reset gamepanel, this is added so if the user
+		 * plays again after they lose, the game will reset correctly
+		 */
+		if(gamePanel != null) {
+			gamePanel.reset();
+
+		}
 		// Creates window
 		gamePanel = new GamePanel(backgroundImage);
 		nextLevel = new GameOverWIN();
@@ -213,16 +224,18 @@ public class Main {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				System.out.println("Average FPS: " + gamePanel.getFPS());
-				final int added = leaderboard.addEntry(playerName, secondsTotal);
 				gamePanel.stopLoop();
-				//Check if user found the end of the maze
-				if(gamePanel.wonGame()) {
+				//Check if user has won at least once.
+				if(gamePanel.hasWon()) {
+					
 					//If they did, add their score to the leaderboard if it was low enough
+					final int added = leaderboard.addEntry(playerName, bestTime);
+
 					if(added == -1) {
 						JOptionPane.showMessageDialog(window, "You didn't make the leaderboard :( Womp Womp");
 					}else {
 						JOptionPane.showMessageDialog(window, String.format("Nice job! You're #%d on the leaderboard!", added+1));
-						leaderboard.updateleaderboardFile();
+						//leaderboard.updateleaderboardFile();
 					}
 				}else {
 					JOptionPane.showMessageDialog(window, "Why didn't you finish the game???");
@@ -341,6 +354,10 @@ public class Main {
 	    seconds = 0;
 	    seconds_left = 0;
 	    totalEnemiesKilled = 0;
+	    if(secondsTotal < bestTime) {
+	    	bestTime = secondsTotal;
+	    }
+	    secondsTotal = 0;
 
 	    // Create a new instance of the HomeScreen
 	    homePanel = new HomeScreen();

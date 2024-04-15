@@ -199,6 +199,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			if (current_level == NUM_LEVELS) {
 				System.out.print("");
 				Main.gameOverPanel(true);
+				System.out.println("Game over");				
 				/*
 				 *
 				 *
@@ -294,8 +295,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	public void reset() { // TODO add testing?
 		ourPlayer.reset();
 		cmanager.reset();
-		v.updateRadius();
 		v.reset();
+		current_level = 1;
 	}
 
 
@@ -305,7 +306,16 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 * @return true if user completed all levels.
 	 */
 	public boolean wonGame() {
-		return current_level == NUM_LEVELS;
+		return current_level == NUM_LEVELS && cmanager.endFound();
+	}
+	
+	/**
+	 * Checks if the user has won the game at least one time.
+	 * 
+	 * @return true if the user has won at least once.
+	 */
+	public boolean hasWon() {
+		return current_level == NUM_LEVELS && cmanager.hasWon();
 	}
 
 	/**
@@ -340,6 +350,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		drawHealthBar(g);
 
 		ourPlayer.draw(g2);
+		
+		
 
 		// Saves some memory
 		g2.dispose();
@@ -375,6 +387,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		final int currentHealth = ourPlayer.getHealth();
 		final int barWidth = (int) (((double) currentHealth / 10000) * healthBarWidth);
 
+		g.drawString("Maze Runner", 10, 10);
+		
 		// Draw the health portion of the health bar
 		g.setColor(Color.GREEN); // Health color
 		g.fillRect(healthBarX, healthBarY, barWidth, healthBarHeight); // Health
