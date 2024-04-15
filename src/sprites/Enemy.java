@@ -1,5 +1,6 @@
 package sprites;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -667,8 +668,8 @@ public abstract class Enemy implements GameVariables {
 		}
 
 		// TODO remove
-//		g.setColor(Color.RED);
-//		g.drawRect(final_x, final_y, WIDTH, HEIGHT);
+		g.setColor(Color.RED);
+		g.drawRect(final_x, final_y, WIDTH, HEIGHT);
 //		if(chasing)
 //			g.drawLine(final_x + WIDTH/2, final_y + HEIGHT/2, PLAYER_X + PLAYER_WIDTH/2, PLAYER_Y + PLAYER_HEIGHT/2);
 	}

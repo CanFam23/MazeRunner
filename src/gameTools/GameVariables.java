@@ -136,6 +136,6 @@ public interface GameVariables {
 	final int COLLISION_INT = 5;
 
 	/** Used to make the block hitboxes slightly bigger then their dimensions. */
-	final int HITBOX_BUFFER_AMOUNT = 6; // TODO How close is close enough to register a collision?
+	final int HITBOX_BUFFER_AMOUNT = 6;
 
 }

@@ -199,7 +199,7 @@ public class Chunk implements GameVariables {
 				final PositionBlock temp = block[c];
 				if (temp instanceof Wall) {
 
-					final int[][] tempCoords = temp.getBounds(xPosition - deltas[0], yPosition - deltas[1]);
+					final int[][] tempCoords = temp.getHitbox(xPosition - deltas[0], yPosition - deltas[1]);
 
 					collided = CollisionDetection.getCollision(tempCoords[0], tempCoords[1], xCoords, yCoords);
 
@@ -400,7 +400,7 @@ public class Chunk implements GameVariables {
 
 		// Should find a collision because the PositiobBlock's coords are intersecting
 		// with the players
-		int[][] tempBounds = pb.getBounds(0, 0);
+		int[][] tempBounds = pb.getHitbox(0, 0);
 		if (!CollisionDetection.getCollision(tempBounds[0], tempBounds[1], playerXCoords, playerYCoords)) {
 			System.err.println("Collision() found no collision, when it should have found one!");
 			allPassed = false;
@@ -410,7 +410,7 @@ public class Chunk implements GameVariables {
 		// with the players, this time they are slightly different
 		pb = new PositionBlock(PLAYER_X + WALL_WIDTH / 4, PLAYER_Y, WALL_WIDTH, WALL_HEIGHT);
 
-		tempBounds = pb.getBounds(0, 0);
+		tempBounds = pb.getHitbox(0, 0);
 
 		if (!CollisionDetection.getCollision(tempBounds[0], tempBounds[1], playerXCoords, playerYCoords)) {
 			System.err.println("Collision() found no collision, when it should have found one!");
@@ -419,7 +419,7 @@ public class Chunk implements GameVariables {
 
 		// Should not find a collision because the block is at 0,0
 		pb = new PositionBlock(0, 0, WALL_WIDTH, WALL_HEIGHT);
-		tempBounds = pb.getBounds(0, 0);
+		tempBounds = pb.getHitbox(0, 0);
 
 		if (CollisionDetection.getCollision(tempBounds[0], tempBounds[1], playerXCoords, playerYCoords)) {
 			System.err.println("Collision() found a collision, when it shouldn't have found one!");
