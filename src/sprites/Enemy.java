@@ -589,7 +589,7 @@ public abstract class Enemy implements GameVariables {
 			GamePanel.ourPlayer.setGettingAttacked(false);
 			enemies.remove(this);
 			activeEnemies.remove(this);
-			Main.addTime(15);
+			Main.addTime();
 			Main.enemyKilled();
 		}
 	}
@@ -668,8 +668,8 @@ public abstract class Enemy implements GameVariables {
 		}
 
 		// TODO remove
-		g.setColor(Color.RED);
-		g.drawRect(final_x, final_y, WIDTH, HEIGHT);
+//		g.setColor(Color.RED);
+//		g.drawRect(final_x, final_y, WIDTH, HEIGHT);
 //		if(chasing)
 //			g.drawLine(final_x + WIDTH/2, final_y + HEIGHT/2, PLAYER_X + PLAYER_WIDTH/2, PLAYER_Y + PLAYER_HEIGHT/2);
 	}

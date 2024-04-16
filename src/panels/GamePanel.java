@@ -2,6 +2,7 @@ package panels;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -113,6 +114,43 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private int healthBarHeight = 20;
 	/** Padding from the top and right edges of the panel.*/
 	private int padding = 30;
+	
+	/** Time left text x coord. */
+	private final int timeX = 25;
+	
+	/** Time left text y coord. */
+	private final int timeY = 25;
+	
+	/** Enemy Kill count text x coord.*/
+	private final int enemyKillCountX = timeX;
+	
+	/** Enemy Kill count text y coord.*/
+	private final int enemyKillCountY = timeY + 25;
+	
+	/** Keeps track of if time is being added or not. 
+	 *  If this is set to true, the addText string is 
+	 *  displayed on the screen.
+	 */
+	private boolean addingTime = false;
+	
+	/** How long to display addText.*/
+	private final int maxAddTime = 3 * 1000;
+	
+	
+	/** How long addText has been displayed for.*/
+	private int addTimeElapsed = 0;
+	
+	/** Text displayed when adding time. */
+	private final String addText = "Adding 15 seconds!";
+	/** X coord for adding time text. */
+	private final int addTextX = PLAYER_X - 75;
+	
+	/** Y coord for adding time text. */
+	private final int addTextY = PLAYER_Y - 25;
+    /** Create a custom font with size 20, used for writing the time left and enemies killed.*/
+    private final Font customFont = new Font("Courier", Font.BOLD, 20);
+    
+	
 
 	/**
 	 * Constructs a GamePanel object.
@@ -174,6 +212,16 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				frames++;
 				delta--;
 				if (System.currentTimeMillis() - time >= 1000) {
+					if(Main.addTime && addTimeElapsed < maxAddTime) {
+						addingTime = true;
+						addTimeElapsed += 1000;
+						
+						if(addTimeElapsed >= maxAddTime) {
+							addingTime = false;
+							addTimeElapsed = 0;
+							Main.addTime(15);
+						}
+					}
 					fpsTracker.add(frames);
 					time += 1000;
 					frames = 0;
@@ -351,10 +399,32 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		ourPlayer.draw(g2);
 		
+		drawStats(g2);
 		
-
 		// Saves some memory
 		g2.dispose();
+	}
+	
+	/**
+	 * Draws the seconds left and enemies left on the screen.
+	 * 
+	 * @param g2 Graphics to draw on.
+	 */
+	private void drawStats(Graphics2D g2) {
+		g2.setColor(Color.red);
+
+        // Set the custom font
+        g2.setFont(customFont);
+		final String timeLeft = "Time left: " + String.valueOf(Main.seconds_left) + " seconds";
+		g2.drawString(timeLeft, timeX, timeY);
+		
+		final String enemiesKilled = "Enemies killed: " + String.valueOf(Main.totalEnemiesKilled);
+		g2.drawString(enemiesKilled, enemyKillCountX, enemyKillCountY);
+
+		//If adding time, tell the user its happening
+		if(addingTime) {
+			g2.drawString(addText, addTextX,addTextY);
+		}
 	}
 
 	/**
@@ -386,8 +456,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// Calculate the width of the health bar based on player's health percentage
 		final int currentHealth = ourPlayer.getHealth();
 		final int barWidth = (int) (((double) currentHealth / 10000) * healthBarWidth);
-
-		g.drawString("Maze Runner", 10, 10);
 		
 		// Draw the health portion of the health bar
 		g.setColor(Color.GREEN); // Health color
