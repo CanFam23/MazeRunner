@@ -216,7 +216,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 						addingTime = true;
 						addTimeElapsed += 1000;
 						
-						if(addTimeElapsed >= maxAddTime) {
+						if(addTimeElapsed >= maxAddTime || Main.seconds_left <= 3) {
 							addingTime = false;
 							addTimeElapsed = 0;
 							Main.addTime(15);
