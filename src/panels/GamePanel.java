@@ -212,10 +212,15 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				frames++;
 				delta--;
 				if (System.currentTimeMillis() - time >= 1000) {
+					//If more time needs to be added, wait three seconds before doing so
 					if(Main.addTime && addTimeElapsed < maxAddTime) {
 						addingTime = true;
 						addTimeElapsed += 1000;
 						
+						/*
+						 * If addTime has reached three seconds or theres less than three seconds in the game
+						 * Add more time.
+						 */
 						if(addTimeElapsed >= maxAddTime || Main.seconds_left <= 3) {
 							addingTime = false;
 							addTimeElapsed = 0;
