@@ -55,12 +55,6 @@ public class Main {
 	/** Total seconds the player has been playing the game. */
 	private static int secondsTotal = 0;
 
-	/** Total elapsed seconds for each level. */
-	private static int seconds = 0;
-
-	/** Remaining seconds left for the player. */
-	private static int seconds_left = 0;
-
 	/** Time elapsed for level. */
 	private static int timeAmount = 120;
 	
@@ -82,14 +76,19 @@ public class Main {
 	/** Home screen. */
 	private static HomeScreen homePanel;
 
-	/** Total enemies killed by the player. */
-	private static int totalEnemiesKilled = 0;
-
 	/** Stores player's name. */
 	private static String playerName = "";
 
 	/** Keeps track of leaderboard, and updates it when called. */
 	public final static Leaderboard leaderboard = new Leaderboard("leaderboards/overall_time_leaderboard.txt");
+	
+	/** Remaining seconds left for the player. */
+	public static int seconds_left = timeAmount;
+	
+	/** Total enemies killed by the player. */
+	public static int totalEnemiesKilled = 0;
+	
+	public static boolean addTime = false;
 
 	/**
 	 * Main method to start the game.
@@ -171,15 +170,12 @@ public class Main {
 			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				seconds++;
 				secondsTotal++;
-				seconds_left = timeAmount - seconds;
+				seconds_left--;
 
 				if (seconds_left <= 0) {
 					timer.stop();
 					gameOverPanel(true);
-				} else {
-					window.setTitle("Time Left: " + seconds_left + " seconds - Enemy Kill Count:" + totalEnemiesKilled);
 				}
 			}
 		});
@@ -263,8 +259,7 @@ public class Main {
 	 * timer.
 	 */
 	public static void resetTime() {
-		seconds = 0;
-		seconds_left = 0;
+		seconds_left = timeAmount;
 	    totalEnemiesKilled = 0;
 		window.setTitle("Maze Runner - Use Arrows to start time");
 		gamePanel.addKeyListener(new KeyAdapter() {
@@ -291,9 +286,21 @@ public class Main {
 		timer.stop();
 	}
 
+	/**
+	 * Sets add time to true.
+	 */
+	public static void addTime() {
+		addTime = true;
+	}
+	
+	/**
+	 * Adds more time to the time player has left.
+	 * 
+	 * @param t Time to add.
+	 */
 	public static void addTime(int t) {
-		window.setTitle("Adding Time");
-		seconds -= t; // this is what is removed from the total seconds to represent time left
+		seconds_left += 15;
+		addTime = false;
 	}
 
 	public static void enemyKilled() {
@@ -351,8 +358,7 @@ public class Main {
 	    window.dispose();
 
 	    // Reset game variables
-	    seconds = 0;
-	    seconds_left = 0;
+	    seconds_left = timeAmount;
 	    totalEnemiesKilled = 0;
 	    if(secondsTotal < bestTime) {
 	    	bestTime = secondsTotal;
