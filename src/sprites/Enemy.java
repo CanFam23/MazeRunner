@@ -602,7 +602,7 @@ public abstract class Enemy implements GameVariables {
 	}
 
 	/**
-	 * Return the current health of player
+	 * Return the current health of player.
 	 */
 	public int getHitCount() {
 		return hitCount;
@@ -611,8 +611,8 @@ public abstract class Enemy implements GameVariables {
 	/**
 	 * Update the position of the enemy.
 	 *
-	 * @param dx horizontal shift in the enemy's position
-	 * @param dy vertical shift in the enemy's position
+	 * @param dx horizontal shift in the enemy's position.
+	 * @param dy vertical shift in the enemy's position.
 	 */
 	private void update_coords(int dx, int dy) {
 		position_x += dx;
@@ -622,7 +622,7 @@ public abstract class Enemy implements GameVariables {
 	/**
 	 * Draw the enemy to the screen.
 	 *
-	 * @param g Graphics2D object used for drawing
+	 * @param g Graphics2D object used for drawing.
 	 */
 	public void draw(Graphics2D g) {
 		// Store position based on movement of the map
@@ -674,7 +674,11 @@ public abstract class Enemy implements GameVariables {
 //			g.drawLine(final_x + WIDTH/2, final_y + HEIGHT/2, PLAYER_X + PLAYER_WIDTH/2, PLAYER_Y + PLAYER_HEIGHT/2);
 	}
 
-	// Test enemy classes
+	/**
+	 * Main method, used for testing.
+	 * 
+	 * @param args Arguments passed.
+	 */
 	public static void main(String[] args) {
 		// Create factories that will create our images.
 		EnemyFactory mageCreator = MageFactory.getInstance();

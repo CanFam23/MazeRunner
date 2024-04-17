@@ -326,7 +326,7 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * Convert original images to volatile images because they are going to be loaded over and over again.
 	 *
-	 * @param originalImage the image to be converted to volatile
+	 * @param originalImage the image to be converted to volatile.
 	 * @return VolatileImage same image, but now volatile which increases performance when drawn over and over again.
 	 */
 	private VolatileImage convertToVolatile(BufferedImage originalImage) {
@@ -392,14 +392,14 @@ public class ChunkManager implements GameVariables {
 	 * Gets knockback variable, which represents if the player is getting knocked
 	 * back or not.
 	 *
-	 * @return knockback
+	 * @return true if the player is getting knocked back.
 	 */
 	public boolean getKnockback() {
 		return knockback;
 	}
 
 	/**
-	 * Knockback the player when knockback is equal to true. If knocking back the
+	 * Knockback the player when knockback is set to true. If knocking back the
 	 * player would result in hitting a wall, the knockback effect stops.
 	 */
 	public void knockback() {
@@ -578,7 +578,7 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * Return a list of the chunks that appear on the screen.
 	 *
-	 * @return the list of chunks that are visible on the screen.
+	 * @return The list of chunks that are visible on the screen.
 	 */
 	public Set<Chunk> getActiveChunks() {
 		return activeChunks;

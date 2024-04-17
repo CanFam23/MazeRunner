@@ -41,7 +41,7 @@ public class Player implements GameVariables {
 	private static final String FILE_LOCATION = "images/";
 
 	/**
-	 * Tracks the health of our player
+	 * Tracks the health of our player.
 	 */
 	private int health = 10000;
 
@@ -95,12 +95,12 @@ public class Player implements GameVariables {
 	private static final Map<State, Map<Facing, List<BufferedImage>>> images = new HashMap<>();
 
 	/**
-	 * Enemies the player hit
+	 * Enemies the player hit.
 	 */
 	private final Set<Enemy> hitEnemies = new HashSet<>();
 
 	/**
-	 * A map of Facing enumerators and Rectangles
+	 * A map of Facing enumerators and Rectangles.
 	 */
 	@SuppressWarnings("serial")
 	private final Map<Facing, Rectangle> hitboxes = new HashMap<>() {
@@ -123,7 +123,7 @@ public class Player implements GameVariables {
 	};
 
 	/**
-	 * Which way the player is looking when attacking
+	 * Which way the player is looking when attacking.
 	 */
 	private Facing attackFacing = Facing.N;
 
@@ -208,7 +208,6 @@ public class Player implements GameVariables {
 		}
 	}
 
-	// TODO Testing
 	/**
 	 * Checks if the player hits any enemies when they attack.
 	 *
@@ -231,7 +230,6 @@ public class Player implements GameVariables {
 		}
 	}
 
-	// TODO Testing
 	/**
 	 * Handles the player attack and knocks back all enemies the player hit.
 	 */
@@ -243,7 +241,6 @@ public class Player implements GameVariables {
 		hitEnemies.clear();
 	}
 
-	// TODO Testing
 	/**
 	 * Checks if any enemies are in hitEnemies Set.
 	 *
@@ -325,7 +322,7 @@ public class Player implements GameVariables {
 	 * Draw our player. Draw handles the switching from one image in a sequence to
 	 * the next.
 	 *
-	 * @param g 2Dgraphics to draw on
+	 * @param g 2Dgraphics to draw on.
 	 */
 	public void draw(Graphics2D g) {
 		final BufferedImage myImage = images.get(currentState).get(currentFacing).get(0);
@@ -339,15 +336,11 @@ public class Player implements GameVariables {
 		if (drawCount < framesPerSwitch - 1) { // For x ticks of the game loop, draw the same image.
 			g.drawImage(myImage, PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment,
 					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
-//			g.setColor(Color.red);
-//			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 			drawCount++;
 		} else { // Then, switch the image to the next one in the sequence.
 			BufferedImage img = images.get(currentState).get(currentFacing).remove(0);
 			g.drawImage(img, PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment,
 					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
-//			g.setColor(Color.red);
-//			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 			images.get(currentState).get(currentFacing).add(img);
 			drawCount = 0;
 		}
@@ -371,9 +364,8 @@ public class Player implements GameVariables {
 
 	}
 
-	// TODO add testing
 	/**
-	 * Reset player state and direction
+	 * Reset player state and direction.
 	 */
 	public synchronized void reset() {
 		stateLocked = false;
@@ -398,28 +390,28 @@ public class Player implements GameVariables {
 	}
 
 	/**
-	 * Set the state to be fixed
+	 * Set the state to be fixed.
 	 */
 	public void lockState() {
 		stateLocked = true;
 	}
 
 	/**
-	 * Set facing to be fixed
+	 * Set facing to be fixed.
 	 */
 	public void lockFacing() {
 		facingLocked = true;
 	}
 
 	/**
-	 * Allow state to be changed
+	 * Allow state to be changed.
 	 */
 	public void unlockState() {
 		stateLocked = false;
 	}
 
 	/**
-	 * Allow facing to be changed
+	 * Allow facing to be changed.
 	 */
 	public void unlockFacing() {
 		facingLocked = false;
@@ -444,14 +436,14 @@ public class Player implements GameVariables {
 	}
 
 	/**
-	 * Set player health back to 100
+	 * Set player health back to 100.
 	 */
 	public void resetHealth() {
 		health = 10000;
 	}
 
 	/**
-	 * Return the current health of player
+	 * Return the current health of player.
 	 */
 	public int getHealth() {
 		return health;
@@ -522,7 +514,7 @@ public class Player implements GameVariables {
 	}
 
 	/**
-	 * Main method
+	 * Main method. Used for testing.
 	 *
 	 * @param args arguments passed
 	 */
@@ -534,31 +526,82 @@ public class Player implements GameVariables {
 		p1.load_images("Civilian1(black)");
 
 		// Start: Unit Testing
-		boolean all_passed = true;
+		boolean allPassed = true;
 		// Update the state as if all keys were pressed at the same time
 		// By default, this should set the current direction faced to North
 		p1.updateState(true, true, true, true);
 		if (p1.currentFacing != Facing.N) {
-			System.out.println("When updateState() registers all keys being pressed, Facing should be set to north.");
-			all_passed = false;
+			System.err.println("When updateState() registers all keys being pressed, Facing should be set to north.");
+			allPassed = false;
 		}
 		// Now set key press
 		p1.updateState(false, false, true, false);
 		if (p1.currentFacing != Facing.E) {
-			System.out.println("Key press of right should change the player to be facing east.");
-			all_passed = false;
+			System.err.println("Key press of right should change the player to be facing east.");
+			allPassed = false;
 		}
 		p1.updateState(false, false, false, false);
 		if (p1.currentState != State.Idle) {
-			System.out.println("When no key is pressed, the current state should be idle.");
-			all_passed = false;
+			System.err.println("When no key is pressed, the current state should be idle.");
+			allPassed = false;
 		}
 		p1.setFacing(Facing.SE);
 		if (p1.currentFacing != Facing.SE) {
-			System.out.println("setFacing() failed to set the direction of the player to southeast.");
-			all_passed = false;
+			System.err.println("setFacing() failed to set the direction of the player to southeast.");
+			allPassed = false;
 		}
-		if (all_passed) {
+		/*
+		 * stateLocked = false;
+		facingLocked = false;
+		attackCount = 0;
+		drawCount = 0;
+		setState(State.Idle);
+		setFacing(Facing.N);
+		health = 10000;
+		 */
+		//Testing reset
+		p1.reset();
+		if(p1.stateLocked || p1.facingLocked || p1.attackCount != 0 || p1.drawCount != 0 || p1.currentState != State.Idle || p1.currentFacing != Facing.N || p1.health != 10000) {
+			System.err.println("reset() failed to reset 1 or more variables!");
+			allPassed = false;
+		}
+		
+		p1.attacking();
+		if(p1.hitEnemies.size() != 0) {
+			System.err.println("A enemy was hit when no enemies existed!");
+			allPassed = false;
+		}
+		
+		//Make a enemy and add it to enemy lists
+		p1.setFacing(Facing.W);
+		MageFactory mf = MageFactory.getInstance();
+		Enemy m = mf.createEnemy(PLAYER_X, PLAYER_Y);
+		Enemy.activeEnemies.add(m);
+		Enemy.enemies.add(m);
+		//We should get a hit enemy now.
+		p1.attacking();
+		if(p1.hitEnemies.size() == 0) {
+			System.err.println("No enemies were hit, when one should've been!");
+			allPassed = false;
+		}
+		
+		//Hit enemies should return true here
+		if(!p1.hitEnemies()) {
+			System.err.println("Hit enemies should return true, but it returned false!");
+			allPassed = false;
+		}
+
+		final int preHitCount = m.getHitCount();
+		p1.handleAttack();
+		//Since we called handleAttack, the hit count of the enemy should have went down one
+		for (Enemy e : p1.hitEnemies) {
+			if(e.getHitCount() != preHitCount) {
+				System.err.println("Enemies hit count should have decreased!");
+				allPassed = false;
+			}
+		}
+		
+		if (allPassed) {
 			System.out.println("All cases passed, good job.");
 		} else {
 			System.out.println("At least one case failed");

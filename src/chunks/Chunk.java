@@ -188,7 +188,7 @@ public class Chunk implements GameVariables {
 	 * @param xCoords X coordinates to use.
 	 * @param yCoords Y coordinates to use.
 	 * @param deltas  Displacement of x and y.
-	 * @return
+	 * @return true if a collision is found.
 	 */
 	public boolean checkCollision(int[] xCoords, int[] yCoords, Integer[] deltas) {
 
@@ -260,9 +260,9 @@ public class Chunk implements GameVariables {
 	}
 
 	/**
-	 * Main Method.
+	 * Main Method, used for testing.
 	 *
-	 * @param args Arguements passed.
+	 * @param args Arguments passed.
 	 */
 	public static void main(String[] args) {
 		boolean allPassed = true;
