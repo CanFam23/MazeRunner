@@ -36,7 +36,7 @@ public class PositionBlock implements GameVariables {
 	/**
 	 * Main method
 	 * 
-	 * @param args arguements passed
+	 * @param args arguments passed
 	 */
 	public static void main(String[] args) {
 		boolean allPassed = true;
@@ -68,9 +68,11 @@ public class PositionBlock implements GameVariables {
 		EndBlock.setImage(vImage);
 		Wall.setImage(vImage);
 		StartingBlock.setImage(vImage);
+		
+		PositionBlock.setBlockSize(WALL_WIDTH, WALL_HEIGHT);
 
 		// Testing a position block
-		PositionBlock pb = new PositionBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
+		PositionBlock pb = new PositionBlock(initialX, initialY);
 		
 		String blockType = "????";
 		
@@ -79,7 +81,7 @@ public class PositionBlock implements GameVariables {
 		}
 		
 		// Testing an empty block
-		pb = new EmptyBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
+		pb = new EmptyBlock(initialX, initialY);
 		
 		blockType = "empt";
 		
@@ -88,7 +90,7 @@ public class PositionBlock implements GameVariables {
 		}
 		
 		// Testing a wall
-		pb = new Wall(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
+		pb = new Wall(initialX, initialY);
 
 		blockType = "wall";
 		
@@ -97,7 +99,7 @@ public class PositionBlock implements GameVariables {
 		}
 				
 		// Testing a starting block
-		pb = new StartingBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
+		pb = new StartingBlock(initialX, initialY);
 
 		blockType = "strt";
 		
@@ -106,7 +108,7 @@ public class PositionBlock implements GameVariables {
 		}
 		
 		// Testing a end block
-		pb = new EndBlock(initialX, initialY, WALL_WIDTH, WALL_HEIGHT);
+		pb = new EndBlock(initialX, initialY);
 
 		blockType = "EndB";
 		
@@ -120,15 +122,15 @@ public class PositionBlock implements GameVariables {
 			System.err.println("At least 1 case failed!");
 		}
 	}
-
-	/** Height of the block. */
-	protected int height;
-
+	
 	/** Block Image. PositionBlock should never directly be drawn */
 	private VolatileImage image = null;
-
+	
 	/** Width of the block. */
-	protected int width;
+	protected static int width;
+	
+	/** Height of the block. */
+	protected static int height;
 
 	/** X coordinate of the block. */
 	protected int x;
@@ -147,11 +149,14 @@ public class PositionBlock implements GameVariables {
 	 * @param height The height of the block.
 	 * @param c      The color of the block.
 	 */
-	public PositionBlock(int x, int y, int width, int height) {
+	public PositionBlock(int x, int y) {
 		this.x = x;
 		this.y = y;
-		this.width = width;
-		this.height = height;
+	}
+	
+	public static void setBlockSize(int width, int height) {
+		PositionBlock.width = width;
+		PositionBlock.height = height;
 	}
 
 	/**

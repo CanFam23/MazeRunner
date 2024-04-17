@@ -80,7 +80,7 @@ public class Player implements GameVariables {
 	/** Set initial player direction. */
 	private Facing currentFacing = Facing.N;
 
-	private final int framesPerSwitch = 6;
+	private final int FRAMESPERSWITCH = 6;
 	
 	private boolean gettingAttacked = false;
 
@@ -162,7 +162,7 @@ public class Player implements GameVariables {
 		// Load the spritesheet file
 		if (playerState.toString() != null) {
 			final String resource;
-			if (holdingWeapon)
+			if (holdingWeapon && character_name != "Knight1")
 				resource = FILE_LOCATION + character_name + "_" + playerState.toString() + "(Weapon1)" + ".png";
 			else
 				resource = FILE_LOCATION + character_name + "_" + playerState.toString() + ".png";
@@ -333,33 +333,34 @@ public class Player implements GameVariables {
 		if (currentState == State.Attack)
 			attackCount += 1;
 
-		if (drawCount < framesPerSwitch - 1) { // For x ticks of the game loop, draw the same image.
+		if (drawCount < FRAMESPERSWITCH - 1) { // For x ticks of the game loop, draw the same image.
 			g.drawImage(myImage, PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment,
 					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
-//			g.setColor(Color.red);
-//			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 			drawCount++;
 		} else { // Then, switch the image to the next one in the sequence.
 			BufferedImage img = images.get(currentState).get(currentFacing).remove(0);
 			g.drawImage(img, PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment,
 					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
-//			g.setColor(Color.red);
-//			g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 			images.get(currentState).get(currentFacing).add(img);
 			drawCount = 0;
 		}
 
 		// TODO remove
+		// Show Player hitbox
 //		g.setColor(Color.RED);
 //		g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
-//
+//		g.setColor(Color.BLUE);
+//		g.drawRect(PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment,
+//					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2);
+		
+		// Show attacking area
 //		g.setColor(Color.blue);
 //		if (getState().equals("Attack")) {
 //			g.draw(hitboxes.get(currentFacing));
 //
 //		}
 
-		if (attackCount == framesPerSwitch * 4) {
+		if (attackCount == FRAMESPERSWITCH * 4) {
 			unlockState();
 			unlockFacing();
 			currentState = State.Idle;
@@ -529,6 +530,7 @@ public class Player implements GameVariables {
 
 		// Choose the player model analyzed
 		p1.load_images("Civilian1(black)");
+//		p1.load_images("Knight");
 
 		// Start: Unit Testing
 		boolean all_passed = true;
