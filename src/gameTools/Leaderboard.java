@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Scanner;
 
 /**
@@ -23,7 +24,7 @@ public class Leaderboard implements GameVariables {
 	/**
 	 * Stores the entries in the leaderboard.
 	 */
-	private final String[] leaderboard = new String[5];
+	private final Entry[] leaderboard = new Entry[5];
 	/**
 	 * Stores the file name for the leaderboard file.
 	 */
@@ -43,7 +44,8 @@ public class Leaderboard implements GameVariables {
 
 		final String fileName = "leaderboards/overall_time_leaderboard.txt";
 		final Leaderboard leaders = new Leaderboard(fileName);
-		final String[] entries = Arrays.copyOf(leaders.getleaderboard(), leaders.getleaderboard().length);
+		
+		final Entry[] entries = Arrays.copyOf(leaders.getleaderboard(), leaders.getleaderboard().length);
 		final String name = leaders.getleaderboardName();
 
 		if (name == null || entries == null) {
@@ -52,9 +54,9 @@ public class Leaderboard implements GameVariables {
 		}
 
 		// This entry shouldn't be added because its higher than the last score
-		leaders.addEntry("MazeRunner", 100);
+		leaders.addEntry("MazeRunner", 300);
 
-		String[] newEntries = leaders.getleaderboard();
+		Entry[] newEntries = leaders.getleaderboard();
 		// Make sure no entries have been changed
 		for (int i = 0; i < entries.length; i++) {
 			if (!entries[i].equals(newEntries[i])) {
@@ -96,11 +98,21 @@ public class Leaderboard implements GameVariables {
 					System.err.println("Updated leaderboard with the wrong title!");
 					allPassed = false;
 				}
-
+ 
 				for (int i = 0; i < entries.length; i++) {
-					String currentEntry = input.nextLine().replace(";", " ");
-					if (!newEntries[i].equals(currentEntry)) {
+					final String line = input.nextLine();
+					final String[] currentEntry = line.split(";");
+					
+					//New entries should match currentEntry
+					if (!newEntries[i].name.equals(currentEntry[0]) || newEntries[i].score != Integer.parseInt(currentEntry[1])) {
 						System.err.println("Updated leaderboard with a incorrect entry!");
+						allPassed = false;
+					}
+					
+					//Testing toString
+					final String tempStr = line.replace(";", " ");
+					if(!newEntries[i].toString().equals(tempStr)) {
+						System.err.println("ToString failed!");
 						allPassed = false;
 					}
 				}
@@ -111,11 +123,11 @@ public class Leaderboard implements GameVariables {
 
 		// Making sure the leaderboard is sorted from lowest to highest score
 		for (int i = 0; i < newEntries.length - 1; i++) {
-			final String entryOne = newEntries[i];
-			final String entryTwo = newEntries[i + 1];
+			final Entry entryOne = newEntries[i];
+			final Entry entryTwo = newEntries[i + 1];
 
-			final int playerOneScore = Integer.parseInt(entryOne.substring(entryOne.length() - 2));
-			final int playerTwoScore = Integer.parseInt(entryTwo.substring(entryTwo.length() - 2));
+			final int playerOneScore = entryOne.score;
+			final int playerTwoScore = entryTwo.score;
 
 			if (playerOneScore > playerTwoScore) {
 				System.err.println("Player scores not sorted!");
@@ -132,8 +144,10 @@ public class Leaderboard implements GameVariables {
 			writer.newLine();
 
 			// Write each leaderboard entry to file
+			// Write each leaderboard entry to file
 			for (int i = 0; i < entries.length; i++) {
-				writer.write(entries[i].replace(" ", ";"));
+				final String entry = entries[i].name + ";" + entries[i].score;
+				writer.write(entry);
 				if (i < entries.length - 1) {
 					writer.newLine();
 				}
@@ -165,13 +179,28 @@ public class Leaderboard implements GameVariables {
 	 */
 	public void loadleaderboard(String fileName) {
 		try (final Scanner input = new Scanner(new File(fileName))) {
+			Entry defaultEntry = new Entry("Name",Integer.MAX_VALUE);
 			while (input.hasNextLine()) {
 				levelName = input.nextLine();
 
 				for (int i = 0; i < 5; i++) {
-					leaderboard[i] = input.nextLine().replace(";", " ");
+					
+					try{
+						final String[] tempEntry = input.nextLine().split(";");
+						final String name = tempEntry[0];
+						
+						final int score = Integer.parseInt(tempEntry[1]);
+						Entry newEntry = new Entry(name,score);
+						leaderboard[i] = newEntry;
+					}catch(NumberFormatException e) {
+						System.err.println("Error loading leaderboard scores! Using default value.");
+						leaderboard[i] = defaultEntry;
+					}
 				}
 			}
+			
+			//Sort leaderboard array by score of each entry object
+			Arrays.sort(leaderboard, Comparator.comparingInt(Entry -> Entry.score));
 		} catch (FileNotFoundException e) {
 			System.err.println(fileName + " was not found!");
 		}
@@ -182,14 +211,17 @@ public class Leaderboard implements GameVariables {
 	 */
 	public void updateleaderboardFile() {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-
+			//Sort leaderboard array by score of each entry object
+			Arrays.sort(leaderboard, Comparator.comparingInt(Entry -> Entry.score));
+			
 			// Add title
 			writer.write(levelName);
 			writer.newLine();
 
 			// Write each leaderboard entry to file
 			for (int i = 0; i < leaderboard.length; i++) {
-				writer.write(leaderboard[i].replace(" ", ";"));
+				final String entry = leaderboard[i].name + ";" + leaderboard[i].score;
+				writer.write(entry);
 				if (i < leaderboard.length - 1) {
 					writer.newLine();
 				}
@@ -209,12 +241,14 @@ public class Leaderboard implements GameVariables {
 	 */
 	public int addEntry(String name, int score) {
 		int index = -1;
+		
+		//Sort leaderboard array by score of each entry object
+		Arrays.sort(leaderboard, Comparator.comparingInt(Entry -> Entry.score));
 
 		// Check each entry in the array
 		for (int i = 0; i < leaderboard.length; i++) {
-			final String temp = leaderboard[i];
-			final int playerScore = Integer.parseInt(temp.substring(temp.length() - 2));
-			System.out.println(playerScore);
+			final Entry temp = leaderboard[i];
+			final int playerScore = temp.score;
 			/*
 			 * if new score is less than the score at i, thats where the new score will be
 			 * inserted, so no need to look any farther.
@@ -235,10 +269,9 @@ public class Leaderboard implements GameVariables {
 		}
 
 		// Add new entry
-		final String newEntry = name + " " + score;
+		final Entry newEntry = new Entry(name,score);
 		leaderboard[index] = newEntry;
 
-		updateleaderboardFile();
 		return index;
 	}
 
@@ -247,8 +280,25 @@ public class Leaderboard implements GameVariables {
 	 *
 	 * @return The leaderboard.
 	 */
-	public String[] getleaderboard() {
+	public Entry[] getleaderboard() {
 		return leaderboard;
+	}
+	
+	/**
+	 * Gets the leaderboard array, but converts every entry to a string.
+	 * 
+	 * @return The leaderboard, where each entry is a string.
+	 */
+	public String[] leaderboardToString() {
+		final String[] leaderboardStr = new String[leaderboard.length];
+		
+		
+		for(int i = 0; i < leaderboard.length; i++) {
+			final String entry = leaderboard[i].toString();
+			leaderboardStr[i] = entry;
+		}
+		
+		return leaderboardStr;
 	}
 
 	/**
@@ -258,5 +308,20 @@ public class Leaderboard implements GameVariables {
 	 */
 	public String getleaderboardName() {
 		return levelName;
+	}
+	
+	
+	private class Entry{
+		public String name;
+		public int score;
+		
+		Entry(String name, int score){
+			this.name = name;
+			this.score = score;
+		}
+		
+		public String toString() {
+			return name + " " + score;
+		}
 	}
 }

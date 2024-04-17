@@ -181,7 +181,7 @@ public class HomeScreen extends JPanel {
 		scoreboardBoxPanel.setBorder(BorderFactory.createEmptyBorder(25, 50, 50, 50)); // Add padding
 
 		String levelName = Main.leaderboard.getleaderboardName();
-		String[] entries = Main.leaderboard.getleaderboard();
+		String[] entries = Main.leaderboard.leaderboardToString();
 
 		String scoreboard = "<html>";
 		scoreboard += "<br>" + levelName + "<br>";
