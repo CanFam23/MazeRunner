@@ -167,7 +167,7 @@ public class Player implements GameVariables {
 			try {
 				spriteSheet = ImageIO.read(new File(resource));
 			} catch (IOException e) {
-				System.out.println("Image not found at '" + resource + "'");
+				System.err.println("Image not found at '" + resource + "'");
 			}
 		}
 		// Split the spritesheet into individual images.

@@ -555,6 +555,7 @@ public class ChunkManager implements GameVariables {
 	 */
 	public boolean checkCollision(Integer[] deltas) {
 
+		//Check each chunk in active chunks for a collision.
 		for (Chunk c : activeChunks) {
 			final boolean collided = c.checkCollision(playerXCoords, playerYCoords, deltas);
 			if (collided) {
@@ -586,7 +587,7 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * Checks if the given chunk is currently visible on the screen.
 	 *
-	 * @param chunk the chunk to check.
+	 * @param chunk The chunk to check.
 	 * @return If chunk is currently visible on screen.
 	 */
 	private boolean isVisible(Chunk chunk) {
