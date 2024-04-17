@@ -98,7 +98,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private Image backgroundImage;
 
 	/**
-	 * Version of the current level, each level has 5 version.
+	 * Version of the current level, each level has 5 versions.
 	 */
 	private int levelVersionNumber;
 
@@ -251,8 +251,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			keyH.leftPressed = false;
 			if (current_level == NUM_LEVELS) {
 				System.out.print("");
-				Main.gameOverPanel(true);
-				System.out.println("Game over");				
+				Main.gameOverPanel(true);				
 				/*
 				 *
 				 *
