@@ -234,10 +234,7 @@ public class Main {
 				System.out.println("Average FPS: " + gamePanel.getFPS());
 				GamePanel.stopLoop();
 				// Check if user has won at least once.
-				if (gamePanel.hasWon()) {
-
-					leaderboard.updateleaderboardFile();
-				} else {
+				if(!gamePanel.hasWon()) {
 					JOptionPane.showMessageDialog(window, "Why didn't you finish the game???");
 					System.exit(0);
 				}
@@ -372,8 +369,6 @@ public class Main {
 	public static void addScoreToLeader() {
 		final int added = leaderboard.addEntry(playerName, bestTime);
 		if(added != -1) {
-			System.out.print(bestTime);
-			System.out.print("should add score");
 			addedToLeaderboard = true;
 		}
 	}

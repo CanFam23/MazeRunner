@@ -136,6 +136,15 @@ public class Leaderboard implements GameVariables {
 			}
 		}
 
+        // Sort the array by score using a Comparator
+        Arrays.sort(entries, Comparator.comparingInt(entry -> entry.score));
+
+        // Print the sorted array
+        System.out.println("Sorted by score:");
+        for (Entry entry : entries) {
+            System.out.println(entry);
+        }
+
 		// Set file back to what it was originally
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
 
