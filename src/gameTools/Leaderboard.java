@@ -311,15 +311,36 @@ public class Leaderboard implements GameVariables {
 	}
 	
 	
+	/**
+	 * Used to store entries in the leaderboard.
+	 * Each entry has a 'name' and 'score.'
+	 */
 	private class Entry{
+		/**
+		 * Name associated with the entry.
+		 */
 		public String name;
+		/**
+		 * Score associated with the entry.
+		 */
 		public int score;
 		
+		/**
+		 * Makes a new Entry object.
+		 * 
+		 * @param name Name associated with entry.
+		 * @param score Score associated with entry.
+		 */
 		Entry(String name, int score){
 			this.name = name;
 			this.score = score;
 		}
 		
+		/**
+		 *Converts Entry object to string.
+		 *
+		 *@return String format of entry object.
+		 */
 		public String toString() {
 			return name + " " + score;
 		}
