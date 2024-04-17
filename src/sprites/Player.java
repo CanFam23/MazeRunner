@@ -83,6 +83,9 @@ public class Player implements GameVariables {
 	/** Set initial player direction. */
 	private Facing currentFacing = Facing.N;
 
+	/** How many frames that pass before each image switch. */
+	private final int FRAMESPERSWITCH = 6;
+	
 	/**
 	 * Keeps track of if the player is getting attacked.
 	 */
@@ -159,7 +162,7 @@ public class Player implements GameVariables {
 		// Load the spritesheet file
 		if (playerState.toString() != null) {
 			final String resource;
-			if (holdingWeapon) {
+			if (holdingWeapon && character_name != "Knight1") {
 				resource = FILE_LOCATION + character_name + "_" + playerState.toString() + "(Weapon1)" + ".png";
 			} else {
 				resource = FILE_LOCATION + character_name + "_" + playerState.toString() + ".png";
@@ -331,9 +334,7 @@ public class Player implements GameVariables {
 		if (currentState == State.Attack) {
 			attackCount += 1;
 		}
-
-		final int framesPerSwitch = 6;
-		if (drawCount < framesPerSwitch - 1) { // For x ticks of the game loop, draw the same image.
+		if (drawCount < FRAMESPERSWITCH - 1) { // For x ticks of the game loop, draw the same image.
 			g.drawImage(myImage, PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment,
 					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
 			drawCount++;
@@ -346,16 +347,21 @@ public class Player implements GameVariables {
 		}
 
 		// TODO remove
+		// Show Player hitbox
 //		g.setColor(Color.RED);
 //		g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
-//
+//		g.setColor(Color.BLUE);
+//		g.drawRect(PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment,
+//					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2);
+		
+		// Show attacking area
 //		g.setColor(Color.blue);
 //		if (getState().equals("Attack")) {
 //			g.draw(hitboxes.get(currentFacing));
 //
 //		}
 
-		if (attackCount == framesPerSwitch * 4) {
+		if (attackCount == FRAMESPERSWITCH * 4) {
 			unlockState();
 			unlockFacing();
 			currentState = State.Idle;
@@ -388,7 +394,6 @@ public class Player implements GameVariables {
 	public boolean isFacingLocked() {
 		return facingLocked;
 	}
-
 	/**
 	 * Set the state to be fixed.
 	 */
@@ -522,6 +527,7 @@ public class Player implements GameVariables {
 
 		// Choose the player model analyzed
 		p1.load_images("Civilian1(black)");
+//		p1.load_images("Knight");
 
 		// Start: Unit Testing
 		boolean allPassed = true;
