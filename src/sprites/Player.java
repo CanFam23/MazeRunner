@@ -457,8 +457,6 @@ public class Player implements GameVariables {
 		gettingAttacked = t;
 	}
 
-
-
 	///////////////// BELOW CODE IS USED JUST FOR TESTING PURPOSES
 	///////////////// //////////////////
 	/**
@@ -551,62 +549,58 @@ public class Player implements GameVariables {
 			allPassed = false;
 		}
 		/*
-		 * stateLocked = false;
-		facingLocked = false;
-		attackCount = 0;
-		drawCount = 0;
-		setState(State.Idle);
-		setFacing(Facing.N);
-		health = 10000;
+		 * stateLocked = false; facingLocked = false; attackCount = 0; drawCount = 0;
+		 * setState(State.Idle); setFacing(Facing.N); health = 10000;
 		 */
-		//Testing reset
+		// Testing reset
 		p1.reset();
-		if(p1.stateLocked || p1.facingLocked || p1.attackCount != 0 || p1.drawCount != 0 || p1.currentState != State.Idle || p1.currentFacing != Facing.N || p1.health != 10000) {
+		if (p1.stateLocked || p1.facingLocked || p1.attackCount != 0 || p1.drawCount != 0
+				|| p1.currentState != State.Idle || p1.currentFacing != Facing.N || p1.health != 10000) {
 			System.err.println("reset() failed to reset 1 or more variables!");
 			allPassed = false;
 		}
-		
+
 		p1.attacking();
-		if(p1.hitEnemies.size() != 0) {
+		if (p1.hitEnemies.size() != 0) {
 			System.err.println("A enemy was hit when no enemies existed!");
 			allPassed = false;
 		}
-		
-		//Make a enemy and add it to enemy lists
+
+		// Make a enemy and add it to enemy lists
 		p1.setFacing(Facing.W);
 		MageFactory mf = MageFactory.getInstance();
 		Enemy m = mf.createEnemy(PLAYER_X, PLAYER_Y);
 		Enemy.activeEnemies.add(m);
 		Enemy.enemies.add(m);
-		//We should get a hit enemy now.
+		// We should get a hit enemy now.
 		p1.attacking();
-		if(p1.hitEnemies.size() == 0) {
+		if (p1.hitEnemies.size() == 0) {
 			System.err.println("No enemies were hit, when one should've been!");
 			allPassed = false;
 		}
-		
-		//Hit enemies should return true here
-		if(!p1.hitEnemies()) {
+
+		// Hit enemies should return true here
+		if (!p1.hitEnemies()) {
 			System.err.println("Hit enemies should return true, but it returned false!");
 			allPassed = false;
 		}
 
 		final int preHitCount = m.getHitCount();
 		p1.handleAttack();
-		//Since we called handleAttack, the hit count of the enemy should have went down one
+		// Since we called handleAttack, the hit count of the enemy should have went
+		// down one
 		for (Enemy e : p1.hitEnemies) {
-			if(e.getHitCount() != preHitCount) {
+			if (e.getHitCount() != preHitCount) {
 				System.err.println("Enemies hit count should have decreased!");
 				allPassed = false;
 			}
 		}
-		
+
 		if (allPassed) {
 			System.out.println("All cases passed, good job.");
 		} else {
 			System.out.println("At least one case failed");
 		}
-
 
 		// Start: Image testing
 		initializeGUI();

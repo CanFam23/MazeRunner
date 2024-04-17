@@ -46,10 +46,10 @@ public class PositionBlock implements GameVariables {
 
 		// Create utilities for Volatile Image loading
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice device = env.getDefaultScreenDevice();
-        GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
+		GraphicsDevice device = env.getDefaultScreenDevice();
+		GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
 
-        // TODO: For image testing, all block types would need to be loaded and set.
+		// TODO: For image testing, all block types would need to be loaded and set.
 		try {
 			vImage = graphicsConfig.createCompatibleVolatileImage(WALL_WIDTH, WALL_HEIGHT);
 			Graphics2D g = vImage.createGraphics();
@@ -282,7 +282,8 @@ public class PositionBlock implements GameVariables {
 			allPassed = false;
 		}
 		// Checking for correct image assignment
-		// TODO: Now that we are using a static VolatileImage, this image loading test would have to be different
+		// TODO: Now that we are using a static VolatileImage, this image loading test
+		// would have to be different
 //		if (!this.image.equals(image)) {
 //			System.err.println("Image assignment failed!");
 //			allPassed = false;
@@ -298,12 +299,12 @@ public class PositionBlock implements GameVariables {
 				initX + WALL_WIDTH + HITBOX_BUFFER_AMOUNT, initX - HITBOX_BUFFER_AMOUNT };
 		final int[] wallYCoords = new int[] { initY - HITBOX_BUFFER_AMOUNT, initY - HITBOX_BUFFER_AMOUNT,
 				initY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT, initY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT };
-		final int[][] checkCoords = new int[][] {wallXCoords,wallYCoords};
+		final int[][] checkCoords = new int[][] { wallXCoords, wallYCoords };
 
-		final int[][] coords = getHitbox(0,0);
-		for(int r = 0; r < coords.length; r++) {
-			for(int c = 0; c < coords[0].length; c++) {
-				if(checkCoords[r][c] != coords[r][c]) {
+		final int[][] coords = getHitbox(0, 0);
+		for (int r = 0; r < coords.length; r++) {
+			for (int c = 0; c < coords[0].length; c++) {
+				if (checkCoords[r][c] != coords[r][c]) {
 					System.err.println("Hitbox coords are incorrect!");
 					allPassed = false;
 				}

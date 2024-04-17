@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import blocks.PositionBlock;
+import sprites.Enemy;
 import sprites.Player;
 
 /**
@@ -64,9 +65,8 @@ public interface GameVariables {
 	}
 
 	/**
-	 * Hashmap used to store each direction and it's opposite direction.
-	 * Used when the player is hit and we need to determine which direction to
-	 * knock it back.
+	 * Hashmap used to store each direction and it's opposite direction. Used when
+	 * the player is hit and we need to determine which direction to knock it back.
 	 */
 	@SuppressWarnings("serial")
 	final Map<Facing, Facing> oppositeDirection = new HashMap<>() {
@@ -84,7 +84,7 @@ public interface GameVariables {
 
 	/** Width of the screen. */
 	final int SCREEN_WIDTH = 1000;
-	
+
 	/** Height of the screen. */
 	final int SCREEN_HEIGHT = 800;
 
@@ -143,8 +143,9 @@ public interface GameVariables {
 	 */
 	final int FULL_COLLISION_INT = 75;
 
-	/** 
-	 * Used to make the block hitboxes slightly bigger then their dimensions. 
+	/**
+	 * Used to make the block hitboxes slightly bigger then their dimensions.
+	 * 
 	 * @see PositionBlock#getHitbox
 	 */
 	final int HITBOX_BUFFER_AMOUNT = 6;
