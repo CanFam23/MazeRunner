@@ -33,8 +33,8 @@ public class EndBlock extends PositionBlock {
 	 * @param height             The height of the block.
 	 * @param positionBlockImage The color of the block.
 	 */
-	public EndBlock(int x, int y, int width, int height) {
-		super(x, y, width, height);
+	public EndBlock(int x, int y) {
+		super(x, y);
 	}
 
 	public static void setImage(VolatileImage positionBlockImage) {

@@ -170,7 +170,7 @@ public abstract class Enemy implements GameVariables {
 	protected boolean facingLocked = false;
 
 	/** Set initial state. */
-	protected State currentState = State.Attack;
+	protected State currentState = State.Idle;
 
 	/** Set initial state. */
 	protected Facing currentFacing = Facing.E;
@@ -672,12 +672,14 @@ public abstract class Enemy implements GameVariables {
 
 	// Test enemy classes
 	public static void main(String[] args) {
+		
 		// Create factories that will create our images.
 		EnemyFactory mageCreator = MageFactory.getInstance();
 		EnemyFactory ghostCreator = GhostFactory.getInstance();
 
 		// Create enemy instances using 'magic' numbers for x and y positions.
 		Enemy merlin = mageCreator.createEnemy(10, 10);
+		Enemy spooky = ghostCreator.createEnemy(10, 110);
 		Enemy casper = ghostCreator.createEnemy(110, 10);
 		Enemy gandalf = mageCreator.createEnemy(110, 110);
 
@@ -687,6 +689,7 @@ public abstract class Enemy implements GameVariables {
 
 		// Add our enemies to the drawing panel to be drawn
 		panel.addDrawable(merlin);
+		panel.addDrawable(spooky);
 		panel.addDrawable(casper);
 		panel.addDrawable(gandalf);
 

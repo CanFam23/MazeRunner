@@ -33,8 +33,8 @@ public class Wall extends PositionBlock {
 	 * @param height             of the block.
 	 * @param positionBlockImage color of the block.
 	 */	
-	public Wall(int x, int y, int width, int height) {
-		super(x, y, width, height);
+	public Wall(int x, int y) {
+		super(x, y);
 	}
 	
 	public static void setImage(VolatileImage positionBlockImage) {
