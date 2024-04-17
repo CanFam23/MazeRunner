@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import gameTools.GameVariables;
 
@@ -26,11 +27,13 @@ import gameTools.GameVariables;
  * facing (N, NE, E...) and methods including loading images, updating state,
  * and drawing.
  * </p>
- * 
- * @author Andrew Denegar, Nick Clouse, Molly O'Connor
- * 
+ *
+ * @author Andrew Denegar
+ * @author Nick Clouse
+ * @author Molly O'Connor
+ *
  * @since March 20, 2024
- * 
+ *
  * @see GameVariables
  */
 public class Player implements GameVariables {
@@ -40,7 +43,7 @@ public class Player implements GameVariables {
 	/**
 	 * Tracks the health of our player
 	 */
-	private int health = 500;
+	private int health = 10000;
 
 	/**
 	 * Draw count is used to track the number of draws that have occurred since the
@@ -80,8 +83,12 @@ public class Player implements GameVariables {
 	/** Set initial player direction. */
 	private Facing currentFacing = Facing.N;
 
+	/** How many frames that pass before each image switch. */
 	private final int FRAMESPERSWITCH = 6;
 	
+	/**
+	 * Keeps track of if the player is getting attacked.
+	 */
 	private boolean gettingAttacked = false;
 
 	/**
@@ -124,15 +131,8 @@ public class Player implements GameVariables {
 	private Facing attackFacing = Facing.N;
 
 	/**
-	 * Constructor
-	 */
-	public Player() {
-
-	}
-
-	/**
 	 * Load images for each player state.
-	 * 
+	 *
 	 * @param character_name the name of the player file to be selected (Civilian1,
 	 *                       Civilian2, Civilian1(black), etc).
 	 */
@@ -150,7 +150,7 @@ public class Player implements GameVariables {
 
 	/**
 	 * Load an individual spritesheet.
-	 * 
+	 *
 	 * @param character_name the name of the player file to be selected (Civilian1,
 	 *                       Civilian2, Civilian1(black), etc).
 	 * @param playerState    the player state that is to be loaded.
@@ -162,10 +162,11 @@ public class Player implements GameVariables {
 		// Load the spritesheet file
 		if (playerState.toString() != null) {
 			final String resource;
-			if (holdingWeapon && character_name != "Knight1")
+			if (holdingWeapon && character_name != "Knight1") {
 				resource = FILE_LOCATION + character_name + "_" + playerState.toString() + "(Weapon1)" + ".png";
-			else
+			} else {
 				resource = FILE_LOCATION + character_name + "_" + playerState.toString() + ".png";
+			}
 			try {
 				spriteSheet = ImageIO.read(new File(resource));
 			} catch (IOException e) {
@@ -213,7 +214,7 @@ public class Player implements GameVariables {
 	// TODO Testing
 	/**
 	 * Checks if the player hits any enemies when they attack.
-	 * 
+	 *
 	 * Uses the attack hitboxes and enemy hitbox to make rectangles and check for
 	 * collision between the two. If there is a collision, add the enemy to hit
 	 * enemies set.
@@ -248,7 +249,7 @@ public class Player implements GameVariables {
 	// TODO Testing
 	/**
 	 * Checks if any enemies are in hitEnemies Set.
-	 * 
+	 *
 	 * @return If any enemies are in hitEnemies Set.
 	 */
 	public boolean hitEnemies() {
@@ -257,7 +258,7 @@ public class Player implements GameVariables {
 
 	/**
 	 * Update the direction that our player is facing.
-	 * 
+	 *
 	 * @param up    The up arrow key is pressed.
 	 * @param down  The down arrow key is pressed.
 	 * @param right The right arrow key is pressed.
@@ -265,7 +266,7 @@ public class Player implements GameVariables {
 	 */
 	public void updateState(boolean up, boolean down, boolean right, boolean left) {
 		// Set the player state (idle or move)
-		if (up == false && down == false && right == false && left == false) {
+		if (!up && !down && !right && !left) {
 			currentState = State.Idle;
 			return;
 		} else {
@@ -273,18 +274,21 @@ public class Player implements GameVariables {
 		}
 		// Set the direction headed
 		String dir = "";
-		if (up && !down)
+		if (up && !down) {
 			dir += "N";
-		else if (down && !up)
+		} else if (down && !up) {
 			dir += "S";
+		}
 
-		if (left && !right)
+		if (left && !right) {
 			dir += "W";
-		else if (right && !left)
+		} else if (right && !left) {
 			dir += "E";
+		}
 
-		if (!dir.equals(""))
+		if (!dir.equals("")) {
 			currentFacing = Facing.valueOf(dir);
+		}
 	}
 
 	/**
@@ -304,7 +308,7 @@ public class Player implements GameVariables {
 
 	/**
 	 * Change the direction the player is facing.
-	 * 
+	 *
 	 * @param direction to set.
 	 */
 	public void setFacing(Facing direction) {
@@ -313,7 +317,7 @@ public class Player implements GameVariables {
 
 	/**
 	 * Change the state of the player.
-	 * 
+	 *
 	 * @param playerState to set.
 	 */
 	public void setState(State playerState) {
@@ -323,16 +327,16 @@ public class Player implements GameVariables {
 	/**
 	 * Draw our player. Draw handles the switching from one image in a sequence to
 	 * the next.
-	 * 
+	 *
 	 * @param g 2Dgraphics to draw on
 	 */
 	public void draw(Graphics2D g) {
 		final BufferedImage myImage = images.get(currentState).get(currentFacing).get(0);
-		final int imageXAdjustment = (int) ((myImage.getWidth() * SIZE - PLAYER_WIDTH) / 2);
-		final int imageYAdjustment = (int) ((myImage.getHeight() * SIZE - PLAYER_HEIGHT) / 2);
-		if (currentState == State.Attack)
+		final int imageXAdjustment = (myImage.getWidth() * SIZE - PLAYER_WIDTH) / 2;
+		final int imageYAdjustment = (myImage.getHeight() * SIZE - PLAYER_HEIGHT) / 2;
+		if (currentState == State.Attack) {
 			attackCount += 1;
-
+		}
 		if (drawCount < FRAMESPERSWITCH - 1) { // For x ticks of the game loop, draw the same image.
 			g.drawImage(myImage, PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment,
 					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
@@ -373,7 +377,7 @@ public class Player implements GameVariables {
 	/**
 	 * Reset player state and direction
 	 */
-	public synchronized void reset() { // TODO add testing?
+	public synchronized void reset() {
 		stateLocked = false;
 		facingLocked = false;
 		attackCount = 0;
@@ -394,7 +398,6 @@ public class Player implements GameVariables {
 	public boolean isFacingLocked() {
 		return facingLocked;
 	}
-
 	/**
 	 * Set the state to be fixed
 	 */
@@ -425,7 +428,7 @@ public class Player implements GameVariables {
 
 	/**
 	 * Subtract health from the player.
-	 * 
+	 *
 	 * @param amount The amount of health to subtract.
 	 */
 	public void subtractHealth(int amount) {
@@ -434,7 +437,7 @@ public class Player implements GameVariables {
 
 	/**
 	 * Subtract health from the player.
-	 * 
+	 *
 	 * @param amount The amount of health to subtract.
 	 */
 	public void addHealth(int amount) {
@@ -454,16 +457,16 @@ public class Player implements GameVariables {
 	public int getHealth() {
 		return health;
 	}
-	
+
 	public boolean isGettingAttacked() {
 		return gettingAttacked;
 	}
-	
+
 	public void setGettingAttacked(boolean t) {
 		gettingAttacked = t;
 	}
-	
-	
+
+
 
 	///////////////// BELOW CODE IS USED JUST FOR TESTING PURPOSES
 	///////////////// //////////////////
@@ -480,7 +483,7 @@ public class Player implements GameVariables {
 	 */
 	public static void initializeGUI() {
 		frame = new JFrame("Image Display");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setBounds(10, 10, 400, 400);
 
 		panel = new JPanel() {
@@ -511,7 +514,7 @@ public class Player implements GameVariables {
 
 	/**
 	 * Displayed given image.
-	 * 
+	 *
 	 * @param newImage image to draw.
 	 */
 	public static void displayImage(BufferedImage newImage) {
@@ -521,7 +524,7 @@ public class Player implements GameVariables {
 
 	/**
 	 * Main method
-	 * 
+	 *
 	 * @param args arguments passed
 	 */
 	public static void main(String[] args) {
@@ -562,7 +565,7 @@ public class Player implements GameVariables {
 		} else {
 			System.out.println("At least one case failed");
 		}
-		
+
 
 		// Start: Image testing
 		initializeGUI();
@@ -573,14 +576,14 @@ public class Player implements GameVariables {
 		int speed = (int) (0.1 * 1000); // Set seconds (first number) between each image.
 
 		while (true) {
-			BufferedImage img = p1.images.get(playerState).get(direction).remove(0);
+			BufferedImage img = Player.images.get(playerState).get(direction).remove(0);
 			displayImage(img);
 			try {
 				Thread.sleep(speed);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			p1.images.get(playerState).get(direction).add(img);
+			Player.images.get(playerState).get(direction).add(img);
 		}
 	}
 }

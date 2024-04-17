@@ -1,7 +1,6 @@
 package main;
 
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -16,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import javax.swing.WindowConstants;
 
 import gameTools.Leaderboard;
 import panels.GameOverLOSE;
@@ -28,69 +28,78 @@ import panels.HomeScreen;
  * Serves as the main file for our game. This is the file you should run to play
  * our game.
  * </p>
- * 
+ *
  * <p>
  * This class initializes the game window, timer, and other necessary
  * components.
  * </p>
- * 
+ *
  * @author Nick Clouse
  * @author Andrew Denegar
  * @author Molly O'Connor
- * 
+ *
  * @since February 20, 2024
- * 
+ *
  * @see JFrame
  * @see HomeScreen
  * @see GamePanel
  */
 public class Main {
 
-	// Timer object used for timing how long the player has
+	/** Timer object used for timing how long the player has.*/
 	private static Timer timer;
 
-	// Window used to display the game
+	/** Window used to display the game. */
 	private static JFrame window;
 
+	/** Total seconds the player has been playing the game. */
 	private static int secondsTotal = 0;
-	
-	// Total elapsed seconds for each level
-	private static int seconds = 0;
 
-	// Remaining seconds left for the player
-	private static int seconds_left = 0;
-
-	// Time elapsed for level
+	/** Time elapsed for level. */
 	private static int timeAmount = 120;
+	
+	/** Users best time. Starts off with the max value a int can be, since user has never completed game. */
+	private static int bestTime = Integer.MAX_VALUE;
 
-	// The main game panel where the game is rendered
+	/** The main game panel where the game is rendered. */
 	private static GamePanel gamePanel;
 
-	// Background image that is the same as the maze walls
+	/** Background image that is the same as the maze walls. */
 	private static BufferedImage backgroundImage = null;
 
+	/** Win screen when user reaches end of a level. */
 	private static GameOverWIN nextLevel;
 
+	/** Lose screen when user runs out of time. */
 	private static GameOverLOSE timeOut;
 
+	/** Home screen. */
 	private static HomeScreen homePanel;
-	
-	private static int totalEnemiesKilled = 0;
 
+	/** Stores player's name. */
 	private static String playerName = "";
 
+	/** Keeps track of leaderboard, and updates it when called. */
 	public final static Leaderboard leaderboard = new Leaderboard("leaderboards/overall_time_leaderboard.txt");
 	
+	/** Remaining seconds left for the player. */
+	public static int seconds_left = timeAmount;
+	
+	/** Total enemies killed by the player. */
+	public static int totalEnemiesKilled = 0;
+	
+	public static boolean addTime = false;
+
 	/**
 	 * Main method to start the game.
-	 * 
+	 *
 	 * @param args The arguments passed to the main method.
 	 */
 	public static void main(String[] args) {
 		window = new JFrame();
 		homePanel = new HomeScreen();
 		// Set up the window and display the HomeScreen panel
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		window.setPreferredSize(new Dimension(1000, 800));
 		window.getContentPane().add(homePanel);
 		window.pack();
@@ -127,6 +136,14 @@ public class Main {
 			System.err.println("Failed to load backgroundBlock.png!");
 		}
 
+		/*
+		 * Reset gamepanel, this is added so if the user
+		 * plays again after they lose, the game will reset correctly
+		 */
+		if(gamePanel != null) {
+			gamePanel.reset();
+
+		}
 		// Creates window
 		gamePanel = new GamePanel(backgroundImage);
 		nextLevel = new GameOverWIN();
@@ -134,7 +151,7 @@ public class Main {
 		nextLevel.setPreferredSize(new Dimension(800, 600));
 		timeOut.setPreferredSize(new Dimension(800, 600));
 
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		window.setTitle("Maze Runner - Use Arrows to start time");
 
 		// window.setResizable(false);
@@ -148,20 +165,17 @@ public class Main {
 
 			/**
 			 * Made to keep track of how much time is left in the game.
-			 * 
+			 *
 			 * @param e ActionEvent to process.
 			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				seconds++;
 				secondsTotal++;
-				seconds_left = timeAmount - seconds;
+				seconds_left--;
 
 				if (seconds_left <= 0) {
 					timer.stop();
 					gameOverPanel(true);
-				} else {
-					window.setTitle("Time Left: " + seconds_left + " seconds - Enemy Kill Count:" + totalEnemiesKilled);
 				}
 			}
 		});
@@ -171,7 +185,7 @@ public class Main {
 
 			/**
 			 * Made to check for key press. When a key is pressed, the timer starts.
-			 * 
+			 *
 			 * @param e KeyEvent to process
 			 */
 			@Override
@@ -200,27 +214,29 @@ public class Main {
 		window.addWindowListener(new WindowAdapter() {
 			/**
 			 * Used to handle window closing event.
-			 * 
+			 *
 			 * @param e WindowEvent to process.
 			 */
 			@Override
 			public void windowClosing(WindowEvent e) {
 				System.out.println("Average FPS: " + gamePanel.getFPS());
-				final int added = leaderboard.addEntry(playerName, secondsTotal);
 				gamePanel.stopLoop();
-				//Check if user found the end of the maze
-				if(gamePanel.wonGame()) {
+				//Check if user has won at least once.
+				if(gamePanel.hasWon()) {
+					
 					//If they did, add their score to the leaderboard if it was low enough
+					final int added = leaderboard.addEntry(playerName, bestTime);
+
 					if(added == -1) {
 						JOptionPane.showMessageDialog(window, "You didn't make the leaderboard :( Womp Womp");
 					}else {
 						JOptionPane.showMessageDialog(window, String.format("Nice job! You're #%d on the leaderboard!", added+1));
-						leaderboard.updateleaderboardFile();
+						//leaderboard.updateleaderboardFile();
 					}
 				}else {
 					JOptionPane.showMessageDialog(window, "Why didn't you finish the game???");
 				}
-				window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				window.dispose(); // Close the window
 
 			}
@@ -243,8 +259,7 @@ public class Main {
 	 * timer.
 	 */
 	public static void resetTime() {
-		seconds = 0;
-		seconds_left = 0;
+		seconds_left = timeAmount;
 	    totalEnemiesKilled = 0;
 		window.setTitle("Maze Runner - Use Arrows to start time");
 		gamePanel.addKeyListener(new KeyAdapter() {
@@ -252,7 +267,7 @@ public class Main {
 
 			/**
 			 * Made to check for key press. When a key is pressed, the timer starts.
-			 * 
+			 *
 			 * @param e KeyEvent to process
 			 */
 			@Override
@@ -270,12 +285,24 @@ public class Main {
 	public static void stopTime() {
 		timer.stop();
 	}
-	
-	public static void addTime(int t) {
-		window.setTitle("Adding Time");
-		seconds -= t; // this is what is removed from the total seconds to represent time left 
+
+	/**
+	 * Sets add time to true.
+	 */
+	public static void addTime() {
+		addTime = true;
 	}
 	
+	/**
+	 * Adds more time to the time player has left.
+	 * 
+	 * @param t Time to add.
+	 */
+	public static void addTime(int t) {
+		seconds_left += 15;
+		addTime = false;
+	}
+
 	public static void enemyKilled() {
 		totalEnemiesKilled += 1;
 	}
@@ -329,18 +356,21 @@ public class Main {
 	public static void restartGame() {
 	    // Dispose of the current window
 	    window.dispose();
-	    
+
 	    // Reset game variables
-	    seconds = 0;
-	    seconds_left = 0;
+	    seconds_left = timeAmount;
 	    totalEnemiesKilled = 0;
-	    
+	    if(secondsTotal < bestTime) {
+	    	bestTime = secondsTotal;
+	    }
+	    secondsTotal = 0;
+
 	    // Create a new instance of the HomeScreen
 	    homePanel = new HomeScreen();
-	    
+
 	    // Set up the window and display the HomeScreen panel
 	    window = new JFrame();
-	    window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	    window.setPreferredSize(new Dimension(1000, 800));
 	    window.getContentPane().add(homePanel);
 	    window.pack();

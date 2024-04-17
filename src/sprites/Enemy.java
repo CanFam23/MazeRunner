@@ -1,5 +1,6 @@
 package sprites;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import chunks.Chunk;
 import chunks.ChunkManager;
@@ -21,13 +23,13 @@ import main.Main;
 import panels.GamePanel;
 
 /**
- * 
+ *
  * This file holds Enemy.java, Mage, Ghost, EnemyFactory, MageFactory, and
  * GhostFactory. These are the classes used to create enemies including loading
  * their images, storing their locations, and drawing to the screen. Mage and
  * Ghost are child classes of Enemy and MageFactory and GhostFactory are child
  * classes of EnemyFactory.
- * 
+ *
  * @author Andrew Denegar
  * @since March 26, 2024
  *
@@ -37,7 +39,7 @@ public abstract class Enemy implements GameVariables {
 	 * Calculates the distance between two points using the
 	 * <a href="https://www.purplemath.com/modules/distform.htm">distance
 	 * formula<a/>.
-	 * 
+	 *
 	 * @param x1 First x coordinate.
 	 * @param y1 First y coordinate.
 	 * @param x2 Second x coordinate.
@@ -50,7 +52,7 @@ public abstract class Enemy implements GameVariables {
 
 	/**
 	 * Checks for a collision between eOne and all enemies in activeEnemies.
-	 * 
+	 *
 	 * @param eOne The enemy to use.
 	 * @param newX The x coordinate to use.
 	 * @param newY The y coordinate to use.
@@ -108,9 +110,9 @@ public abstract class Enemy implements GameVariables {
 
 	/** How many times the enemy is drawn before the next image is selected . */
 	protected static final int DRAW_FRAMES = 5;
-	
+
 	/** Conversion is a constant used to resize our enemy to our liking */
-	private static final int IMAGESIZECONVERSION = 2; 
+	private static final int IMAGESIZECONVERSION = 2;
 
 	/** Width of enemy. */
 	protected int WIDTH;
@@ -205,7 +207,7 @@ public abstract class Enemy implements GameVariables {
 
 	/** Displace player y coordinate by this amount. */
 	private int knockbackDy = 0;
-	
+
 	/** Damage dealt to player when enemy hits the player. */
 	protected int damage = 0;
 
@@ -260,9 +262,9 @@ public abstract class Enemy implements GameVariables {
 				currentState = State.Attack;
 				attackCount = 0;
 				drawCount = 0;
-				
+
 				Facing dirToPlayer = Facing.N;
-				
+
 				int[] newDeltas = newPosition();
 				//Determine which direction the enemy is to the player.
 				if(newDeltas[0] < 0 && newDeltas[1] < 0) {
@@ -285,7 +287,7 @@ public abstract class Enemy implements GameVariables {
 
 				/*
 				 * Pass handling hitting the player to ChunkManager, with the direction to move the player.
-				 * Use oppositeDirection map to find the opposite direction the enemy is to the player, so 
+				 * Use oppositeDirection map to find the opposite direction the enemy is to the player, so
 				 * we know which way to move the player.
 				 */
 				GamePanel.ourPlayer.setGettingAttacked(true);
@@ -345,22 +347,24 @@ public abstract class Enemy implements GameVariables {
 	 * Changes state and direction of Enemy depending on values of x and y. If x and
 	 * y both don't equal 0, then the enemy is moving, else, it's idle. If s is
 	 * positive, the enemy is moving east, else its moving west.
-	 * 
+	 *
 	 * @param x x coordinate to check.
 	 * @param y y coordinate to check.
 	 */
 	public void changeState(int x, int y) {
 		if (!stateLocked) {
-			if (x != 0 || y != 0)
+			if (x != 0 || y != 0) {
 				currentState = State.Move;
-			else
+			} else {
 				currentState = State.Idle;
+			}
 		}
 		if (!facingLocked) {
-			if (x > 0)
+			if (x > 0) {
 				currentFacing = Facing.E;
-			else if (x < 0)
+			} else if (x < 0) {
 				currentFacing = Facing.W;
+			}
 		}
 	}
 
@@ -384,7 +388,7 @@ public abstract class Enemy implements GameVariables {
 
 	/**
 	 * Checks if the enemy is currently visible on the screen.
-	 * 
+	 *
 	 * @return true if the Enemy is currently visible on the screen.
 	 */
 	public boolean isVisible() {
@@ -400,7 +404,7 @@ public abstract class Enemy implements GameVariables {
 	 * the move would result in a smaller distance to the player, and wouldn't
 	 * result in a collision between a wall or a enemy, then it's considered a valid
 	 * move.
-	 * 
+	 *
 	 * @return A 2D array of integers, which are the enemies new coordinates.
 	 */
 	public int[] newPosition() {
@@ -436,7 +440,7 @@ public abstract class Enemy implements GameVariables {
 	/**
 	 * Checks for a collision between the enemy and the walls in
 	 * ChunkManager.activeChunks.
-	 * 
+	 *
 	 * @param x The x coordinate to use.
 	 * @param y The y coordinate to use.
 	 * @return true if there is a collision between any wall in any chunk.
@@ -464,7 +468,7 @@ public abstract class Enemy implements GameVariables {
 	/**
 	 * Checks if the enemy is in range of the player so it can start moving towards
 	 * the player.
-	 * 
+	 *
 	 * @return true if the enemy is in range of the player.
 	 */
 	public boolean inRangeOfPlayer() {
@@ -476,7 +480,7 @@ public abstract class Enemy implements GameVariables {
 
 	/**
 	 * Checks if the enemy is close enough to the player to attack.
-	 * 
+	 *
 	 * @param x The x coordinate to use.
 	 * @param y The y coordinate to use.
 	 * @return true If the enemy is closer enough to attack.
@@ -493,7 +497,7 @@ public abstract class Enemy implements GameVariables {
 	/**
 	 * Determines which direction to knockback the enemy, and sets knockback-related
 	 * variables to true;
-	 * 
+	 *
 	 * @param d The direction to knockback the enemy.
 	 */
 	public void knockback(Facing d) {
@@ -539,7 +543,7 @@ public abstract class Enemy implements GameVariables {
 
 	/**
 	 * Gets the actual position of the enemy.
-	 * 
+	 *
 	 * @return The actual position of the enemy.
 	 */
 	public int[] getPosition() {
@@ -548,7 +552,7 @@ public abstract class Enemy implements GameVariables {
 
 	/**
 	 * Gets the speed of the enemy.
-	 * 
+	 *
 	 * @return The speed of the enemy.
 	 */
 	public int getSpeed() {
@@ -557,7 +561,7 @@ public abstract class Enemy implements GameVariables {
 
 	/**
 	 * Gets the width of the enemy.
-	 * 
+	 *
 	 * @return The width of the enemy.
 	 */
 	public int getWidth() {
@@ -566,7 +570,7 @@ public abstract class Enemy implements GameVariables {
 
 	/**
 	 * Gets the height of the enemy.
-	 * 
+	 *
 	 * @return The height of the enemy.
 	 */
 	public int getHeight() {
@@ -576,7 +580,7 @@ public abstract class Enemy implements GameVariables {
 	// TODO Test
 	/**
 	 * Subtract health from the player.
-	 * 
+	 *
 	 * @param amount The amount of health to subtract.
 	 */
 	public void subtractHitCount(int amount) {
@@ -585,7 +589,7 @@ public abstract class Enemy implements GameVariables {
 			GamePanel.ourPlayer.setGettingAttacked(false);
 			enemies.remove(this);
 			activeEnemies.remove(this);
-			Main.addTime(15);
+			Main.addTime();
 			Main.enemyKilled();
 		}
 	}
@@ -606,7 +610,7 @@ public abstract class Enemy implements GameVariables {
 
 	/**
 	 * Update the position of the enemy.
-	 * 
+	 *
 	 * @param dx horizontal shift in the enemy's position
 	 * @param dy vertical shift in the enemy's position
 	 */
@@ -614,10 +618,10 @@ public abstract class Enemy implements GameVariables {
 		position_x += dx;
 		position_y += dy;
 	}
-	
+
 	/**
 	 * Draw the enemy to the screen.
-	 * 
+	 *
 	 * @param g Graphics2D object used for drawing
 	 */
 	public void draw(Graphics2D g) {
@@ -694,7 +698,7 @@ public abstract class Enemy implements GameVariables {
 		panel.addDrawable(gandalf);
 
 		// More GUI setup
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.add(panel);
 		frame.pack(); // Adjusts window to fit the preferred size and layouts of its subcomponents
 		frame.setLocationRelativeTo(null); // Center the window

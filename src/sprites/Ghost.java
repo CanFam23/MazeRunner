@@ -7,14 +7,14 @@ import java.util.Map;
 /**
  * Ghost is a child of Enemy with attributes and unique images.
  * Testing is found in Enemy.java.
- * 
+ *
  * @author Andrew Denegar
  */
 public class Ghost extends Enemy {
 
 	/**
 	 * Create a ghost, which should be done through a GhostFactory.
-	 * 
+	 *
 	 * @param x starting x position
 	 * @param y starting y position
 	 * @param images static images for ghost

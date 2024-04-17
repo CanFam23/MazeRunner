@@ -13,9 +13,9 @@ import java.util.Scanner;
  * Leaderboard is used to load and update the leaderboards for each level, and
  * the leaderboard that tracks the fastest times to complete the game.
  * </p>
- * 
+ *
  * @author Nick Clouse
- * 
+ *
  * @since April 11, 2024
  */
 public class Leaderboard implements GameVariables {
@@ -35,7 +35,7 @@ public class Leaderboard implements GameVariables {
 
 	/**
 	 * Main method, used for testing.
-	 * 
+	 *
 	 * @param args Arguments passed.
 	 */
 	public static void main(String[] args) {
@@ -143,7 +143,7 @@ public class Leaderboard implements GameVariables {
 			System.err.println("Error writing to file: " + e.getMessage());
 		}
 
-		if (allPassed == true) {
+		if (allPassed) {
 			System.out.println("All cases passed! :)");
 		} else {
 			System.out.println("At least one case failed! :(");
@@ -152,7 +152,7 @@ public class Leaderboard implements GameVariables {
 
 	/**
 	 * Constructs a new leaderboard object.
-	 * 
+	 *
 	 * @param fileName The fileName of the file that stores the leaderboard.
 	 */
 	public Leaderboard(String fileName) {
@@ -202,7 +202,7 @@ public class Leaderboard implements GameVariables {
 
 	/**
 	 * Adds a new entry to the leaderboard, if the score is low enough.
-	 * 
+	 *
 	 * @param name  The name to add.
 	 * @param score The score to add.
 	 * @return true if the entry was added to the leaderboard.
@@ -225,8 +225,9 @@ public class Leaderboard implements GameVariables {
 			}
 		}
 		// If a spot for the score isn't found, no need to go past this point
-		if (index == -1)
+		if (index == -1) {
 			return index;
+		}
 
 		// Shift each entry after the index to the right
 		for (int i = leaderboard.length - 1; i > index; i--) {
@@ -242,7 +243,7 @@ public class Leaderboard implements GameVariables {
 
 	/**
 	 * Gets the leaderboard array.
-	 * 
+	 *
 	 * @return The leaderboard.
 	 */
 	public String[] getleaderboard() {
@@ -251,7 +252,7 @@ public class Leaderboard implements GameVariables {
 
 	/**
 	 * Gets the levelName String, which is the title for the leaderboard.
-	 * 
+	 *
 	 * @return The name of the leaderboard.
 	 */
 	public String getleaderboardName() {
