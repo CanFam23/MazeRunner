@@ -23,7 +23,6 @@ import javax.swing.border.Border;
 
 import main.Main;
 
-
 /**
  * <p>
  * HomeScreen creates the home screen.
@@ -46,89 +45,87 @@ public class HomeScreen extends JPanel {
 	 * Background image to use.
 	 */
 	private BufferedImage backgroundImage;
-    private JPanel mainPanel;
-    private JPanel instructionsPanel;
-    private JPanel scoreboardPanel;
-    private JButton startButton;
-    private JButton instructionButton;
-    private JButton scoreButton;
-    private JButton backButton;
+	private JPanel mainPanel;
+	private JPanel instructionsPanel;
+	private JPanel scoreboardPanel;
+	private JButton startButton;
+	private JButton instructionButton;
+	private JButton scoreButton;
+	private JButton backButton;
 
-    private JPanel currentPanel;
+	private JPanel currentPanel;
 
-    JTextField nameField;
+	JTextField nameField;
 
+	public HomeScreen() {
+		try {
+			backgroundImage = ImageIO.read(new File("images/HomeScreen.png"));
+		} catch (IOException e) {
+			System.err.println("Failed to load home screen background image!");
+		}
 
-    public HomeScreen() {
-        try {
-            backgroundImage = ImageIO.read(new File("images/HomeScreen.png"));
-        } catch (IOException e) {
-            System.err.println("Failed to load home screen background image!");
-        }
+		setLayout(new BorderLayout());
 
-        setLayout(new BorderLayout());
+		mainPanel = createMainPanel();
+		instructionsPanel = createInstructionsPanel();
+		scoreboardPanel = createScoreboardPanel();
 
-        mainPanel = createMainPanel();
-        instructionsPanel = createInstructionsPanel();
-        scoreboardPanel = createScoreboardPanel();
-
-        add(mainPanel, BorderLayout.CENTER);
-        currentPanel = mainPanel;
-    }
+		add(mainPanel, BorderLayout.CENTER);
+		currentPanel = mainPanel;
+	}
 
 	private JPanel createMainPanel() {
-        JPanel panel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-            }
-        };
+		JPanel panel = new JPanel() {
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+			}
+		};
 
-        JPanel buttonPanel = new JPanel(new BorderLayout()); // Use BorderLayout for buttonPanel
-        buttonPanel.setBackground(Color.BLACK);
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // top, left, bottom, right
+		JPanel buttonPanel = new JPanel(new BorderLayout()); // Use BorderLayout for buttonPanel
+		buttonPanel.setBackground(Color.BLACK);
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // top, left, bottom, right
 
-        // Create a panel for the nameLabel and nameField
-        JPanel nameInputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        nameInputPanel.setBackground(Color.BLACK); // Adjust as needed
-        JLabel nameLabel = new JLabel("Enter Your Name: ");
+		// Create a panel for the nameLabel and nameField
+		JPanel nameInputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		nameInputPanel.setBackground(Color.BLACK); // Adjust as needed
+		JLabel nameLabel = new JLabel("Enter Your Name: ");
 		nameLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
-        nameLabel.setForeground(Color.WHITE); // Set label text color
-        nameField = new JTextField(10); // 10 columns for the text field
-        nameInputPanel.add(nameLabel);
-        nameInputPanel.add(nameField);
+		nameLabel.setForeground(Color.WHITE); // Set label text color
+		nameField = new JTextField(10); // 10 columns for the text field
+		nameInputPanel.add(nameLabel);
+		nameInputPanel.add(nameField);
 
-        // Add nameInputPanel to the CENTER of buttonPanel
-        buttonPanel.add(nameInputPanel, BorderLayout.CENTER);
+		// Add nameInputPanel to the CENTER of buttonPanel
+		buttonPanel.add(nameInputPanel, BorderLayout.CENTER);
 
-        // Create a panel for the buttons with FlowLayout (horizontal)
-        JPanel buttonsFlowPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
-        buttonsFlowPanel.setBackground(Color.BLACK); // Adjust as needed
+		// Create a panel for the buttons with FlowLayout (horizontal)
+		JPanel buttonsFlowPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
+		buttonsFlowPanel.setBackground(Color.BLACK); // Adjust as needed
 
-        instructionButton = createButton("INSTRUCTIONS");
-        startButton = createButton("START");
-        scoreButton = createButton("SCOREBOARD");
+		instructionButton = createButton("INSTRUCTIONS");
+		startButton = createButton("START");
+		scoreButton = createButton("SCOREBOARD");
 
-        buttonsFlowPanel.add(instructionButton);
-        buttonsFlowPanel.add(startButton);
-        buttonsFlowPanel.add(scoreButton);
+		buttonsFlowPanel.add(instructionButton);
+		buttonsFlowPanel.add(startButton);
+		buttonsFlowPanel.add(scoreButton);
 
-        // Add buttonsFlowPanel to the SOUTH of buttonPanel
-        buttonPanel.add(buttonsFlowPanel, BorderLayout.SOUTH);
+		// Add buttonsFlowPanel to the SOUTH of buttonPanel
+		buttonPanel.add(buttonsFlowPanel, BorderLayout.SOUTH);
 
-        // Set BorderLayout for the main panel
-        panel.setLayout(new BorderLayout());
+		// Set BorderLayout for the main panel
+		panel.setLayout(new BorderLayout());
 
-        // Add the buttonPanel to the SOUTH
-        panel.add(buttonPanel, BorderLayout.SOUTH);
+		// Add the buttonPanel to the SOUTH
+		panel.add(buttonPanel, BorderLayout.SOUTH);
 
-        return panel;
+		return panel;
 
+	}
 
-    }
-
-	private JPanel createInstructionsPanel(){
+	private JPanel createInstructionsPanel() {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setBackground(Color.BLACK);
 
@@ -138,42 +135,43 @@ public class HomeScreen extends JPanel {
 		instructionsBoxPanel.setBorder(BorderFactory.createEmptyBorder(25, 50, 50, 50)); // Add padding
 
 		// Create label for instructions text
-		JLabel instructionsLabel = new JLabel("<html>Welcome to MazeRunner!<br> <br> In this game, your objective is to navigate through three challenging levels of mazes, find the exit, and escape before the time runs out. Here are the rules and tips to help you succeed:<br>"
-				+ "<br>- Use the arrow keys keys to move your player through the maze and the space bar to attack enemies."
-		        + " <br><br>- You have a total of two minutes to complete each level. A timer will be displayed on the top of the screen to keep track of the remaining time. If the time runs out before you find the exit, you lose the game."
-		        + "<br><br>- Each level has 5 different mazes. Each time you start the game, a random maze is picked for each level.<br><br>"
-		        +"- Along the way, you may encounter enemies lurking in the maze. Your player has a health bar, which decreases if you collide with enemies. If your player's health reaches zero, you'll respawn at the beginning of the maze. However, fighting enemies also grants you an extra 15 seconds of time if you hit them 5 times. Use your health wisely to balance speed and safety."
-		        + "<br><br>- Your score is determined by the time taken to complete each level. The faster you complete the three mazes, the higher ranking you will have. Aim for the best time and challenge yourself to improve with each playthrough."
-		        + "<br><br>Are you ready to embark on this thrilling maze adventure? Good luck, and may the odds be in your favor!</html>");
+		JLabel instructionsLabel = new JLabel(
+				"<html>Welcome to MazeRunner!<br> <br> In this game, your objective is to navigate through three challenging levels of mazes, find the exit, and escape before the time runs out. Here are the rules and tips to help you succeed:<br>"
+						+ "<br>- Use the arrow keys keys to move your player through the maze and the space bar to attack enemies."
+						+ " <br><br>- You have a total of two minutes to complete each level. A timer will be displayed on the top of the screen to keep track of the remaining time. If the time runs out before you find the exit, you lose the game."
+						+ "<br><br>- Each level has 5 different mazes. Each time you start the game, a random maze is picked for each level.<br><br>"
+						+ "- Along the way, you may encounter enemies lurking in the maze. Your player has a health bar, which decreases if you collide with enemies. If your player's health reaches zero, you'll respawn at the beginning of the maze. However, fighting enemies also grants you an extra 15 seconds of time if you hit them 5 times. Use your health wisely to balance speed and safety."
+						+ "<br><br>- Your score is determined by the time taken to complete each level. The faster you complete the three mazes, the higher ranking you will have. Aim for the best time and challenge yourself to improve with each playthrough."
+						+ "<br><br>Are you ready to embark on this thrilling maze adventure? Good luck, and may the odds be in your favor!</html>");
 		instructionsLabel.setForeground(Color.WHITE);
 		instructionsLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
 		instructionsLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		instructionsLabel.setVerticalAlignment(SwingConstants.TOP); // Align text to the top
-		instructionsLabel.setPreferredSize(new Dimension(600, 0)); // Set preferred width, 0 for unlimited height (auto-wrap)
+		instructionsLabel.setPreferredSize(new Dimension(600, 0)); // Set preferred width, 0 for unlimited height
+																	// (auto-wrap)
 
 		// Add instructions label to the center of the instructions box panel
 		instructionsBoxPanel.add(instructionsLabel, BorderLayout.CENTER);
 
-	    // Create exit button
-	    backButton = createButton("BACK");
+		// Create exit button
+		backButton = createButton("BACK");
 
+		backButton.addActionListener(e -> showMainPanel());
 
-	    backButton.addActionListener(e -> showMainPanel());
+		// Create a panel to hold the back button and center it
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		buttonPanel.setBackground(Color.BLACK);
+		buttonPanel.add(backButton);
 
-	    // Create a panel to hold the back button and center it
-	    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,0,0));
-	    buttonPanel.setBackground(Color.BLACK);
-	    buttonPanel.add(backButton);
+		// Add button panel to the bottom of the instructions box panel
+		instructionsBoxPanel.add(buttonPanel, BorderLayout.SOUTH);
+		// Add instructions box panel to the center of the main panel
+		panel.add(instructionsBoxPanel, BorderLayout.CENTER);
 
-	    // Add button panel to the bottom of the instructions box panel
-	    instructionsBoxPanel.add(buttonPanel, BorderLayout.SOUTH);
-	    // Add instructions box panel to the center of the main panel
-	    panel.add(instructionsBoxPanel, BorderLayout.CENTER);
+		return panel;
+	}
 
-	    return panel;
-    }
-
-	private JPanel createScoreboardPanel(){
+	private JPanel createScoreboardPanel() {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setBackground(Color.BLACK);
 
@@ -188,8 +186,8 @@ public class HomeScreen extends JPanel {
 		String scoreboard = "<html>";
 		scoreboard += "<br>" + levelName + "<br>";
 
-		for(int i = 0; i < entries.length; i++) {
-			scoreboard += "<br>" + (i+1) + ". " + entries[i] + "<br>";
+		for (int i = 0; i < entries.length; i++) {
+			scoreboard += "<br>" + (i + 1) + ". " + entries[i] + "<br>";
 		}
 		scoreboard += "<html>";
 
@@ -200,8 +198,10 @@ public class HomeScreen extends JPanel {
 		scoreboardLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		scoreboardLabel.setVerticalAlignment(SwingConstants.TOP); // Align text to the top
 
-		JLabel scoreboardTxtLabel = new JLabel("<html><br>-The leaderboard keeps track of the fastest time (In seconds) it takes"
-				+ " to complete all 3 levels.<br>" +"<br>-Want to be among the greats? Go back to the home page and press start!<br><html>");
+		JLabel scoreboardTxtLabel = new JLabel(
+				"<html><br>-The leaderboard keeps track of the fastest time (In seconds) it takes"
+						+ " to complete all 3 levels.<br>"
+						+ "<br>-Want to be among the greats? Go back to the home page and press start!<br><html>");
 		scoreboardTxtLabel.setForeground(Color.WHITE);
 		scoreboardTxtLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
 		scoreboardTxtLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -211,94 +211,92 @@ public class HomeScreen extends JPanel {
 		scoreboardBoxPanel.add(scoreboardLabel, BorderLayout.NORTH);
 		scoreboardBoxPanel.add(scoreboardTxtLabel, BorderLayout.CENTER);
 
-	    // Create exit button
-	    backButton = createButton("BACK");
+		// Create exit button
+		backButton = createButton("BACK");
 
-	    backButton.addActionListener(e -> showMainPanel());
+		backButton.addActionListener(e -> showMainPanel());
 
-	    // Create a panel to hold the back button and center it
-	    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,0,0));
-	    buttonPanel.setBackground(Color.BLACK);
-	    buttonPanel.add(backButton);
+		// Create a panel to hold the back button and center it
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		buttonPanel.setBackground(Color.BLACK);
+		buttonPanel.add(backButton);
 
-	    // Add button panel to the bottom of the instructions box panel
-	    scoreboardBoxPanel.add(buttonPanel, BorderLayout.SOUTH);
-	    // Add instructions box panel to the center of the main panel
-	    panel.add(scoreboardBoxPanel, BorderLayout.CENTER);
+		// Add button panel to the bottom of the instructions box panel
+		scoreboardBoxPanel.add(buttonPanel, BorderLayout.SOUTH);
+		// Add instructions box panel to the center of the main panel
+		panel.add(scoreboardBoxPanel, BorderLayout.CENTER);
 
-	    return panel;
-    }
+		return panel;
+	}
 
+	private JButton createButton(String text) {
+		Dimension buttonSize = new Dimension(225, 50);
+		JButton button = new JButton(text);
+		button.setPreferredSize(buttonSize);
+		button.setFont(new Font("Monospaced", Font.PLAIN, 24));
+		button.setForeground(Color.WHITE);
+		button.setBackground(Color.BLACK);
+		button.setFocusable(false);
 
-    private JButton createButton(String text) {
-    	Dimension buttonSize = new Dimension(225,50);
-        JButton button = new JButton(text);
-        button.setPreferredSize(buttonSize);
-        button.setFont(new Font("Monospaced", Font.PLAIN, 24));
-        button.setForeground(Color.WHITE);
-        button.setBackground(Color.BLACK);
-        button.setFocusable(false);
+		// Set the content area background color
+		button.setContentAreaFilled(false);
+		button.setOpaque(false);
 
-        // Set the content area background color
-        button.setContentAreaFilled(false);
-        button.setOpaque(false);
+		// Create a line border with white color and 2 pixels thickness
+		Color lightYellow = new Color(255, 255, 153);
+		Border border = BorderFactory.createLineBorder(lightYellow, 1);
 
-        // Create a line border with white color and 2 pixels thickness
-        Color lightYellow = new Color(255, 255, 153);
-        Border border = BorderFactory.createLineBorder(lightYellow, 1);
+		// Set the border for the button
+		button.setBorder(border);
 
-        // Set the border for the button
-        button.setBorder(border);
-
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
+		button.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
 			public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setForeground(Color.BLUE);
-                button.setBackground(Color.WHITE);
-            }
+				button.setForeground(Color.BLUE);
+				button.setBackground(Color.WHITE);
+			}
 
-            @Override
+			@Override
 			public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setForeground(Color.WHITE);
-            }
-        });
+				button.setForeground(Color.WHITE);
+			}
+		});
 
-        if (text.equals("INSTRUCTIONS")) {
-            button.addActionListener(e -> showInstructionsPanel());
-        }else if(text.equals("SCOREBOARD")) {
-        	 button.addActionListener(e -> showScoreboardPanel());
-        }
+		if (text.equals("INSTRUCTIONS")) {
+			button.addActionListener(e -> showInstructionsPanel());
+		} else if (text.equals("SCOREBOARD")) {
+			button.addActionListener(e -> showScoreboardPanel());
+		}
 
-        return button;
-    }
+		return button;
+	}
 
-    private void showInstructionsPanel() {
-        remove(mainPanel);
-        add(instructionsPanel, BorderLayout.CENTER);
-        currentPanel = instructionsPanel;
-        revalidate();
-        repaint();
-        instructionButton.setForeground(Color.WHITE);
-    }
+	private void showInstructionsPanel() {
+		remove(mainPanel);
+		add(instructionsPanel, BorderLayout.CENTER);
+		currentPanel = instructionsPanel;
+		revalidate();
+		repaint();
+		instructionButton.setForeground(Color.WHITE);
+	}
 
-    private void showScoreboardPanel() {
-        remove(mainPanel);
-        add(scoreboardPanel, BorderLayout.CENTER);
-        currentPanel = scoreboardPanel;
-        revalidate();
-        repaint();
-        scoreButton.setForeground(Color.WHITE);
-    }
+	private void showScoreboardPanel() {
+		remove(mainPanel);
+		add(scoreboardPanel, BorderLayout.CENTER);
+		currentPanel = scoreboardPanel;
+		revalidate();
+		repaint();
+		scoreButton.setForeground(Color.WHITE);
+	}
 
-    private void showMainPanel() {
-	    backButton.setForeground(Color.WHITE);
-        remove(currentPanel);
-        currentPanel = mainPanel;
-        add(mainPanel, BorderLayout.CENTER);
-        revalidate();
-        repaint();
-    }
-
+	private void showMainPanel() {
+		backButton.setForeground(Color.WHITE);
+		remove(currentPanel);
+		currentPanel = mainPanel;
+		add(mainPanel, BorderLayout.CENTER);
+		revalidate();
+		repaint();
+	}
 
 	// Method to get the startButton instance
 	public JButton getStartButton() {

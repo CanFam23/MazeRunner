@@ -110,47 +110,47 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	// Health bar properties
 	/** Make the health bar width slightly smaller than the panel width. */
 	private int healthBarWidth = 200;
-	/** Reduce the height of the health bar.*/
+	/** Reduce the height of the health bar. */
 	private int healthBarHeight = 20;
-	/** Padding from the top and right edges of the panel.*/
+	/** Padding from the top and right edges of the panel. */
 	private int padding = 30;
-	
+
 	/** Time left text x coord. */
 	private final int timeX = 25;
-	
+
 	/** Time left text y coord. */
 	private final int timeY = 25;
-	
-	/** Enemy Kill count text x coord.*/
+
+	/** Enemy Kill count text x coord. */
 	private final int enemyKillCountX = timeX;
-	
-	/** Enemy Kill count text y coord.*/
+
+	/** Enemy Kill count text y coord. */
 	private final int enemyKillCountY = timeY + 25;
-	
-	/** Keeps track of if time is being added or not. 
-	 *  If this is set to true, the addText string is 
-	 *  displayed on the screen.
+
+	/**
+	 * Keeps track of if time is being added or not. If this is set to true, the
+	 * addText string is displayed on the screen.
 	 */
 	private boolean addingTime = false;
-	
-	/** How long to display addText.*/
+
+	/** How long to display addText. */
 	private final int maxAddTime = 3 * 1000;
-	
-	
-	/** How long addText has been displayed for.*/
+
+	/** How long addText has been displayed for. */
 	private int addTimeElapsed = 0;
-	
+
 	/** Text displayed when adding time. */
 	private final String addText = "Adding 15 seconds!";
 	/** X coord for adding time text. */
 	private final int addTextX = PLAYER_X - 75;
-	
+
 	/** Y coord for adding time text. */
 	private final int addTextY = PLAYER_Y - 25;
-    /** Create a custom font with size 20, used for writing the time left and enemies killed.*/
-    private final Font customFont = new Font("Courier", Font.BOLD, 20);
-    
-	
+	/**
+	 * Create a custom font with size 20, used for writing the time left and enemies
+	 * killed.
+	 */
+	private final Font customFont = new Font("Courier", Font.BOLD, 20);
 
 	/**
 	 * Constructs a GamePanel object.
@@ -166,8 +166,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		this.setFocusable(true);
 
 		cmanager = ChunkManager.getInstance();
-        // Generate a random number between 1 and 5 (inclusive)
-        levelVersionNumber = random.nextInt(1,5);
+		// Generate a random number between 1 and 5 (inclusive)
+		levelVersionNumber = random.nextInt(1, 5);
 		cmanager.loadLevel(current_level, levelVersionNumber);
 
 		// Create our player and load the images
@@ -212,16 +212,16 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				frames++;
 				delta--;
 				if (System.currentTimeMillis() - time >= 1000) {
-					//If more time needs to be added, wait three seconds before doing so
-					if(Main.addTime && addTimeElapsed < maxAddTime) {
+					// If more time needs to be added, wait three seconds before doing so
+					if (Main.addTime && addTimeElapsed < maxAddTime) {
 						addingTime = true;
 						addTimeElapsed += 1000;
-						
+
 						/*
-						 * If addTime has reached three seconds or theres less than three seconds in the game
-						 * Add more time.
+						 * If addTime has reached three seconds or theres less than three seconds in the
+						 * game Add more time.
 						 */
-						if(addTimeElapsed >= maxAddTime || Main.seconds_left <= 3) {
+						if (addTimeElapsed >= maxAddTime || Main.seconds_left <= 3) {
 							addingTime = false;
 							addTimeElapsed = 0;
 							Main.addTime(15);
@@ -251,7 +251,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			keyH.leftPressed = false;
 			if (current_level == NUM_LEVELS) {
 				System.out.print("");
-				Main.gameOverPanel(true);				
+				Main.gameOverPanel(true);
 				/*
 				 *
 				 *
@@ -267,7 +267,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			}
 			reset();
 			current_level++;
-			levelVersionNumber = random.nextInt(1,5);
+			levelVersionNumber = random.nextInt(1, 5);
 			cmanager.loadLevel(current_level, levelVersionNumber);
 			Main.showGamePanel();
 			Main.resetTime();
@@ -351,7 +351,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		current_level = 1;
 	}
 
-
 	/**
 	 * Checks if the user completed the last level, and won the game.
 	 *
@@ -360,7 +359,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	public boolean wonGame() {
 		return current_level == NUM_LEVELS && cmanager.endFound();
 	}
-	
+
 	/**
 	 * Checks if the user has won the game at least one time.
 	 * 
@@ -390,7 +389,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		final Graphics2D g2 = (Graphics2D) g;
 
-		// Draw the active chunks on the map by extracting all the relevant position blocks
+		// Draw the active chunks on the map by extracting all the relevant position
+		// blocks
 		cmanager.draw(g2);
 		cmanager.drawEnemies(g2);
 
@@ -402,13 +402,13 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		drawHealthBar(g);
 
 		ourPlayer.draw(g2);
-		
+
 		drawStats(g2);
-		
+
 		// Saves some memory
 		g2.dispose();
 	}
-	
+
 	/**
 	 * Draws the seconds left and enemies left on the screen.
 	 * 
@@ -417,17 +417,17 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private void drawStats(Graphics2D g2) {
 		g2.setColor(Color.red);
 
-        // Set the custom font
-        g2.setFont(customFont);
+		// Set the custom font
+		g2.setFont(customFont);
 		final String timeLeft = "Time left: " + String.valueOf(Main.seconds_left) + " seconds";
 		g2.drawString(timeLeft, timeX, timeY);
-		
+
 		final String enemiesKilled = "Enemies killed: " + String.valueOf(Main.totalEnemiesKilled);
 		g2.drawString(enemiesKilled, enemyKillCountX, enemyKillCountY);
 
-		//If adding time, tell the user its happening
-		if(addingTime) {
-			g2.drawString(addText, addTextX,addTextY);
+		// If adding time, tell the user its happening
+		if (addingTime) {
+			g2.drawString(addText, addTextX, addTextY);
 		}
 	}
 
@@ -441,8 +441,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		final int healthBarY = padding; // Adjust Y coordinate to be near the top edge
 		final int titleX = getWidth() - healthBarWidth - padding; // X coordinate of the title (aligned with health bar)
 		final int titleY = padding - 5; // Y coordinate of the title (just above the health bar)
-		final int healthPercentage = (int) (((float) ourPlayer.getHealth() / 10000) * 100); // Assuming maximum health is
-																						// 10000
+		final int healthPercentage = (int) (((float) ourPlayer.getHealth() / 10000) * 100); // Assuming maximum health
+																							// is
+		// 10000
 
 		// Draw title
 		g.setColor(Color.WHITE);
@@ -460,7 +461,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// Calculate the width of the health bar based on player's health percentage
 		final int currentHealth = ourPlayer.getHealth();
 		final int barWidth = (int) (((double) currentHealth / 10000) * healthBarWidth);
-		
+
 		// Draw the health portion of the health bar
 		g.setColor(Color.GREEN); // Health color
 		g.fillRect(healthBarX, healthBarY, barWidth, healthBarHeight); // Health
@@ -561,8 +562,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			System.err.println("Game loop isn't running, when it should be!");
 		}
 
-		//Testing wonGame
-		if(gp.wonGame()) {
+		// Testing wonGame
+		if (gp.wonGame()) {
 			allPassed = false;
 			System.err.println("wonGame said the game was won, when it wasn't!");
 		}

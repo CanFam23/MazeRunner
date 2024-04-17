@@ -1,6 +1,5 @@
 package sprites;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -266,29 +265,29 @@ public abstract class Enemy implements GameVariables {
 				Facing dirToPlayer = Facing.N;
 
 				int[] newDeltas = newPosition();
-				//Determine which direction the enemy is to the player.
-				if(newDeltas[0] < 0 && newDeltas[1] < 0) {
+				// Determine which direction the enemy is to the player.
+				if (newDeltas[0] < 0 && newDeltas[1] < 0) {
 					dirToPlayer = Facing.NW;
-				}else if(newDeltas[0] > 0 && newDeltas[1] < 0) {
+				} else if (newDeltas[0] > 0 && newDeltas[1] < 0) {
 					dirToPlayer = Facing.NE;
-				}else if(newDeltas[0] > 0 && newDeltas[1] > 0) {
+				} else if (newDeltas[0] > 0 && newDeltas[1] > 0) {
 					dirToPlayer = Facing.SE;
-				}else if(newDeltas[0] < 0 && newDeltas[1] > 0) {
+				} else if (newDeltas[0] < 0 && newDeltas[1] > 0) {
 					dirToPlayer = Facing.SW;
-				}else if(newDeltas[0] > 0) {
+				} else if (newDeltas[0] > 0) {
 					dirToPlayer = Facing.W;
-				}else if(newDeltas[0] < 0) {
+				} else if (newDeltas[0] < 0) {
 					dirToPlayer = Facing.E;
-				}else if(newDeltas[1] > 0) {
+				} else if (newDeltas[1] > 0) {
 					dirToPlayer = Facing.S;
-				}else if(newDeltas[1] < 0) {
+				} else if (newDeltas[1] < 0) {
 					dirToPlayer = Facing.N;
 				}
 
 				/*
-				 * Pass handling hitting the player to ChunkManager, with the direction to move the player.
-				 * Use oppositeDirection map to find the opposite direction the enemy is to the player, so
-				 * we know which way to move the player.
+				 * Pass handling hitting the player to ChunkManager, with the direction to move
+				 * the player. Use oppositeDirection map to find the opposite direction the
+				 * enemy is to the player, so we know which way to move the player.
 				 */
 				GamePanel.ourPlayer.setGettingAttacked(true);
 				ChunkManager.playerHit(oppositeDirection.get(dirToPlayer), this.damage);
@@ -709,7 +708,7 @@ public abstract class Enemy implements GameVariables {
 
 		// Load the 0 level, it'll create two enemies
 		ChunkManager cmanager = ChunkManager.getInstance();
-		cmanager.loadLevel(0,0);
+		cmanager.loadLevel(0, 0);
 
 		final int x1 = 20;
 		final int x2 = 40;

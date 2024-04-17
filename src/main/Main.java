@@ -46,7 +46,7 @@ import panels.HomeScreen;
  */
 public class Main {
 
-	/** Timer object used for timing how long the player has.*/
+	/** Timer object used for timing how long the player has. */
 	private static Timer timer;
 
 	/** Window used to display the game. */
@@ -57,8 +57,11 @@ public class Main {
 
 	/** Time elapsed for level. */
 	private static int timeAmount = 120;
-	
-	/** Users best time. Starts off with the max value a int can be, since user has never completed game. */
+
+	/**
+	 * Users best time. Starts off with the max value a int can be, since user has
+	 * never completed game.
+	 */
 	private static int bestTime = Integer.MAX_VALUE;
 
 	/** The main game panel where the game is rendered. */
@@ -81,14 +84,14 @@ public class Main {
 
 	/** Keeps track of leaderboard, and updates it when called. */
 	public final static Leaderboard leaderboard = new Leaderboard("leaderboards/overall_time_leaderboard.txt");
-	
+
 	/** Remaining seconds left for the player. */
 	public static int seconds_left = timeAmount;
-	
+
 	/** Total enemies killed by the player. */
 	public static int totalEnemiesKilled = 0;
-	
-	/** Keeps track of if time should be added.*/
+
+	/** Keeps track of if time should be added. */
 	public static boolean addTime = false;
 
 	/**
@@ -112,11 +115,11 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = homePanel.getName();
-				if(name.isBlank()) {
+				if (name.isBlank()) {
 					JOptionPane.showMessageDialog(window, "Please enter a name!");
-				}else if(name.length() > 10) {
+				} else if (name.length() > 10) {
 					JOptionPane.showMessageDialog(window, "Name can't be longer than 10 characters!");
-				}else {
+				} else {
 					playerName = name;
 					homePanel.setVisible(false);
 					runMainCode();
@@ -138,10 +141,10 @@ public class Main {
 		}
 
 		/*
-		 * Reset gamepanel, this is added so if the user
-		 * plays again after they lose, the game will reset correctly
+		 * Reset gamepanel, this is added so if the user plays again after they lose,
+		 * the game will reset correctly
 		 */
-		if(gamePanel != null) {
+		if (gamePanel != null) {
 			gamePanel.reset();
 
 		}
@@ -222,19 +225,20 @@ public class Main {
 			public void windowClosing(WindowEvent e) {
 				System.out.println("Average FPS: " + gamePanel.getFPS());
 				gamePanel.stopLoop();
-				//Check if user has won at least once.
-				if(gamePanel.hasWon()) {
-					
-					//If they did, add their score to the leaderboard if it was low enough
+				// Check if user has won at least once.
+				if (gamePanel.hasWon()) {
+
+					// If they did, add their score to the leaderboard if it was low enough
 					final int added = leaderboard.addEntry(playerName, bestTime);
 
-					if(added == -1) {
+					if (added == -1) {
 						JOptionPane.showMessageDialog(window, "You didn't make the leaderboard :( Womp Womp");
-					}else {
-						JOptionPane.showMessageDialog(window, String.format("Nice job! You're #%d on the leaderboard!", added+1));
-						//leaderboard.updateleaderboardFile();
+					} else {
+						JOptionPane.showMessageDialog(window,
+								String.format("Nice job! You're #%d on the leaderboard!", added + 1));
+						// leaderboard.updateleaderboardFile();
 					}
-				}else {
+				} else {
 					JOptionPane.showMessageDialog(window, "Why didn't you finish the game???");
 				}
 				window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -261,7 +265,7 @@ public class Main {
 	 */
 	public static void resetTime() {
 		seconds_left = timeAmount;
-	    totalEnemiesKilled = 0;
+		totalEnemiesKilled = 0;
 		window.setTitle("Maze Runner - Use Arrows to start time");
 		gamePanel.addKeyListener(new KeyAdapter() {
 			private boolean timerStarted = false;
@@ -293,7 +297,7 @@ public class Main {
 	public static void addTime() {
 		addTime = true;
 	}
-	
+
 	/**
 	 * Adds more time to the time player has left.
 	 * 
@@ -355,36 +359,36 @@ public class Main {
 	}
 
 	public static void restartGame() {
-	    // Dispose of the current window
-	    window.dispose();
+		// Dispose of the current window
+		window.dispose();
 
-	    // Reset game variables
-	    seconds_left = timeAmount;
-	    totalEnemiesKilled = 0;
-	    if(secondsTotal < bestTime) {
-	    	bestTime = secondsTotal;
-	    }
-	    secondsTotal = 0;
+		// Reset game variables
+		seconds_left = timeAmount;
+		totalEnemiesKilled = 0;
+		if (secondsTotal < bestTime) {
+			bestTime = secondsTotal;
+		}
+		secondsTotal = 0;
 
-	    // Create a new instance of the HomeScreen
-	    homePanel = new HomeScreen();
+		// Create a new instance of the HomeScreen
+		homePanel = new HomeScreen();
 
-	    // Set up the window and display the HomeScreen panel
-	    window = new JFrame();
-	    window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-	    window.setPreferredSize(new Dimension(1000, 800));
-	    window.getContentPane().add(homePanel);
-	    window.pack();
-	    window.setLocationRelativeTo(null);
-	    window.setVisible(true);
+		// Set up the window and display the HomeScreen panel
+		window = new JFrame();
+		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		window.setPreferredSize(new Dimension(1000, 800));
+		window.getContentPane().add(homePanel);
+		window.pack();
+		window.setLocationRelativeTo(null);
+		window.setVisible(true);
 
-	    // Add action listener to the button in HomeScreen
-	    homePanel.getStartButton().addActionListener(new ActionListener() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            homePanel.setVisible(false);
-	            runMainCode(); // Start the game again
-	        }
-	    });
+		// Add action listener to the button in HomeScreen
+		homePanel.getStartButton().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				homePanel.setVisible(false);
+				runMainCode(); // Start the game again
+			}
+		});
 	}
 }

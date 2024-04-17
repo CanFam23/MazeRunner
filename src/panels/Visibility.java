@@ -67,22 +67,22 @@ public class Visibility implements GameVariables {
 	private int radius = startingRadius;
 
 	/**
-	 * Stores the right side of the visibility shape.
-	 * They are split into two sides so they are easier to draw.
-	 * When they come together, they form a circle in the middle.
+	 * Stores the right side of the visibility shape. They are split into two sides
+	 * so they are easier to draw. When they come together, they form a circle in
+	 * the middle.
 	 */
 	private GeneralPath rightSide = new GeneralPath();
 
 	/**
-	 * Stores the right side of the visibility shape.
-	 * They are split into two sides so they are easier to draw.
-	 * When they come together, they form a circle in the middle.
+	 * Stores the right side of the visibility shape. They are split into two sides
+	 * so they are easier to draw. When they come together, they form a circle in
+	 * the middle.
 	 */
 	private GeneralPath leftSide = new GeneralPath();
 
 	/**
-	 * Color used for drawing the visibility.
-	 * It's a gradient that goes from black to transparent.
+	 * Color used for drawing the visibility. It's a gradient that goes from black
+	 * to transparent.
 	 */
 	private RadialGradientPaint p;
 
@@ -114,7 +114,7 @@ public class Visibility implements GameVariables {
 	 */
 	public void updateRadius() {
 		radius -= decreaseAmount;
-		if(radius <= 0) {
+		if (radius <= 0) {
 			radius = 400;
 		}
 	}
@@ -180,7 +180,7 @@ public class Visibility implements GameVariables {
 
 		leftSide.closePath();
 
-		//Update the gradient to match the size of the visibility circle
+		// Update the gradient to match the size of the visibility circle
 		p = new RadialGradientPaint(centerX, centerY, radius * 2, dist, colors);
 	}
 
@@ -202,74 +202,76 @@ public class Visibility implements GameVariables {
 	 * @param args Arguments passed.
 	 */
 	public static void main(String[] args) {
-        // Create a new JFrame
-        JFrame frame = new JFrame("Visibility Test");
-        frame.setSize(GameVariables.SCREEN_WIDTH, GameVariables.SCREEN_HEIGHT);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		// Create a new JFrame
+		JFrame frame = new JFrame("Visibility Test");
+		frame.setSize(GameVariables.SCREEN_WIDTH, GameVariables.SCREEN_HEIGHT);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Create an instance of Visibility
-        Visibility visibility = Visibility.getInstance();
+		// Create an instance of Visibility
+		Visibility visibility = Visibility.getInstance();
 
-        // Create a JPanel to draw the visibility
-        JPanel panel = new JPanel() {
-            private static final long serialVersionUID = -2350091849192585086L;
+		// Create a JPanel to draw the visibility
+		JPanel panel = new JPanel() {
+			private static final long serialVersionUID = -2350091849192585086L;
 
 			@Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2d = (Graphics2D) g;
-                // Draw the visibility circle
-                visibility.drawVision(g2d);
-                
-                // Draw text in the center of screen
-                String text = "Press Spacebar to Decrease Visibility";
-                FontMetrics metrics = g2d.getFontMetrics();
-                int x = (getWidth() - metrics.stringWidth(text)) / 2;
-                int y = (getHeight() - metrics.getHeight()) / 2 + metrics.getAscent();
-                g.setColor(Color.black);
-                g2d.drawString(text, x, y);
-            }
-        };
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Graphics2D g2d = (Graphics2D) g;
+				// Draw the visibility circle
+				visibility.drawVision(g2d);
 
-        // Add KeyListener to the JPanel
-        panel.setFocusable(true);
-        panel.requestFocusInWindow();
-        panel.addKeyListener(new KeyListener() {
-            /**
-             * Not used.
-             *
-             *@param e KeyEvent to use.
-             */
-            @Override
-            public void keyTyped(KeyEvent e) {}
+				// Draw text in the center of screen
+				String text = "Press Spacebar to Decrease Visibility";
+				FontMetrics metrics = g2d.getFontMetrics();
+				int x = (getWidth() - metrics.stringWidth(text)) / 2;
+				int y = (getHeight() - metrics.getHeight()) / 2 + metrics.getAscent();
+				g.setColor(Color.black);
+				g2d.drawString(text, x, y);
+			}
+		};
 
-            /**
-             * If space bar is pressed, update radius.
-             *
-             *@param e KeyEvent to use.
-             */
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    visibility.updateRadius();
-                    visibility.reset();
-                    panel.repaint();
-                }
-            }
+		// Add KeyListener to the JPanel
+		panel.setFocusable(true);
+		panel.requestFocusInWindow();
+		panel.addKeyListener(new KeyListener() {
+			/**
+			 * Not used.
+			 *
+			 * @param e KeyEvent to use.
+			 */
+			@Override
+			public void keyTyped(KeyEvent e) {
+			}
 
-            /**
-             * Not used.
-             *
-             *@param e KeyEvent to use.
-             */
-            @Override
-            public void keyReleased(KeyEvent e) {}
-        });
+			/**
+			 * If space bar is pressed, update radius.
+			 *
+			 * @param e KeyEvent to use.
+			 */
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+					visibility.updateRadius();
+					visibility.reset();
+					panel.repaint();
+				}
+			}
 
-        frame.add(panel);
+			/**
+			 * Not used.
+			 *
+			 * @param e KeyEvent to use.
+			 */
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+		});
 
-        // Set up the JFrame
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
+		frame.add(panel);
+
+		// Set up the JFrame
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+	}
 }
