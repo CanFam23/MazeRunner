@@ -213,7 +213,6 @@ public class Leaderboard implements GameVariables {
 		// Check each entry in the array
 		for (int i = 0; i < leaderboard.length; i++) {
 			final String temp = leaderboard[i];
-
 			final int playerScore = Integer.parseInt(temp.substring(temp.length() - 2));
 			/*
 			 * if new score is less than the score at i, thats where the new score will be
@@ -238,6 +237,7 @@ public class Leaderboard implements GameVariables {
 		final String newEntry = name + " " + score;
 		leaderboard[index] = newEntry;
 
+		updateleaderboardFile();
 		return index;
 	}
 

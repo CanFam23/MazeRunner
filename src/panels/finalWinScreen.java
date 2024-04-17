@@ -33,7 +33,7 @@ import main.Main;
  *
  * @since February 28, 2024
  */
-public class GameOverLOSE extends JPanel {
+public class finalWinScreen extends JPanel {
 	/**
 	 * Image to use for background.
 	 */
@@ -52,12 +52,21 @@ public class GameOverLOSE extends JPanel {
 	 * Creates JFrame and adds components. Displays the game over screen with
 	 * options to exit the game or play again.
 	 */
-	public GameOverLOSE() {
+	public finalWinScreen() {
 		// Load the image
-		try {
-			backgroundImage = ImageIO.read(new File("images/GameOver2.png"));
-		} catch (IOException e) {
-			System.err.println("Failed to load game over screen background image!");
+		if (Main.scoreboardOrNo() == -1) {
+			try {
+				backgroundImage = ImageIO.read(new File("images/winnerNoScoreboard.png"));
+			} catch (IOException e) {
+				System.err.println("Failed to load game over screen background image!");
+			}		
+		}
+		else if (Main.scoreboardOrNo() != -1) {
+			try {
+				backgroundImage = ImageIO.read(new File("images/winnerYesScoreboard.png"));
+			} catch (IOException e) {
+				System.err.println("Failed to load game over screen background image!");
+			}
 		}
 
 		setLayout(new BorderLayout());
@@ -140,7 +149,7 @@ public class GameOverLOSE extends JPanel {
         }
 
         if (text.equals("PLAY AGAIN")) {
-        	button.addActionListener(e -> newGame());
+        	button.addActionListener(e -> Main.restartGame());
         }
 
         if (text.equals("EXIT")) {
@@ -148,17 +157,6 @@ public class GameOverLOSE extends JPanel {
         }
         return button;
     }
-    
-    private static void newGame() {
-    	
-    	GamePanel.resetLevel();
-    	Main.resetTime();
-    	Main.disablePanels();
-    	Main.runMainCode();
-    	
-    }
-
-
 
 	/**
 	 * Returns true if the game over panel is running, false otherwise.
@@ -177,10 +175,10 @@ public class GameOverLOSE extends JPanel {
 		JFrame frame = new JFrame("Game Over Window Test");
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-		GameOverLOSE gameOver = new GameOverLOSE();
-		gameOver.setPreferredSize(new Dimension(1000, 800));
+		finalWinScreen finalScreen = new finalWinScreen();
+		finalScreen.setPreferredSize(new Dimension(1000, 800));
 
-		frame.add(gameOver);
+		frame.add(finalScreen);
 
 		frame.pack();
 		frame.setLocationRelativeTo(null);
