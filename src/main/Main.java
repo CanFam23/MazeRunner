@@ -97,6 +97,8 @@ public class Main {
 
 	/** Keeps track of if time should be added. */
 	public static boolean addTime = false;
+	
+	public static boolean addedToLeaderboard = true;
 
 	/**
 	 * Main method to start the game.
@@ -119,11 +121,11 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = homePanel.getName();
-				if (name.isBlank()) {
+				if(name.isBlank()) {
 					JOptionPane.showMessageDialog(window, "Please enter a name!");
-				} else if (name.length() > 10) {
+				}else if(name.length() > 10) {
 					JOptionPane.showMessageDialog(window, "Name can't be longer than 10 characters!");
-				} else {
+				}else {
 					playerName = name;
 					homePanel.setVisible(false);
 					runMainCode();
@@ -230,20 +232,11 @@ public class Main {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				System.out.println("Average FPS: " + gamePanel.getFPS());
-				gamePanel.stopLoop();
+				GamePanel.stopLoop();
 				// Check if user has won at least once.
 				if (gamePanel.hasWon()) {
 
-					// If they did, add their score to the leaderboard if it was low enough
-					final int added = leaderboard.addEntry(playerName, bestTime);
-
-					if (added == -1) {
-						JOptionPane.showMessageDialog(window, "You didn't make the leaderboard :( Womp Womp");
-					} else {
-						JOptionPane.showMessageDialog(window,
-								String.format("Nice job! You're #%d on the leaderboard!", added + 1));
-						// leaderboard.updateleaderboardFile();
-					}
+					leaderboard.updateleaderboardFile();
 				} else {
 					JOptionPane.showMessageDialog(window, "Why didn't you finish the game???");
 					System.exit(0);
@@ -376,15 +369,13 @@ public class Main {
 		GamePanel.continueLoop();
 	}
 	
-	public static int scoreboardOrNo() {
-		System.out.print(leaderboard.addEntry(playerName,bestTime));
-		return leaderboard.addEntry(playerName,bestTime);
-	}
-	
 	public static void addScoreToLeader() {
-		leaderboard.addEntry(playerName, bestTime);
-		System.out.print(bestTime);
-		System.out.print("should add score");
+		final int added = leaderboard.addEntry(playerName, bestTime);
+		if(added != -1) {
+			System.out.print(bestTime);
+			System.out.print("should add score");
+			addedToLeaderboard = true;
+		}
 	}
 	
 	public static void updateBestTime() {
@@ -422,6 +413,8 @@ public class Main {
 					JOptionPane.showMessageDialog(window, "Please enter a name!");
 				}else if(name.length() > 10) {
 					JOptionPane.showMessageDialog(window, "Name can't be longer than 10 characters!");
+				}else if(name.contains(";")) {
+					JOptionPane.showMessageDialog(window, "Name can't contain ';' character");
 				}else {
 					playerName = name;
 					homePanel.setVisible(false);

@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
@@ -54,14 +57,14 @@ public class finalWinScreen extends JPanel {
 	 */
 	public finalWinScreen() {
 		// Load the image
-		if (Main.scoreboardOrNo() == -1) {
+		if (!Main.addedToLeaderboard) {
 			try {
 				backgroundImage = ImageIO.read(new File("images/winnerNoScoreboard.png"));
 			} catch (IOException e) {
 				System.err.println("Failed to load game over screen background image!");
 			}		
 		}
-		else if (Main.scoreboardOrNo() != -1) {
+		else if (Main.addedToLeaderboard) {
 			try {
 				backgroundImage = ImageIO.read(new File("images/winnerYesScoreboard.png"));
 			} catch (IOException e) {
@@ -153,7 +156,13 @@ public class finalWinScreen extends JPanel {
         }
 
         if (text.equals("EXIT")) {
-        	button.addActionListener(e -> System.exit(0));
+        	button.addActionListener(new ActionListener() {
+    			@Override
+    			public void actionPerformed(ActionEvent e) {
+    		        Main.leaderboard.updateleaderboardFile();
+    		        System.exit(0);
+    			}
+    		});
         }
         return button;
     }
