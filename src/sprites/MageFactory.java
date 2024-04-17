@@ -14,7 +14,7 @@ public class MageFactory extends EnemyFactory {
 
 	/** Singleton: Only one MageFactory should be created. */
 	private static MageFactory single_instance = null;
-	
+
 	/** Hold images (which should be the same for all Mages) */
 	static private Map<Enemy.State, List<BufferedImage>> images = new HashMap<>();
 
@@ -31,10 +31,11 @@ public class MageFactory extends EnemyFactory {
 		PADDING = new int[] { TOP_PADDING, RIGHT_PADDING, BOTTOM_PADDING, LEFT_PADDING };
 		load_images();
 	}
-	
+
 	public static synchronized MageFactory getInstance() {
-		if (single_instance == null)
+		if (single_instance == null) {
 			single_instance = new MageFactory();
+		}
 
 		return single_instance;
 	}

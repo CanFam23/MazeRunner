@@ -1,7 +1,6 @@
 package blocks;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.VolatileImage;
 
 /**
@@ -11,20 +10,20 @@ import java.awt.image.VolatileImage;
  * <p>
  * It extends the {@link PositionBlock} class.
  * </p>
- * 
+ *
  * @author Nick Clouse
  * @author Andrew Denegar
  * @author Molly O'Connor
- * 
+ *
  * @since March 2, 2024
  */
 public class StartingBlock extends PositionBlock {
 
 	private static VolatileImage image;
-	
+
 	/**
 	 * Constructs a new StartingBlock with the given parameters.
-	 * 
+	 *
 	 * @param x                  The x-coordinate relative to the top-left
 	 *                           coordinate of the chunk.
 	 * @param y                  The y-coordinate relative to the top-left
@@ -36,11 +35,11 @@ public class StartingBlock extends PositionBlock {
 	public StartingBlock(int x, int y) {
 		super(x, y);
 	}
-	
+
 	public static void setImage(VolatileImage positionBlockImage) {
 		image = positionBlockImage;
 	}
-	
+
 	@Override
 	public void draw(Graphics2D g, int chunkXPosition, int chunkYPosition) {
 		g.drawImage(image, x + chunkXPosition, y + chunkYPosition, width, height, null);

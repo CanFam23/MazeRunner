@@ -1,22 +1,4 @@
-Top times level one
-NickClouse;60
-MollyOConn;62
-AndrewDene;63
-ILoveJavaL;72
-NathanAwes;89
-Top times level two
-MollyOConn;74
-AndrewDene;77
-NickClouse;79
-ILoveJavaL;84
-NathanAwes;92
-Top times level three
-AndrewDene;70
-MollyOConn;84
-NickClouse;86
-ILoveJavaL;88
-NathanAwes;93
-Top times total
+
 NickClouse;225
 MollyOConn;227
 AndrewDene;210

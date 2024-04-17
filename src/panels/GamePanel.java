@@ -2,6 +2,7 @@ package panels;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -29,18 +30,18 @@ import sprites.Player;
  * also manages the top-level updating and rendering of all objects on the
  * screen.
  * </p>
- * 
+ *
  * <p>
  * This class extends {@link JPanel} and implements {@link Runnable} and
  * {@link GameVariables}.
  * </p>
- * 
+ *
  * @author Nick Clouse
  * @author Andrew Denegar
  * @author Molly O'Connor
- * 
+ *
  * @since February 24, 2024
- * 
+ *
  * @see JPanel
  * @see Runnable
  * @see GameVariables
@@ -55,7 +56,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private final KeyHandler keyH = new KeyHandler();
 
 	/** ArrayList used to track average fps. */
-	private final List<Integer> fpsTracker = new ArrayList<Integer>();
+	private final List<Integer> fpsTracker = new ArrayList<>();
 
 	/** Speed of player. */
 	private final int speed = 6;
@@ -91,22 +92,71 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	/** Keeps track of game state (Running vs not running). */
 	private boolean isRunning = true;
 
+	/**
+	 * Background image.
+	 */
 	private Image backgroundImage;
-	
+
+	/**
+	 * Version of the current level, each level has 5 version.
+	 */
 	private int levelVersionNumber;
-	
+
+	/**
+	 * Random object, used for generating which level version to use.
+	 */
 	private final Random random = new Random();
 
 	// Health bar properties
-	int healthBarWidth = 200; // Make the health bar width slightly smaller than the panel width
-	int healthBarHeight = 20; // Reduce the height of the health bar
-	int padding = 30; // Padding from the top and right edges of the panel
+	/** Make the health bar width slightly smaller than the panel width. */
+	private int healthBarWidth = 200;
+	/** Reduce the height of the health bar.*/
+	private int healthBarHeight = 20;
+	/** Padding from the top and right edges of the panel.*/
+	private int padding = 30;
 	
+	/** Time left text x coord. */
+	private final int timeX = 25;
+	
+	/** Time left text y coord. */
+	private final int timeY = 25;
+	
+	/** Enemy Kill count text x coord.*/
+	private final int enemyKillCountX = timeX;
+	
+	/** Enemy Kill count text y coord.*/
+	private final int enemyKillCountY = timeY + 25;
+	
+	/** Keeps track of if time is being added or not. 
+	 *  If this is set to true, the addText string is 
+	 *  displayed on the screen.
+	 */
+	private boolean addingTime = false;
+	
+	/** How long to display addText.*/
+	private final int maxAddTime = 3 * 1000;
+	
+	
+	/** How long addText has been displayed for.*/
+	private int addTimeElapsed = 0;
+	
+	/** Text displayed when adding time. */
+	private final String addText = "Adding 15 seconds!";
+	/** X coord for adding time text. */
+	private final int addTextX = PLAYER_X - 75;
+	
+	/** Y coord for adding time text. */
+	private final int addTextY = PLAYER_Y - 25;
+    /** Create a custom font with size 20, used for writing the time left and enemies killed.*/
+    private final Font customFont = new Font("Courier", Font.BOLD, 20);
+    
+	
+
 	/**
 	 * Constructs a GamePanel object.
 	 */
 	public GamePanel(Image backgroundImage) {
-		
+
 		this.backgroundImage = backgroundImage;
 		setPreferredSize(new Dimension(800, 600));
 		this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -151,7 +201,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		double time = System.currentTimeMillis();
 
 		// Game loop
-		while (isRunning == true) {
+		while (isRunning) {
 			long now = System.nanoTime();
 			delta += (now - lastime) / ns;
 			lastime = now;
@@ -164,6 +214,21 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				frames++;
 				delta--;
 				if (System.currentTimeMillis() - time >= 1000) {
+					//If more time needs to be added, wait three seconds before doing so
+					if(Main.addTime && addTimeElapsed < maxAddTime) {
+						addingTime = true;
+						addTimeElapsed += 1000;
+						
+						/*
+						 * If addTime has reached three seconds or theres less than three seconds in the game
+						 * Add more time.
+						 */
+						if(addTimeElapsed >= maxAddTime || Main.seconds_left <= 3) {
+							addingTime = false;
+							addTimeElapsed = 0;
+							Main.addTime(15);
+						}
+					}
 					fpsTracker.add(frames);
 					time += 1000;
 					frames = 0;
@@ -189,12 +254,13 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			if (current_level == NUM_LEVELS) {
 				System.out.print("");
 				Main.gameOverPanel(true);
+				System.out.println("Game over");				
 				/*
-				 * 
-				 * 
+				 *
+				 *
 				 * Make this show gameOverWin screen
-				 * 
-				 * 
+				 *
+				 *
 				 */
 			} else {
 				Main.showNextLevelPanel(true);
@@ -210,7 +276,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			Main.resetTime();
 			continueLoop();
 		}
-		
+
 		if (ourPlayer.getHealth() <= 0) {
 			cmanager.stopKnockback();
 			ourPlayer.reset();
@@ -284,24 +350,32 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	public void reset() { // TODO add testing?
 		ourPlayer.reset();
 		cmanager.reset();
-		v.updateRadius();
 		v.reset();
+		current_level = 1;
 	}
-	
-	
-	//TODO Test
+
+
 	/**
 	 * Checks if the user completed the last level, and won the game.
-	 * 
+	 *
 	 * @return true if user completed all levels.
 	 */
 	public boolean wonGame() {
-		return current_level == NUM_LEVELS;
+		return current_level == NUM_LEVELS && cmanager.endFound();
+	}
+	
+	/**
+	 * Checks if the user has won the game at least one time.
+	 * 
+	 * @return true if the user has won at least once.
+	 */
+	public boolean hasWon() {
+		return current_level == NUM_LEVELS && cmanager.hasWon();
 	}
 
 	/**
 	 * Paints all elements on screen
-	 * 
+	 *
 	 * @param g Graphics to draw on
 	 */
 	@Override
@@ -318,30 +392,59 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 
 		final Graphics2D g2 = (Graphics2D) g;
-		
+
 		// Draw the active chunks on the map by extracting all the relevant position blocks
 		cmanager.draw(g2);
 		cmanager.drawEnemies(g2);
 
 		v.drawVision(g2);
-		if (ourPlayer.getHealth() < 10000 && ourPlayer.isGettingAttacked() == false) {
+		if (ourPlayer.getHealth() < 10000 && !ourPlayer.isGettingAttacked()) {
 			ourPlayer.addHealth(1);
 		}
 
 		drawHealthBar(g);
-		
-		ourPlayer.draw(g2);
 
+		ourPlayer.draw(g2);
+		
+		drawStats(g2);
+		
 		// Saves some memory
 		g2.dispose();
 	}
+	
+	/**
+	 * Draws the seconds left and enemies left on the screen.
+	 * 
+	 * @param g2 Graphics to draw on.
+	 */
+	private void drawStats(Graphics2D g2) {
+		g2.setColor(Color.red);
 
+        // Set the custom font
+        g2.setFont(customFont);
+		final String timeLeft = "Time left: " + String.valueOf(Main.seconds_left) + " seconds";
+		g2.drawString(timeLeft, timeX, timeY);
+		
+		final String enemiesKilled = "Enemies killed: " + String.valueOf(Main.totalEnemiesKilled);
+		g2.drawString(enemiesKilled, enemyKillCountX, enemyKillCountY);
+
+		//If adding time, tell the user its happening
+		if(addingTime) {
+			g2.drawString(addText, addTextX,addTextY);
+		}
+	}
+
+	/**
+	 * Draws the player health bar on the gicen Graphics
+	 *
+	 * @param g graphics to draw on.
+	 */
 	private void drawHealthBar(Graphics g) {
-		int healthBarX = getWidth() - healthBarWidth - padding; // Adjust X coordinate to be near the right edge
-		int healthBarY = padding; // Adjust Y coordinate to be near the top edge
-		int titleX = getWidth() - healthBarWidth - padding; // X coordinate of the title (aligned with health bar)
-		int titleY = padding - 5; // Y coordinate of the title (just above the health bar)
-		int healthPercentage = (int) (((float) ourPlayer.getHealth() / 10000) * 100); // Assuming maximum health is
+		final int healthBarX = getWidth() - healthBarWidth - padding; // Adjust X coordinate to be near the right edge
+		final int healthBarY = padding; // Adjust Y coordinate to be near the top edge
+		final int titleX = getWidth() - healthBarWidth - padding; // X coordinate of the title (aligned with health bar)
+		final int titleY = padding - 5; // Y coordinate of the title (just above the health bar)
+		final int healthPercentage = (int) (((float) ourPlayer.getHealth() / 10000) * 100); // Assuming maximum health is
 																						// 10000
 
 		// Draw title
@@ -358,16 +461,18 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		g.fillRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight); // Background
 
 		// Calculate the width of the health bar based on player's health percentage
-		int currentHealth = ourPlayer.getHealth();
-		int barWidth = (int) (((double) currentHealth / 10000) * healthBarWidth);
-
+		final int currentHealth = ourPlayer.getHealth();
+		final int barWidth = (int) (((double) currentHealth / 10000) * healthBarWidth);
+		
 		// Draw the health portion of the health bar
 		g.setColor(Color.GREEN); // Health color
 		g.fillRect(healthBarX, healthBarY, barWidth, healthBarHeight); // Health
 	}
-	
+
 	/**
-	 * @return the average FPS count during the programs duration
+	 * Gets the average fps count of the game.
+	 *
+	 * @return The average FPS count during the programs duration.
 	 */
 	public double getFPS() {
 		int sum = 0;
@@ -401,7 +506,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 	/**
 	 * Checks if thread has started
-	 * 
+	 *
 	 * @return true if thread has started
 	 */
 	public boolean threadStarted() {
@@ -418,15 +523,14 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		try {
 			backgroundImage = ImageIO.read(new File("images/wall.png"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Failed to find wall image!");
 		}
 		boolean allPassed = true;
 
 		final GamePanel gp = new GamePanel(backgroundImage);
 
 		// Making sure game thread hasn't started yet
-		if (gp.threadStarted() == true) {
+		if (gp.threadStarted()) {
 			allPassed = false;
 			System.err.println("gameThread started when it shouldn't have!");
 		}
@@ -434,20 +538,20 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		gp.startGameThread();
 
 		// Testing if game thread correctly started
-		if (gp.threadStarted() != true) {
+		if (!gp.threadStarted()) {
 			allPassed = false;
 			System.err.println("Failed to start gameThread!");
 		}
 
 		// Testing if gameLoop is running
-		if (gp.isRunning() != true) {
+		if (!gp.isRunning()) {
 			allPassed = false;
 			System.err.println("Game loop isn't running, when it should be!");
 		}
 
 		gp.stopLoop();
 		// Testing if gameLoop is paused when it should be
-		if (gp.isRunning() == true) {
+		if (gp.isRunning()) {
 			allPassed = false;
 			System.err.println("Game loop is running, when it should be stopped!");
 		}
@@ -455,9 +559,15 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		gp.continueLoop();
 
 		// Testing if gameLoop starts again correctly
-		if (gp.isRunning() != true) {
+		if (!gp.isRunning()) {
 			allPassed = false;
 			System.err.println("Game loop isn't running, when it should be!");
+		}
+
+		//Testing wonGame
+		if(gp.wonGame()) {
+			allPassed = false;
+			System.err.println("wonGame said the game was won, when it wasn't!");
 		}
 
 		// Sleep main thread for 10 seconds, so the game thread still runs to test FPS

@@ -15,6 +15,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
 import main.Main;
@@ -22,14 +23,14 @@ import main.Main;
 /**
  * GameOverLOSE creates the game over screen when the user fails to find the end
  * of the maze.
- * 
+ *
  * This class provides a static method to display the game over screen with
  * options to exit the game or play again.
- * 
+ *
  * @author Nick Clouse
  * @author Andrew Denegar
  * @author Molly O'Connor
- * 
+ *
  * @since February 28, 2024
  */
 public class GameOverLOSE extends JPanel {
@@ -39,7 +40,7 @@ public class GameOverLOSE extends JPanel {
 	private BufferedImage backgroundImage;
 
 	private boolean isRunning = true;
-	
+
     private JPanel mainPanel;
     private JPanel instructionsPanel;
     private JButton againButton;
@@ -58,11 +59,11 @@ public class GameOverLOSE extends JPanel {
 		} catch (IOException e) {
 			System.err.println("Failed to load game over screen background image!");
 		}
-		
+
 		setLayout(new BorderLayout());
 		mainPanel = createMainPanel();
 		add(mainPanel, BorderLayout.CENTER);
-		
+
 //		scoreBoardPanel = createScoreBoardPanel();
 	}
 
@@ -74,7 +75,7 @@ public class GameOverLOSE extends JPanel {
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         }
         };
-        
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.BLACK);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // top, left, bottom, right
@@ -100,7 +101,7 @@ public class GameOverLOSE extends JPanel {
         return panel;
 
     }
-        
+
     private JButton createButton(String text) {
     	Dimension buttonSize = new Dimension(225,50);
         JButton button = new JButton(text);
@@ -109,43 +110,45 @@ public class GameOverLOSE extends JPanel {
         button.setForeground(Color.WHITE);
         button.setBackground(Color.BLACK);
         button.setFocusable(false);
-        
+
         // Set the content area background color
         button.setContentAreaFilled(false);
         button.setOpaque(false);
-       
+
         // Create a line border with white color and 2 pixels thickness
         Color brighterPurple = new Color(120, 0, 200); // Adjusted RGB values for brighter purple
         Border border = BorderFactory.createLineBorder(brighterPurple, 1);
-        
+
         // Set the border for the button
         button.setBorder(border);
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
+            @Override
+			public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setForeground(Color.BLUE);
                 button.setBackground(Color.WHITE);
             }
 
-            public void mouseExited(java.awt.event.MouseEvent evt) {
+            @Override
+			public void mouseExited(java.awt.event.MouseEvent evt) {
                 button.setForeground(Color.WHITE);
             }
         });
-        
+
         if (text.equals("SCOREBOARD")) {
 //            button.addActionListener(e -> showInstructionsPanel());
         }
-        
+
         if (text.equals("PLAY AGAIN")) {
-        	button.addActionListener((e -> Main.restartGame()));	
+        	button.addActionListener((e -> Main.restartGame()));
         }
-        
+
         if (text.equals("EXIT")) {
         	button.addActionListener(e -> System.exit(0));
         }
         return button;
-    }	
-	
+    }
+
 
 
 	/**
@@ -157,12 +160,12 @@ public class GameOverLOSE extends JPanel {
 
 	/**
 	 * Main method
-	 * 
+	 *
 	 * @param args arguements passed
 	 */
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("Game Over Window Test");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		GameOverLOSE gameOver = new GameOverLOSE();
 		gameOver.setPreferredSize(new Dimension(1000, 800));

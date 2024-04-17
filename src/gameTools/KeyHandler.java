@@ -7,13 +7,13 @@ import java.awt.event.KeyListener;
  * <p>
  * This class handles key events. Implements KeyListener
  * </p>
- * 
+ *
  * @author Nick Clouse
  * @author Andrew Denegar
  * @author Molly O'Connor
- * 
+ *
  * @since Febuary 20, 2024
- * 
+ *
  * @see KeyListener
  */
 public class KeyHandler implements KeyListener {
@@ -25,7 +25,7 @@ public class KeyHandler implements KeyListener {
 
 	/**
 	 * Checks for key presses.
-	 * 
+	 *
 	 * @param e the KeyEvent to process.
 	 */
 	@Override
@@ -53,7 +53,7 @@ public class KeyHandler implements KeyListener {
 
 	/**
 	 * Checks for key releases.
-	 * 
+	 *
 	 * @param e the KeyEvent to process.
 	 */
 	@Override
@@ -79,7 +79,7 @@ public class KeyHandler implements KeyListener {
 
 	/**
 	 * Not used.
-	 * 
+	 *
 	 * @param e the KeyEvent to process.
 	 */
 	@Override
