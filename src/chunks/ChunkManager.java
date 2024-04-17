@@ -227,6 +227,8 @@ public class ChunkManager implements GameVariables {
 				}
 			}
 
+			// Set PositionBlock size
+			PositionBlock.setBlockSize(WALL_WIDTH, WALL_HEIGHT);
 			// Load Images for each type of PositionBlock.
 			VolatileImage EmptyImage = null;
 			try {
@@ -274,26 +276,26 @@ public class ChunkManager implements GameVariables {
 
 					if (inputData[xPosition].equals("0")) { // Create an empty block
 						pb = new EmptyBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT);
+								(yPosition % chunkYDimension) * WALL_HEIGHT);
 					} else if (inputData[xPosition].equals("1")) { // Create a wall
 						pb = new Wall((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT);
+								(yPosition % chunkYDimension) * WALL_HEIGHT);
 					} else if (inputData[xPosition].equals("2")) { // Create a starting block
 						pb = new StartingBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT);
+								(yPosition % chunkYDimension) * WALL_HEIGHT);
 						isStartingChunk = true;
 					} else if (inputData[xPosition].equals("3")) { // Create an end block
 						pb = new EndBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT);
+								(yPosition % chunkYDimension) * WALL_HEIGHT);
 						isEndChunk = true;
 					} else if (inputData[xPosition].equals("4")) { // Puts a ghost in this space, empty block behind it
 						pb = new EmptyBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT);
+								(yPosition % chunkYDimension) * WALL_HEIGHT);
 						Enemy.enemies.add(ghostCreator.createEnemy(xPosition * WALL_WIDTH + WALL_WIDTH / 4,
 								yPosition * WALL_HEIGHT + WALL_HEIGHT / 4));
 					} else if (inputData[xPosition].equals("5")) { // Puts a mage in this space, empty block behind it
 						pb = new EmptyBlock((xPosition % chunkXDimension) * WALL_WIDTH,
-								(yPosition % chunkYDimension) * WALL_HEIGHT, WALL_WIDTH, WALL_HEIGHT);
+								(yPosition % chunkYDimension) * WALL_HEIGHT);
 						Enemy.enemies.add(mageCreator.createEnemy(xPosition * WALL_WIDTH + WALL_WIDTH / 4,
 								yPosition * WALL_HEIGHT + WALL_HEIGHT / 4));
 					}

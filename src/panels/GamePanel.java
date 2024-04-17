@@ -171,7 +171,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.loadLevel(current_level, levelVersionNumber);
 
 		// Create our player and load the images
-		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)
+//		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)
+		ourPlayer.load_images("Knight1"); // Civilian1(black)
+		
 
 	}
 
