@@ -136,17 +136,26 @@ public class GameOverLOSE extends JPanel {
 		});
 
 		if (text.equals("SCOREBOARD")) {
-//            button.addActionListener(e -> showInstructionsPanel());
+//          button.addActionListener(e -> showInstructionsPanel());
 		}
 
 		if (text.equals("PLAY AGAIN")) {
-			button.addActionListener((e -> Main.restartGame()));
+			button.addActionListener(e -> newGame());
 		}
 
 		if (text.equals("EXIT")) {
 			button.addActionListener(e -> System.exit(0));
 		}
 		return button;
+	}
+
+	private static void newGame() {
+
+		GamePanel.resetLevel();
+		Main.resetTime();
+		Main.disablePanels();
+		Main.runMainCode();
+
 	}
 
 	/**
