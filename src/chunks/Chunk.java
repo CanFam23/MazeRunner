@@ -199,6 +199,7 @@ public class Chunk implements GameVariables {
 				final PositionBlock temp = block[c];
 				if (temp instanceof Wall) {
 
+					//We get the hitbox coords of each wall using the position if we were to update it with deltas
 					final int[][] tempCoords = temp.getHitbox(xPosition - deltas[0], yPosition - deltas[1]);
 
 					collided = CollisionDetection.getCollision(tempCoords[0], tempCoords[1], xCoords, yCoords);

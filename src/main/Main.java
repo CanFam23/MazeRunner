@@ -88,6 +88,7 @@ public class Main {
 	/** Total enemies killed by the player. */
 	public static int totalEnemiesKilled = 0;
 	
+	/** Keeps track of if time should be added.*/
 	public static boolean addTime = false;
 
 	/**
