@@ -1,9 +1,16 @@
 package panels;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RadialGradientPaint;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.geom.GeneralPath;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import gameTools.GameVariables;
 
@@ -107,10 +114,13 @@ public class Visibility implements GameVariables {
 	 */
 	public void updateRadius() {
 		radius -= decreaseAmount;
+		if(radius <= 0) {
+			radius = 400;
+		}
 	}
 
 	/**
-	 * Resets radius.
+	 * Resets radius, updates radius of visibility to current value of radius.
 	 */
 	public void reset() {
 		// Drawing the right side
@@ -187,12 +197,79 @@ public class Visibility implements GameVariables {
 	}
 
 	/**
-	 * Main method
+	 * Main method, used for testing.
 	 *
-	 * @param args arguements passed
+	 * @param args Arguments passed.
 	 */
 	public static void main(String[] args) {
-		// TODO add testing
-	}
+        // Create a new JFrame
+        JFrame frame = new JFrame("Visibility Test");
+        frame.setSize(GameVariables.SCREEN_WIDTH, GameVariables.SCREEN_HEIGHT);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        // Create an instance of Visibility
+        Visibility visibility = Visibility.getInstance();
+
+        // Create a JPanel to draw the visibility
+        JPanel panel = new JPanel() {
+            private static final long serialVersionUID = -2350091849192585086L;
+
+			@Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                // Draw the visibility circle
+                visibility.drawVision(g2d);
+                
+                // Draw text in the center of screen
+                String text = "Press Spacebar to Decrease Visibility";
+                FontMetrics metrics = g2d.getFontMetrics();
+                int x = (getWidth() - metrics.stringWidth(text)) / 2;
+                int y = (getHeight() - metrics.getHeight()) / 2 + metrics.getAscent();
+                g.setColor(Color.black);
+                g2d.drawString(text, x, y);
+            }
+        };
+
+        // Add KeyListener to the JPanel
+        panel.setFocusable(true);
+        panel.requestFocusInWindow();
+        panel.addKeyListener(new KeyListener() {
+            /**
+             * Not used.
+             *
+             *@param e KeyEvent to use.
+             */
+            @Override
+            public void keyTyped(KeyEvent e) {}
+
+            /**
+             * If space bar is pressed, update radius.
+             *
+             *@param e KeyEvent to use.
+             */
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    visibility.updateRadius();
+                    visibility.reset();
+                    panel.repaint();
+                }
+            }
+
+            /**
+             * Not used.
+             *
+             *@param e KeyEvent to use.
+             */
+            @Override
+            public void keyReleased(KeyEvent e) {}
+        });
+
+        frame.add(panel);
+
+        // Set up the JFrame
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
 }

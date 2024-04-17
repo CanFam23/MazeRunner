@@ -27,7 +27,7 @@ import gameTools.GameVariables;
  * @see Wall
  * @see EmptyBlock
  * @see EndBlock
- * @see StartingBlocks
+ * @see StartingBlock
  */
 public class PositionBlock implements GameVariables {
 

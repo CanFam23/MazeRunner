@@ -29,7 +29,7 @@ public class Leaderboard implements GameVariables {
 	 */
 	private String fileName;
 	/**
-	 * Stores the name of the leaderboard, which is the first line of each file,
+	 * Stores the name of the leaderboard, which is the first line of the file.
 	 */
 	private String levelName;
 
@@ -146,7 +146,7 @@ public class Leaderboard implements GameVariables {
 		if (allPassed) {
 			System.out.println("All cases passed! :)");
 		} else {
-			System.out.println("At least one case failed! :(");
+			System.err.println("At least one case failed! :(");
 		}
 	}
 
