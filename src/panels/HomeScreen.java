@@ -135,14 +135,14 @@ public class HomeScreen extends JPanel {
 		instructionsBoxPanel.setBorder(BorderFactory.createEmptyBorder(25, 50, 50, 50)); // Add padding
 
 		// Create label for instructions text
-		JLabel instructionsLabel = new JLabel(
-				"<html>Welcome to MazeRunner!<br> <br> In this game, your objective is to navigate through three challenging levels of mazes, find the exit, and escape before the time runs out. Here are the rules and tips to help you succeed:<br>"
-						+ "<br>- Use the arrow keys keys to move your player through the maze and the space bar to attack enemies."
-						+ " <br><br>- You have a total of two minutes to complete each level. A timer will be displayed on the top of the screen to keep track of the remaining time. If the time runs out before you find the exit, you lose the game."
-						+ "<br><br>- Each level has 5 different mazes. Each time you start the game, a random maze is picked for each level.<br><br>"
-						+ "- Along the way, you may encounter enemies lurking in the maze. Your player has a health bar, which decreases if you collide with enemies. If your player's health reaches zero, you'll respawn at the beginning of the maze. However, fighting enemies also grants you an extra 15 seconds of time if you hit them 5 times. Use your health wisely to balance speed and safety."
-						+ "<br><br>- Your score is determined by the time taken to complete each level. The faster you complete the three mazes, the higher ranking you will have. Aim for the best time and challenge yourself to improve with each playthrough."
-						+ "<br><br>Are you ready to embark on this thrilling maze adventure? Good luck, and may the odds be in your favor!</html>");
+		JLabel instructionsLabel = new JLabel("<html>Welcome to MazeRunner!<br> <br> In this game, your objective is to navigate through three challenging levels of mazes, find the exit, and escape before the time runs out. Here are the rules and tips to help you succeed:<br>"
+				+ "<br>- Use the arrow keys to move your player through the maze and the space bar to attack enemies."
+		        + " <br><br>- You have a total of two minutes to complete each level. A timer will be displayed on the top of the screen to keep track of the remaining time. If the time runs out before you find the exit, you lose the game."
+		        + "<br><br>- Each level has 5 different mazes. Each time you start the game, a random maze is picked for each level.<br><br>"
+		        +"- Along the way, you may encounter enemies lurking in the maze. Your player has a health bar, which decreases if you collide with enemies. If your player's health reaches zero, you'll respawn at the beginning of the maze. However, fighting enemies also grants you an extra 15 seconds of time if you hit them 5 times. Use your health wisely to balance speed and safety."
+		        + "<br><br>- Your score is determined by the time taken to complete each level. The faster you complete the three mazes, the higher ranking you will have. Aim for the best time and challenge yourself to improve with each playthrough."
+		        + "<br><br>Are you ready to embark on this thrilling maze adventure? Good luck, and may the odds be in your favor!</html>");
+
 		instructionsLabel.setForeground(Color.WHITE);
 		instructionsLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
 		instructionsLabel.setHorizontalAlignment(SwingConstants.CENTER);
