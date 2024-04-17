@@ -22,6 +22,7 @@ import panels.GameOverLOSE;
 import panels.GameOverWIN;
 import panels.GamePanel;
 import panels.HomeScreen;
+import panels.finalWinScreen;
 
 /**
  * <p>
@@ -75,6 +76,9 @@ public class Main {
 
 	/** Home screen. */
 	private static HomeScreen homePanel;
+	
+	
+	private static finalWinScreen winner; 
 
 	/** Stores player's name. */
 	private static String playerName = "";
@@ -148,8 +152,10 @@ public class Main {
 		gamePanel = new GamePanel(backgroundImage);
 		nextLevel = new GameOverWIN();
 		timeOut = new GameOverLOSE();
+		winner = new finalWinScreen();
 		nextLevel.setPreferredSize(new Dimension(800, 600));
 		timeOut.setPreferredSize(new Dimension(800, 600));
+		winner.setPreferredSize(new Dimension(800, 600));
 
 		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		window.setTitle("Maze Runner - Use Arrows to start time");
@@ -158,6 +164,7 @@ public class Main {
 		// Creates new game panel object
 		timeOut.setVisible(false);
 		nextLevel.setVisible(false);
+		winner.setVisible(false);
 		window.getContentPane().add(gamePanel);
 
 		// Timer to track seconds
@@ -172,8 +179,10 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				secondsTotal++;
 				seconds_left--;
-
+				int currentLevel = GamePanel.getCurrentLevel();
+				window.setTitle("Maze Runner - Level: " + currentLevel);
 				if (seconds_left <= 0) {
+					GamePanel.stopLoop();
 					timer.stop();
 					gameOverPanel(true);
 				}
@@ -202,9 +211,6 @@ public class Main {
 		// Make sure the panel can receive focus
 		gamePanel.setFocusable(true);
 		gamePanel.requestFocusInWindow();
-
-		nextLevel.setFocusable(true);
-		nextLevel.requestFocusInWindow();
 
 		window.pack();
 		window.setLocationRelativeTo(null);
@@ -235,6 +241,7 @@ public class Main {
 					}
 				}else {
 					JOptionPane.showMessageDialog(window, "Why didn't you finish the game???");
+					System.exit(0);
 				}
 				window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				window.dispose(); // Close the window
@@ -312,11 +319,11 @@ public class Main {
 		window.setTitle(formattedString);
 		window.setVisible(true);
 		window.getContentPane().add(nextLevel);
+		nextLevel.requestFocusInWindow();
 		nextLevel.setVisible(show);
 		nextLevel.setFocusable(show);
 		nextLevel.setVisible(true);
 		nextLevel.setIsGameOverRunning(true);
-		gamePanel.stopLoop();
 		gamePanel.setVisible(false);
 		homePanel.setVisible(false);
 
@@ -324,6 +331,7 @@ public class Main {
 
 	public static void showGamePanel() {
 		window.setVisible(true);
+		timeOut.setVisible(false);
 		window.getContentPane().add(gamePanel);
 		gamePanel.setVisible(true);
 		gamePanel.setFocusable(true);
@@ -338,13 +346,25 @@ public class Main {
 		window.setTitle(formattedString);
 		window.setVisible(true);
 		window.getContentPane().add(timeOut);
+		timeOut.requestFocusInWindow();
 		timeOut.setVisible(show);
 		timeOut.setFocusable(show);
-		gamePanel.stopLoop();
 		gamePanel.setVisible(false);
 		homePanel.setVisible(false);
 	}
-
+	
+	public static void showFinalWinScreen(boolean show) {
+		final String formattedString = String.format("YOU WIN");
+		window.setTitle(formattedString);
+		window.setVisible(true);
+		window.getContentPane().add(winner);
+		winner.requestFocusInWindow();
+		winner.setVisible(show);
+		winner.setFocusable(show);
+		gamePanel.setVisible(false);
+		homePanel.setVisible(false);
+	}
+	
 	public static boolean otherPanelRunning() {
 		if (nextLevel.isGameOverRunning()) {
 			return true;
@@ -352,38 +372,66 @@ public class Main {
 			return false;
 		}
 	}
+	
+	public static void disablePanels() {
+		window.remove(timeOut);
+		GamePanel.continueLoop();
+	}
+	
+	public static int scoreboardOrNo() {
+		System.out.print(leaderboard.addEntry(playerName,bestTime));
+		return leaderboard.addEntry(playerName,bestTime);
+	}
+	
+	public static void addScoreToLeader() {
+		leaderboard.addEntry(playerName, bestTime);
+		System.out.print(bestTime);
+		System.out.print("should add score");
+	}
+	
+	public static void updateBestTime() {
+		if (secondsTotal < bestTime) {
+			bestTime = secondsTotal;
+		}
+	}
 
 	public static void restartGame() {
 	    // Dispose of the current window
 	    window.dispose();
+	    window.remove(gamePanel);
+	    window.remove(timeOut);
+	    window.remove(homePanel);
+	    window.remove(nextLevel);
 
-	    // Reset game variables
-	    seconds_left = timeAmount;
-	    totalEnemiesKilled = 0;
-	    if(secondsTotal < bestTime) {
-	    	bestTime = secondsTotal;
-	    }
-	    secondsTotal = 0;
+		window = new JFrame();
+		homePanel = new HomeScreen();
+		// Set up the window and display the HomeScreen panel
+		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		window.setPreferredSize(new Dimension(1000, 800));
+		window.getContentPane().add(homePanel);
+		window.pack();
+		window.setLocationRelativeTo(null);
+		window.setVisible(true);
 
-	    // Create a new instance of the HomeScreen
-	    homePanel = new HomeScreen();
+		updateBestTime();
 
-	    // Set up the window and display the HomeScreen panel
-	    window = new JFrame();
-	    window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-	    window.setPreferredSize(new Dimension(1000, 800));
-	    window.getContentPane().add(homePanel);
-	    window.pack();
-	    window.setLocationRelativeTo(null);
-	    window.setVisible(true);
-
-	    // Add action listener to the button in HomeScreen
-	    homePanel.getStartButton().addActionListener(new ActionListener() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            homePanel.setVisible(false);
-	            runMainCode(); // Start the game again
-	        }
-	    });
+		// Add action listener to the button in HomeScreen
+		homePanel.getStartButton().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String name = homePanel.getName();
+				if(name.isBlank()) {
+					JOptionPane.showMessageDialog(window, "Please enter a name!");
+				}else if(name.length() > 10) {
+					JOptionPane.showMessageDialog(window, "Name can't be longer than 10 characters!");
+				}else {
+					playerName = name;
+					homePanel.setVisible(false);
+					gamePanel.setVisible(true);
+					GamePanel.continueLoop();
+					runMainCode();
+				}
+			}
+		});
 	}
 }

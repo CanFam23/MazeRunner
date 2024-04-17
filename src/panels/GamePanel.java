@@ -75,7 +75,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private final int NUM_LEVELS = 3;
 
 	/** Current level the player is on. */
-	private int current_level = 1;
+	private static int current_level = 1;
 
 	/**
 	 * Create our player. Initialize later to offer player selection of different
@@ -90,7 +90,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private Thread gameThread;
 
 	/** Keeps track of game state (Running vs not running). */
-	private boolean isRunning = true;
+	private static boolean isRunning = true;
 
 	/**
 	 * Background image.
@@ -250,32 +250,29 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			keyH.rightPressed = false;
 			keyH.leftPressed = false;
 			if (current_level == NUM_LEVELS) {
-				System.out.print("");
-				Main.gameOverPanel(true);
-				System.out.println("Game over");				
-				/*
-				 *
-				 *
-				 * Make this show gameOverWin screen
-				 *
-				 *
-				 */
+				reset();
+				resetLevel();
+				Main.updateBestTime();
+				Main.addScoreToLeader();
+				Main.resetTime();
+				// TO do: if scoreboard display different screen
+				Main.showFinalWinScreen(true);
 			} else {
 				Main.showNextLevelPanel(true);
 				while (Main.otherPanelRunning()) {
 					System.out.print("");
 				}
+				reset();
+				current_level++;
+				levelVersionNumber = random.nextInt(1,5);
+				cmanager.loadLevel(current_level, levelVersionNumber);
+				Main.showGamePanel();
+				Main.resetTime();
+				continueLoop();
 			}
-			reset();
-			current_level++;
-			levelVersionNumber = random.nextInt(1,5);
-			cmanager.loadLevel(current_level, levelVersionNumber);
-			Main.showGamePanel();
-			Main.resetTime();
-			continueLoop();
 		}
 
-		if (ourPlayer.getHealth() <= 0) {
+		if (ourPlayer.getHealth() < 1) {
 			cmanager.stopKnockback();
 			ourPlayer.reset();
 			cmanager.reset();
@@ -349,7 +346,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		ourPlayer.reset();
 		cmanager.reset();
 		v.reset();
-		current_level = 1;
 	}
 
 
@@ -395,7 +391,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.draw(g2);
 		cmanager.drawEnemies(g2);
 
-		v.drawVision(g2);
+//		v.drawVision(g2);
 		if (ourPlayer.getHealth() < 10000 && !ourPlayer.isGettingAttacked()) {
 			ourPlayer.addHealth(1);
 		}
@@ -430,6 +426,10 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		if(addingTime) {
 			g2.drawString(addText, addTextX,addTextY);
 		}
+	}
+	
+	public static int getCurrentLevel() {
+		return current_level;
 	}
 
 	/**
@@ -484,14 +484,14 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	/**
 	 * Stops the game loop
 	 */
-	public void stopLoop() {
+	public static void stopLoop() {
 		isRunning = false;
 	}
 
 	/**
 	 * Continues the game loop
 	 */
-	public void continueLoop() {
+	public static void continueLoop() {
 		isRunning = true;
 	}
 
@@ -514,6 +514,10 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		return gameThread.isAlive();
 	}
 
+	public static void resetLevel() {
+		current_level = 0;
+	}
+	
 	public static void main(String[] args) {
 
 		Image backgroundImage = null;
