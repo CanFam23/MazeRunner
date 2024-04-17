@@ -171,8 +171,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.loadLevel(current_level, levelVersionNumber);
 
 		// Create our player and load the images
-//		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)
-		ourPlayer.load_images("Knight1"); // Civilian1(black)
+		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)
+//		ourPlayer.load_images("Knight1"); // Civilian1(black)
 		
 
 	}
@@ -216,6 +216,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				if (System.currentTimeMillis() - time >= 1000) {
 					// If more time needs to be added, wait three seconds before doing so
 					if (Main.addTime && addTimeElapsed < maxAddTime) {
+						System.out.println("Adding time");
 						addingTime = true;
 						addTimeElapsed += 1000;
 
@@ -245,6 +246,11 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		if (cmanager.endFound()) {
 			stopLoop();
 			Main.stopTime();
+			System.out.println("Found");
+			Main.addTime = false;
+			addingTime = false;
+			addTimeElapsed = 0;
+			
 			ourPlayer.reset();
 			// Disable player movements when end block is reached
 			keyH.upPressed = false;
