@@ -588,7 +588,7 @@ public abstract class Enemy implements GameVariables {
 			GamePanel.ourPlayer.setGettingAttacked(false);
 			enemies.remove(this);
 			activeEnemies.remove(this);
-			Main.addTime();
+			Main.addTime = true;
 			Main.enemyKilled();
 		}
 	}

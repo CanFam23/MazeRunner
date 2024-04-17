@@ -215,6 +215,7 @@ public class Leaderboard implements GameVariables {
 			final String temp = leaderboard[i];
 
 			final int playerScore = Integer.parseInt(temp.substring(temp.length() - 2));
+			System.out.println(playerScore);
 			/*
 			 * if new score is less than the score at i, thats where the new score will be
 			 * inserted, so no need to look any farther.

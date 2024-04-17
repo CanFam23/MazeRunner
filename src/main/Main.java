@@ -292,13 +292,6 @@ public class Main {
 	}
 
 	/**
-	 * Sets add time to true.
-	 */
-	public static void addTime() {
-		addTime = true;
-	}
-
-	/**
 	 * Adds more time to the time player has left.
 	 * 
 	 * @param t Time to add.
