@@ -45,11 +45,12 @@ public class GameOverWIN extends JPanel {
 	 */
 	private boolean isRunning = true;
 
-    private JPanel mainPanel;
-    private JButton nextLevelButton;
-    private JButton exitButton;
-    private JButton scoreButton;
-    private JButton backButton;
+	private JPanel mainPanel;
+	private JButton nextLevelButton;
+	private JButton exitButton;
+	private JButton scoreButton;
+	private JButton backButton;
+
 	/**
 	 * Constructs new GameOverWIN panel
 	 */
@@ -69,86 +70,85 @@ public class GameOverWIN extends JPanel {
 
 	private JPanel createMainPanel() {
 		JPanel panel = new JPanel() {
-	        @Override
-	        protected void paintComponent(Graphics g) {
-	            super.paintComponent(g);
-	            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-	        }
-	        };
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+			}
+		};
 
-	        JPanel buttonPanel = new JPanel();
-	        buttonPanel.setBackground(Color.BLACK);
-	        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // top, left, bottom, right
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setBackground(Color.BLACK);
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // top, left, bottom, right
 
-	        exitButton = createButton("EXIT");
-	        nextLevelButton = createButton("NEXT LEVEL");
-	        scoreButton = createButton("SCOREBOARD");
+		exitButton = createButton("EXIT");
+		nextLevelButton = createButton("NEXT LEVEL");
+		scoreButton = createButton("SCOREBOARD");
 
-	        buttonPanel.add(exitButton);
-	        buttonPanel.add(nextLevelButton);
-	        buttonPanel.add(scoreButton);
+		buttonPanel.add(exitButton);
+		buttonPanel.add(nextLevelButton);
+		buttonPanel.add(scoreButton);
 
-	        // Add buttons with horizontal gap of 20 pixels
-	        buttonPanel.add(exitButton);
-	        buttonPanel.add(Box.createRigidArea(new Dimension(30, 0))); // Add space between buttons
-	        buttonPanel.add(nextLevelButton);
-	        buttonPanel.add(Box.createRigidArea(new Dimension(30, 0))); // Add space between buttons
-	        buttonPanel.add(scoreButton);
+		// Add buttons with horizontal gap of 20 pixels
+		buttonPanel.add(exitButton);
+		buttonPanel.add(Box.createRigidArea(new Dimension(30, 0))); // Add space between buttons
+		buttonPanel.add(nextLevelButton);
+		buttonPanel.add(Box.createRigidArea(new Dimension(30, 0))); // Add space between buttons
+		buttonPanel.add(scoreButton);
 
-	        panel.setLayout(new BorderLayout());
-	        panel.add(buttonPanel, BorderLayout.SOUTH);
+		panel.setLayout(new BorderLayout());
+		panel.add(buttonPanel, BorderLayout.SOUTH);
 
-	        return panel;
+		return panel;
 
-	    }
+	}
 
-	    private JButton createButton(String text) {
-	    	Dimension buttonSize = new Dimension(225,50);
-	        JButton button = new JButton(text);
-	        button.setPreferredSize(buttonSize);
-	        button.setFont(new Font("Monospaced", Font.PLAIN, 24));
-	        button.setForeground(Color.WHITE);
-	        button.setBackground(Color.BLACK);
-	        button.setFocusable(false);
+	private JButton createButton(String text) {
+		Dimension buttonSize = new Dimension(225, 50);
+		JButton button = new JButton(text);
+		button.setPreferredSize(buttonSize);
+		button.setFont(new Font("Monospaced", Font.PLAIN, 24));
+		button.setForeground(Color.WHITE);
+		button.setBackground(Color.BLACK);
+		button.setFocusable(false);
 
-	        // Set the content area background color
-	        button.setContentAreaFilled(false);
-	        button.setOpaque(false);
+		// Set the content area background color
+		button.setContentAreaFilled(false);
+		button.setOpaque(false);
 
-	        // Create a line border with white color and 2 pixels thickness
-	        Color brighterPurple = new Color(120, 0, 200); // Adjusted RGB values for brighter purple
-	        Border border = BorderFactory.createLineBorder(brighterPurple, 1);
+		// Create a line border with white color and 2 pixels thickness
+		Color brighterPurple = new Color(120, 0, 200); // Adjusted RGB values for brighter purple
+		Border border = BorderFactory.createLineBorder(brighterPurple, 1);
 
-	        // Set the border for the button
-	        button.setBorder(border);
+		// Set the border for the button
+		button.setBorder(border);
 
-	        button.addMouseListener(new java.awt.event.MouseAdapter() {
-	            @Override
-				public void mouseEntered(java.awt.event.MouseEvent evt) {
-	                button.setForeground(Color.BLUE);
-	                button.setBackground(Color.WHITE);
-	            }
+		button.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+			public void mouseEntered(java.awt.event.MouseEvent evt) {
+				button.setForeground(Color.BLUE);
+				button.setBackground(Color.WHITE);
+			}
 
-	            @Override
-				public void mouseExited(java.awt.event.MouseEvent evt) {
-	                button.setForeground(Color.WHITE);
-	            }
-	        });
+			@Override
+			public void mouseExited(java.awt.event.MouseEvent evt) {
+				button.setForeground(Color.WHITE);
+			}
+		});
 
-	        if (text.equals("SCOREBOARD")) {
+		if (text.equals("SCOREBOARD")) {
 //	            button.addActionListener(e -> showInstructionsPanel());
-	        }
+		}
 
-	        if (text.equals("NEXT LEVEL")) {
-	        	button.addActionListener(e -> setIsGameOverRunning(false));
-	        }
+		if (text.equals("NEXT LEVEL")) {
+			button.addActionListener(e -> setIsGameOverRunning(false));
+		}
 
-	        if (text.equals("EXIT")) {
-	        	button.addActionListener(e -> System.exit(0));
-	        }
-	        return button;
-	    }
-
+		if (text.equals("EXIT")) {
+			button.addActionListener(e -> System.exit(0));
+		}
+		return button;
+	}
 
 	/**
 	 * Returns true if the game over panel is running, false otherwise.

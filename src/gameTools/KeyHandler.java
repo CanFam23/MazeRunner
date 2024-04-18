@@ -1,7 +1,15 @@
 package gameTools;
 
+import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 /**
  * <p>
@@ -86,4 +94,62 @@ public class KeyHandler implements KeyListener {
 	public void keyTyped(KeyEvent e) {
 	}
 
+	/**
+	 * Main method, used for testing.
+	 * 
+	 * @param args Arguments passed.
+	 */
+	public static void main(String[] args) {
+		// Create an instance of KeyHandler
+		final KeyHandler keyHandler = new KeyHandler();
+
+		// Create a JFrame to listen for key events
+		final JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(400, 300);
+
+		// Create a JLabel to display key status
+		final JLabel statusLabel = new JLabel("Keys Pressed: ");
+		statusLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+		frame.add(statusLabel, BorderLayout.CENTER);
+
+		// Create a JLabel to tell user to press a key
+		final JLabel headLabel = new JLabel("Press a key");
+		headLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+		frame.add(headLabel, BorderLayout.NORTH);
+
+		// Add the KeyHandler as a KeyListener to the JFrame
+		frame.addKeyListener(keyHandler);
+
+		// Create a Timer to update the status of keys in the JLabel
+		final Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				SwingUtilities.invokeLater(() -> {
+					String text = "Keys Pressed: ";
+					if (keyHandler.upPressed) {
+						text += "UP ";
+					}
+					if (keyHandler.downPressed) {
+						text += "DOWN ";
+					}
+					if (keyHandler.leftPressed) {
+						text += "LEFT ";
+					}
+					if (keyHandler.rightPressed) {
+						text += "RIGHT ";
+					}
+					if (keyHandler.spacePressed) {
+						text += "SPACE ";
+					}
+					statusLabel.setText(text);
+				});
+			}
+		}, 0, 100); // 100 milliseconds
+
+		// Center the JFrame on the screen
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+	}
 }

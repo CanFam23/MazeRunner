@@ -1,6 +1,5 @@
 package sprites;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -266,29 +265,29 @@ public abstract class Enemy implements GameVariables {
 				Facing dirToPlayer = Facing.N;
 
 				int[] newDeltas = newPosition();
-				//Determine which direction the enemy is to the player.
-				if(newDeltas[0] < 0 && newDeltas[1] < 0) {
+				// Determine which direction the enemy is to the player.
+				if (newDeltas[0] < 0 && newDeltas[1] < 0) {
 					dirToPlayer = Facing.NW;
-				}else if(newDeltas[0] > 0 && newDeltas[1] < 0) {
+				} else if (newDeltas[0] > 0 && newDeltas[1] < 0) {
 					dirToPlayer = Facing.NE;
-				}else if(newDeltas[0] > 0 && newDeltas[1] > 0) {
+				} else if (newDeltas[0] > 0 && newDeltas[1] > 0) {
 					dirToPlayer = Facing.SE;
-				}else if(newDeltas[0] < 0 && newDeltas[1] > 0) {
+				} else if (newDeltas[0] < 0 && newDeltas[1] > 0) {
 					dirToPlayer = Facing.SW;
-				}else if(newDeltas[0] > 0) {
+				} else if (newDeltas[0] > 0) {
 					dirToPlayer = Facing.W;
-				}else if(newDeltas[0] < 0) {
+				} else if (newDeltas[0] < 0) {
 					dirToPlayer = Facing.E;
-				}else if(newDeltas[1] > 0) {
+				} else if (newDeltas[1] > 0) {
 					dirToPlayer = Facing.S;
-				}else if(newDeltas[1] < 0) {
+				} else if (newDeltas[1] < 0) {
 					dirToPlayer = Facing.N;
 				}
 
 				/*
-				 * Pass handling hitting the player to ChunkManager, with the direction to move the player.
-				 * Use oppositeDirection map to find the opposite direction the enemy is to the player, so
-				 * we know which way to move the player.
+				 * Pass handling hitting the player to ChunkManager, with the direction to move
+				 * the player. Use oppositeDirection map to find the opposite direction the
+				 * enemy is to the player, so we know which way to move the player.
 				 */
 				GamePanel.ourPlayer.setGettingAttacked(true);
 				ChunkManager.playerHit(oppositeDirection.get(dirToPlayer), this.damage);
@@ -589,7 +588,7 @@ public abstract class Enemy implements GameVariables {
 			GamePanel.ourPlayer.setGettingAttacked(false);
 			enemies.remove(this);
 			activeEnemies.remove(this);
-			Main.addTime();
+			Main.addTime = true;
 			Main.enemyKilled();
 		}
 	}
@@ -602,7 +601,7 @@ public abstract class Enemy implements GameVariables {
 	}
 
 	/**
-	 * Return the current health of player
+	 * Return the current health of player.
 	 */
 	public int getHitCount() {
 		return hitCount;
@@ -611,8 +610,8 @@ public abstract class Enemy implements GameVariables {
 	/**
 	 * Update the position of the enemy.
 	 *
-	 * @param dx horizontal shift in the enemy's position
-	 * @param dy vertical shift in the enemy's position
+	 * @param dx horizontal shift in the enemy's position.
+	 * @param dy vertical shift in the enemy's position.
 	 */
 	private void update_coords(int dx, int dy) {
 		position_x += dx;
@@ -622,7 +621,7 @@ public abstract class Enemy implements GameVariables {
 	/**
 	 * Draw the enemy to the screen.
 	 *
-	 * @param g Graphics2D object used for drawing
+	 * @param g Graphics2D object used for drawing.
 	 */
 	public void draw(Graphics2D g) {
 		// Store position based on movement of the map
@@ -674,7 +673,11 @@ public abstract class Enemy implements GameVariables {
 //			g.drawLine(final_x + WIDTH/2, final_y + HEIGHT/2, PLAYER_X + PLAYER_WIDTH/2, PLAYER_Y + PLAYER_HEIGHT/2);
 	}
 
-	// Test enemy classes
+	/**
+	 * Main method, used for testing.
+	 * 
+	 * @param args Arguments passed.
+	 */
 	public static void main(String[] args) {
 		
 		// Create factories that will create our images.
@@ -708,7 +711,7 @@ public abstract class Enemy implements GameVariables {
 
 		// Load the 0 level, it'll create two enemies
 		ChunkManager cmanager = ChunkManager.getInstance();
-		cmanager.loadLevel(0,0);
+		cmanager.loadLevel(0, 0);
 
 		final int x1 = 20;
 		final int x2 = 40;
