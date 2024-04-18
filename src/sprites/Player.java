@@ -146,6 +146,15 @@ public class Player implements GameVariables {
 		load_spritesheet(character_name, State.Idle, SPRITESHEET_WIDTH, SPRITESHEET_IDLE_HEIGHT);
 		load_spritesheet(character_name, State.Move, SPRITESHEET_WIDTH, SPRITESHEET_MOVE_HEIGHT);
 		load_spritesheet(character_name, State.Attack, SPRITESHEET_WIDTH, SPRITESHEET_MOVE_HEIGHT);
+		set_final_attack_images();
+	}
+	
+	public void set_final_attack_images() {
+		Map<Facing, BufferedImage> finalAttackImages = new HashMap<>();
+		
+		
+		
+		finalAttackImages.put(Facing.N, images.get(State.Attack).get(Facing.N).get(0));
 	}
 
 	/**
