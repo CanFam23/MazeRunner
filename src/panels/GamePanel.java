@@ -61,6 +61,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	/** Speed of player. */
 	private final int speed = 6;
 
+	/**
+	 * deltas holds the distance that would be moved in each direction based on the player's speed.
+	 */
 	@SuppressWarnings("serial")
 	Map<Facing, Integer[]> deltas = new HashMap<>() {
 		{
@@ -96,6 +99,15 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 * Background image.
 	 */
 	private Image backgroundImage;
+	
+	/** When deathAnimation is true, we are animating the player's death. */
+	private boolean deathAnimation = false;
+	
+	/** deathCount keeps track of the how many frames we have drawn since the start of the death animation. */
+	private int deathCount = 0;
+	
+	/** How many frames will pass from the start of the death animation to the end.  */
+	private final int DEATHANIMATIONTIME = 150;
 
 	/**
 	 * Version of the current level, each level has 5 versions.
@@ -154,6 +166,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 	/**
 	 * Constructs a GamePanel object.
+	 * 
+	 * @param backgroundImage is seen wherever there are not any position blocks (background)
 	 */
 	public GamePanel(Image backgroundImage) {
 
@@ -261,7 +275,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				Main.updateBestTime();
 				Main.addScoreToLeader();
 				Main.resetTime();
-				// TO do: if scoreboard display different screen
+				// To do: if scoreboard display different screen
 				Main.showFinalWinScreen(true);
 			} else {
 				Main.showNextLevelPanel(true);
@@ -278,17 +292,35 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			}
 		}
 
+		// Our player is out of health (passed out, fainted, dead)
 		if (ourPlayer.getHealth() < 1) {
-			cmanager.stopKnockback();
-			ourPlayer.reset();
-			cmanager.reset();
-			cmanager.loadLevel(current_level, levelVersionNumber);
+			if (deathAnimation == false) {
+				deathCount = 0;
+				deathAnimation = true;
+				ourPlayer.setState(State.Dead);
+				ourPlayer.setFacing(Facing.N);
+				ourPlayer.lockState();
+				ourPlayer.lockFacing();
+				cmanager.stopKnockback();
+			} else if (deathCount == DEATHANIMATIONTIME) {
+				deathAnimation = false;
+				ourPlayer.unlockState();
+				ourPlayer.unlockFacing();
+				ourPlayer.reset();
+				cmanager.reset();
+				cmanager.loadLevel(current_level, levelVersionNumber);
+			} else {
+				deathCount++;
+			}
 		}
 
 		// Move Player
 		int dx = 0;
 		int dy = 0;
 
+		if (deathAnimation) {
+			return;
+		}
 		if (cmanager.getKnockback()) {
 			cmanager.knockback();
 		} else {
@@ -396,9 +428,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// blocks
 		cmanager.draw(g2);
 		cmanager.drawEnemies(g2);
-
+		
 //		v.drawVision(g2);
-		if (ourPlayer.getHealth() < 10000 && !ourPlayer.isGettingAttacked()) {
+		if (ourPlayer.getHealth() < 10000 && !ourPlayer.isGettingAttacked() && !deathAnimation) {
 			ourPlayer.addHealth(1);
 		}
 
@@ -434,6 +466,11 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 	}
 	
+	/**
+	 * Returns the integer indicating the current level of the game.
+	 * 
+	 * @return the integer current level of the game.
+	 */
 	public static int getCurrentLevel() {
 		return current_level;
 	}
@@ -521,10 +558,18 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		return gameThread.isAlive();
 	}
 
+	/**
+	 * Set the level back to the very start
+	 */
 	public static void resetLevel() {
 		current_level = 0;
 	}
 	
+	/**
+	 * Testing driver for GamePanel.java
+	 * 
+	 * @param args not used as of 2024-04-18
+	 */
 	public static void main(String[] args) {
 
 		Image backgroundImage = null;

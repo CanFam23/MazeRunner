@@ -22,20 +22,20 @@ public class Wall extends PositionBlock {
 	private static VolatileImage image;
 
 	/**
-	 * Constructs a new Wall with given parameters.
-	 *
-	 * @param x                  coordinate relative to the top left coordinate of
-	 *                           the chunk.
-	 * @param y                  coordinate relative to the top left coordinate of
-	 *                           the chunk.
-	 * @param width              of the block.
-	 * @param height             of the block.
-	 * @param positionBlockImage color of the block.
-	 */	
+	 * Constructs a new Wall based on the wall's starting position.
+	 * 
+	 * @param x int starting x position.
+	 * @param y int starting y position.
+	 */
 	public Wall(int x, int y) {
 		super(x, y);
 	}
 
+	/**
+	 * Statically set the VolatileImage for all walls.
+	 * 
+	 * @param positionBlockImage VolatileImage that will be used for all walls.
+	 */
 	public static void setImage(VolatileImage positionBlockImage) {
 		image = positionBlockImage;
 	}

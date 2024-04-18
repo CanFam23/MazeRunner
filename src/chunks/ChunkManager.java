@@ -183,6 +183,7 @@ public class ChunkManager implements GameVariables {
 	 * having to use a single instance of ChunkManager.
 	 *
 	 * @param d The direction the player should be knocked back.
+	 * @param damage How much health the player will lose from the hit.
 	 */
 	public static void playerHit(Facing d, int damage) {
 		if (single_instance != null) {
@@ -195,6 +196,7 @@ public class ChunkManager implements GameVariables {
 	 * each chunk of the maze.
 	 *
 	 * @param levelNum the level to load.
+	 * @param levelVersionNumber the randomly selected version of the level that will be played.
 	 * @return true If level was loaded correctly.
 	 */
 	public boolean loadLevel(int levelNum, int levelVersionNumber) {
@@ -364,6 +366,7 @@ public class ChunkManager implements GameVariables {
 	 * which way to knockback the player.
 	 *
 	 * @param d The direction to move the player.
+	 * @param damage how much health the player will lose from this hit.
 	 */
 	public void handlePlayerHit(Facing d, int damage) {
 		GamePanel.ourPlayer.subtractHealth(damage);

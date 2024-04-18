@@ -32,6 +32,11 @@ public class MageFactory extends EnemyFactory {
 		load_images();
 	}
 
+	/**
+	 * Singleton pattern returning the one instance of MageFactory to be used. 
+	 * 
+	 * @return MageFactory that can create Mage instances.
+	 */
 	public static synchronized MageFactory getInstance() {
 		if (single_instance == null) {
 			single_instance = new MageFactory();
