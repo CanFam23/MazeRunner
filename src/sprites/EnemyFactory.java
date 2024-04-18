@@ -12,7 +12,8 @@ import javax.imageio.ImageIO;
 /**
  * EnemyFactory will be used to create up to five enemy factory classes: Beaver,
  * Ghost, Mage, Necromancer, and Salamander. Extensions of EnemyFactories will
- * load the static images for each of the classes. Testing is found in Enemy.java.
+ * load the static images for each of the classes. Testing is found in
+ * Enemy.java.
  *
  */
 public abstract class EnemyFactory {

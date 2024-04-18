@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import blocks.PositionBlock;
+import sprites.Enemy;
 import sprites.Player;
 
 /**
@@ -23,6 +24,9 @@ import sprites.Player;
 public interface GameVariables {
 	/**
 	 * Sprite States.
+	 * 
+	 * @see Player
+	 * @see Enemy
 	 */
 	public enum State {
 		/** Constant for when sprite is idle. */
@@ -37,6 +41,9 @@ public interface GameVariables {
 
 	/**
 	 * The direction the sprite is currently facing.
+	 * 
+	 * @see Player
+	 * @see Enemy
 	 */
 	public enum Facing {
 		/** Constant for the sprite facing south. */
@@ -57,6 +64,10 @@ public interface GameVariables {
 		SW
 	}
 
+	/**
+	 * Hashmap used to store each direction and it's opposite direction. Used when
+	 * the player is hit and we need to determine which direction to knock it back.
+	 */
 	@SuppressWarnings("serial")
 	final Map<Facing, Facing> oppositeDirection = new HashMap<>() {
 		{
@@ -73,6 +84,7 @@ public interface GameVariables {
 
 	/** Width of the screen. */
 	final int SCREEN_WIDTH = 1000;
+
 	/** Height of the screen. */
 	final int SCREEN_HEIGHT = 800;
 
@@ -126,16 +138,16 @@ public interface GameVariables {
 	/**
 	 * Used to check if a full collision is occurring, when all four sides of the
 	 * object are overlapping by this amount or less.
+	 * 
+	 * @see CollisionDetection#fullCollision
 	 */
 	final int FULL_COLLISION_INT = 75;
 
 	/**
-	 * Used to check if the collision overlap is close enough for collision, mainly
-	 * multiple sides colliding at once.
+	 * Used to make the block hitboxes slightly bigger then their dimensions.
+	 * 
+	 * @see PositionBlock#getHitbox
 	 */
-	final int COLLISION_INT = 5;
-
-	/** Used to make the block hitboxes slightly bigger then their dimensions. */
 	final int HITBOX_BUFFER_AMOUNT = 6;
 
 }

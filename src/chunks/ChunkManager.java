@@ -128,7 +128,7 @@ public class ChunkManager implements GameVariables {
 
 	/** Direction to knock player back. */
 	private Facing knockbackDir = Facing.N;
-	
+
 	/**
 	 * Keeps track of if the player has completed the game at least once.
 	 */
@@ -326,10 +326,12 @@ public class ChunkManager implements GameVariables {
 	}
 
 	/**
-	 * Convert original images to volatile images because they are going to be loaded over and over again.
+	 * Convert original images to volatile images because they are going to be
+	 * loaded over and over again.
 	 *
-	 * @param originalImage the image to be converted to volatile
-	 * @return VolatileImage same image, but now volatile which increases performance when drawn over and over again.
+	 * @param originalImage the image to be converted to volatile.
+	 * @return VolatileImage same image, but now volatile which increases
+	 *         performance when drawn over and over again.
 	 */
 	private VolatileImage convertToVolatile(BufferedImage originalImage) {
 		// Volatile image loading utilities
@@ -358,8 +360,8 @@ public class ChunkManager implements GameVariables {
 	}
 
 	/**
-	 * Handles when the player is hit by a enemy. Sets knockback to true and decides which way to
-	 * knockback the player.
+	 * Handles when the player is hit by a enemy. Sets knockback to true and decides
+	 * which way to knockback the player.
 	 *
 	 * @param d The direction to move the player.
 	 */
@@ -394,14 +396,14 @@ public class ChunkManager implements GameVariables {
 	 * Gets knockback variable, which represents if the player is getting knocked
 	 * back or not.
 	 *
-	 * @return knockback
+	 * @return true if the player is getting knocked back.
 	 */
 	public boolean getKnockback() {
 		return knockback;
 	}
 
 	/**
-	 * Knockback the player when knockback is equal to true. If knocking back the
+	 * Knockback the player when knockback is set to true. If knocking back the
 	 * player would result in hitting a wall, the knockback effect stops.
 	 */
 	public void knockback() {
@@ -436,7 +438,7 @@ public class ChunkManager implements GameVariables {
 	 * they can be drawn. It then moves all enemies that are active.
 	 */
 	public synchronized void updateEnemies() {
-		//Get enemies that can be see on the screen right now
+		// Get enemies that can be see on the screen right now
 		for (Enemy e : Enemy.enemies) {
 			if (e.isVisible()) {
 				Enemy.activeEnemies.add(e);
@@ -493,7 +495,7 @@ public class ChunkManager implements GameVariables {
 	public boolean endFound() {
 		return endFound;
 	}
-	
+
 	/**
 	 * Checks if the user has won the game at least one time.
 	 * 
@@ -557,6 +559,7 @@ public class ChunkManager implements GameVariables {
 	 */
 	public boolean checkCollision(Integer[] deltas) {
 
+		// Check each chunk in active chunks for a collision.
 		for (Chunk c : activeChunks) {
 			final boolean collided = c.checkCollision(playerXCoords, playerYCoords, deltas);
 			if (collided) {
@@ -579,7 +582,7 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * Return a list of the chunks that appear on the screen.
 	 *
-	 * @return the list of chunks that are visible on the screen.
+	 * @return The list of chunks that are visible on the screen.
 	 */
 	public Set<Chunk> getActiveChunks() {
 		return activeChunks;
@@ -588,7 +591,7 @@ public class ChunkManager implements GameVariables {
 	/**
 	 * Checks if the given chunk is currently visible on the screen.
 	 *
-	 * @param chunk the chunk to check.
+	 * @param chunk The chunk to check.
 	 * @return If chunk is currently visible on screen.
 	 */
 	private boolean isVisible(Chunk chunk) {
@@ -624,7 +627,7 @@ public class ChunkManager implements GameVariables {
 	public static void main(String[] args) {
 		// Create a chunk manager and load the level data.
 		ChunkManager chunky = ChunkManager.getInstance();
-		chunky.loadLevel(3,1);
+		chunky.loadLevel(3, 1);
 
 		boolean allPassed = true;
 		// Test that dimensions have been loaded correctly
@@ -663,7 +666,7 @@ public class ChunkManager implements GameVariables {
 			allPassed = false;
 		}
 
-		chunky.loadLevel(0,0);
+		chunky.loadLevel(0, 0);
 
 		// Testing resetOffset
 		final int[] preResetOffset = new int[] { xOffset, yOffset };
@@ -691,7 +694,7 @@ public class ChunkManager implements GameVariables {
 			allPassed = false;
 		}
 
-		chunky.loadLevel(0,0);
+		chunky.loadLevel(0, 0);
 
 		// Testing update enemies
 		Set<Enemy> preUpdateEnemies = Set.copyOf(Enemy.activeEnemies);

@@ -188,7 +188,7 @@ public class Chunk implements GameVariables {
 	 * @param xCoords X coordinates to use.
 	 * @param yCoords Y coordinates to use.
 	 * @param deltas  Displacement of x and y.
-	 * @return
+	 * @return true if a collision is found.
 	 */
 	public boolean checkCollision(int[] xCoords, int[] yCoords, Integer[] deltas) {
 
@@ -199,6 +199,8 @@ public class Chunk implements GameVariables {
 				final PositionBlock temp = block[c];
 				if (temp instanceof Wall) {
 
+					// We get the hitbox coords of each wall using the position if we were to update
+					// it with deltas
 					final int[][] tempCoords = temp.getHitbox(xPosition - deltas[0], yPosition - deltas[1]);
 
 					collided = CollisionDetection.getCollision(tempCoords[0], tempCoords[1], xCoords, yCoords);
@@ -259,9 +261,9 @@ public class Chunk implements GameVariables {
 	}
 
 	/**
-	 * Main Method.
+	 * Main Method, used for testing.
 	 *
-	 * @param args Arguements passed.
+	 * @param args Arguments passed.
 	 */
 	public static void main(String[] args) {
 		boolean allPassed = true;
@@ -325,8 +327,8 @@ public class Chunk implements GameVariables {
 		VolatileImage vImage = null;
 
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice device = env.getDefaultScreenDevice();
-        GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
+		GraphicsDevice device = env.getDefaultScreenDevice();
+		GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
 
 		try {
 			vImage = graphicsConfig.createCompatibleVolatileImage(WALL_WIDTH, WALL_HEIGHT);
