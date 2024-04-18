@@ -22,20 +22,22 @@ public class EndBlock extends PositionBlock {
 	private static VolatileImage image;
 
 	/**
-	 * Constructs a new EndBlock with the given parameters.
+	 * Constructs a new EndBlock based on the starting position.
 	 *
 	 * @param x                  The x-coordinate relative to the top-left
 	 *                           coordinate of the chunk.
 	 * @param y                  The y-coordinate relative to the top-left
 	 *                           coordinate of the chunk.
-	 * @param width              The width of the block.
-	 * @param height             The height of the block.
-	 * @param positionBlockImage The color of the block.
 	 */
 	public EndBlock(int x, int y) {
 		super(x, y);
 	}
 
+	/**
+	 * Set the image to be used for all end blocks.
+	 * 
+	 * @param positionBlockImage the image to be used for all end blocks.
+	 */
 	public static void setImage(VolatileImage positionBlockImage) {
 		image = positionBlockImage;
 	}

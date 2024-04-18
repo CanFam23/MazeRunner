@@ -30,6 +30,11 @@ public class GhostFactory extends EnemyFactory {
 		load_images();
 	}
 
+	/**
+	 * Singleton pattern returning the one instance of GhostFactory to be used. 
+	 * 
+	 * @return GhostFactory that can create Ghost instances.
+	 */
 	public static synchronized GhostFactory getInstance() {
 		if (single_instance == null) {
 			single_instance = new GhostFactory();
@@ -48,7 +53,6 @@ public class GhostFactory extends EnemyFactory {
 		final String character_name = "Ghost";
 		final String FILE_LOCATION = "Textures/Ghost/";
 		int imageNumber = 3; // This is the number of images in the spriteSheet
-		int imageNumber2 = 6; // Idle and Move differ from Attack and Dead
 
 		// Load a spritesheet for each player state
 		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Idle, imageNumber, images);
