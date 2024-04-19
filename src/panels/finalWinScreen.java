@@ -156,13 +156,7 @@ public class finalWinScreen extends JPanel {
         }
 
         if (text.equals("EXIT")) {
-        	button.addActionListener(new ActionListener() {
-    			@Override
-    			public void actionPerformed(ActionEvent e) {
-    		        Main.leaderboard.updateleaderboardFile();
-    		        System.exit(0);
-    			}
-    		});
+        	button.addActionListener(e -> System.exit(0));
         }
         return button;
     }

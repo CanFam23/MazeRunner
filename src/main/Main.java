@@ -46,6 +46,12 @@ import panels.finalWinScreen;
  * @see GamePanel
  */
 public class Main {
+	
+	/**
+	 * Change time so if user wins
+	 * Score is 360 - enmiesKilled * -15
+	 * 
+	 */
 
 	/** Timer object used for timing how long the player has. */
 	private static Timer timer;
@@ -295,6 +301,7 @@ public class Main {
 	 */
 	public static void addTime(int t) {
 		seconds_left += 15;
+		secondsTotal -= 15;
 		addTime = false;
 	}
 
@@ -342,7 +349,9 @@ public class Main {
 	}
 	
 	public static void showFinalWinScreen(boolean show) {
+		leaderboard.updateleaderboardFile();
 		final String formattedString = String.format("YOU WIN");
+		System.out.println("WInner");
 		window.setTitle(formattedString);
 		window.setVisible(true);
 		window.getContentPane().add(winner);
