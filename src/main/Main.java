@@ -57,7 +57,7 @@ public class Main {
 	private static int secondsLevel = 0;
 
 	/** Time elapsed for level. */
-	private static int timeAmount = 120;
+	private static int timeAmount = 2;
 	
 	/**
 	 * Total time allowed for all three levels.
@@ -137,10 +137,11 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		window = new JFrame();
+		window.setResizable(false);
 		homePanel = new HomeScreen();
 		// Set up the window and display the HomeScreen panel
 		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		window.setPreferredSize(new Dimension(1000, 800));
+		window.setPreferredSize(new Dimension(1000, 725));
 		window.getContentPane().add(homePanel);
 		window.pack();
 		window.setLocationRelativeTo(null);

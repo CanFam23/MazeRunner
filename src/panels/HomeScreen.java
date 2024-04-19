@@ -141,7 +141,7 @@ public class HomeScreen extends JPanel {
 		        +"- Along the way, you may encounter enemies lurking in the maze. Your player has a health bar, which decreases if you collide with enemies. If your player's health reaches zero, you'll respawn at the beginning of the maze. However, fighting enemies also grants you an extra 15 seconds of time if you hit them 5 times. Use your health wisely to balance speed and safety."
 		        + "<br><br>- Your score is calculated by the time taken to complete each level and the number of enemies you kill. The faster you complete the three mazes and the more enemies you kill, the higher ranking you will have. Aim for the best time, kill as many enemies as you can, and challenge yourself to improve with each playthrough!");
 		instructionsLabel.setForeground(Color.WHITE);
-		instructionsLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
+		instructionsLabel.setFont(new Font("Monospaced", Font.PLAIN, 17));
 		instructionsLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		instructionsLabel.setVerticalAlignment(SwingConstants.TOP); // Align text to the top
 		instructionsLabel.setPreferredSize(new Dimension(600, 0)); // Set preferred width, 0 for unlimited height

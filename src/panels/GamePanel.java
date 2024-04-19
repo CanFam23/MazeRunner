@@ -561,7 +561,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 * Set the level back to the very start
 	 */
 	public static void resetLevel() {
-		current_level = 0;
+		current_level = 1;
 	}
 	
 	/**
