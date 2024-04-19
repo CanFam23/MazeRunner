@@ -524,8 +524,6 @@ public class ChunkManager implements GameVariables {
 	 * @param c  Chunk to check for collision.
 	 * @param pb PositionBlock to check for collision.
 	 * @return true if there is a full collision.
-	 *
-	 * @see {@link Chunk#collision(PositionBlock)}
 	 */
 	public boolean containsPlayer(Chunk c, PositionBlock pb) {
 

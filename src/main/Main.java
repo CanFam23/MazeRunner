@@ -66,16 +66,16 @@ public class Main {
 	
 	/**
 	 * Max score you can gain by killing all enemies in every level.
-	 * We got this number by finding the average number of enemies
-	 * in each version of each level, and then multiplying by 15 because
-	 * each enemy killed adds 15 seconds to the time.
+	 * We got this number by finding the highest number of enemies for
+	 * each level, and then adding them up and multiplying that number by 15
+	 * because that how many seconds each enemy is worth.
 	 */
-	private static final int MAX_SCORE_FROM_ENEMIES = 945;
+	private static final int MAX_SCORE_FROM_ENEMIES = 1095;
 	
 	/**
 	 * Max score the player can get. 
 	 */
-	private static final int MAX_SCORE = TOTAL_TIME_ALLOWED + MAX_SCORE_FROM_ENEMIES;
+	private static final int MAX_SCORE = MAX_SCORE_FROM_ENEMIES-TOTAL_TIME_ALLOWED;
 	
 	/**
 	 * Total time the player takes to beat all levels.
@@ -403,7 +403,7 @@ public class Main {
 	}
 	
 	public static void addScoreToLeader() {		
-		final int playerScore = MAX_SCORE - (totalTimePlayed + totalEnemiesKilled * 15);
+		final int playerScore = MAX_SCORE + totalTimePlayed - (totalEnemiesKilled * 15);
 		final int added = leaderboard.addEntry(playerName, playerScore);
 		if(added != -1) {
 			addedToLeaderboard = true;
