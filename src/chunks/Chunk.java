@@ -79,7 +79,7 @@ public class Chunk implements GameVariables {
 	 *
 	 * @param xPosition is the x position that the block appears in the chunk.
 	 * @param yPosition is the y position that the block appears in the chunk.
-	 * @param Block     can be any of the PositionBlock types (EmptyBlock, EndBlock,
+	 * @param block     can be any of the PositionBlock types (EmptyBlock, EndBlock,
 	 *                  Wall, etc.).
 	 */
 	public void add(int xPosition, int yPosition, PositionBlock block) {

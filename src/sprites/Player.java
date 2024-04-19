@@ -92,6 +92,11 @@ public class Player implements GameVariables {
 	private boolean gettingAttacked = false;
 
 	/**
+	 * Keeps track of the final attack images to determine when we should switch to the next animation.
+	 */
+	private Map<Facing, BufferedImage> finalAttackImages;
+	
+	/**
 	 * A map of images that can be accessed by first specifying the player state and
 	 * direction faced.
 	 */
@@ -146,6 +151,19 @@ public class Player implements GameVariables {
 		load_spritesheet(character_name, State.Idle, SPRITESHEET_WIDTH, SPRITESHEET_IDLE_HEIGHT);
 		load_spritesheet(character_name, State.Move, SPRITESHEET_WIDTH, SPRITESHEET_MOVE_HEIGHT);
 		load_spritesheet(character_name, State.Attack, SPRITESHEET_WIDTH, SPRITESHEET_MOVE_HEIGHT);
+		set_final_attack_images();
+		load_dead_image(character_name);
+	}
+	
+	/**
+	 * Set the final attack images to determine when the animation should stop.
+	 */
+	public void set_final_attack_images() {
+		finalAttackImages = new HashMap<>();
+		final Map<Facing, List<BufferedImage>> attackMap = images.get(State.Attack);
+		for (Facing direction : Facing.values()) {
+			finalAttackImages.put(direction, attackMap.get(direction).get(attackMap.get(direction).size() - 1));
+		}
 	}
 
 	/**
@@ -210,7 +228,21 @@ public class Player implements GameVariables {
 			}
 		}
 	}
-
+	
+	private void load_dead_image(String character_name) {
+		BufferedImage spriteSheet = null;
+		final String resource;
+		resource = FILE_LOCATION + character_name + "_" + "Dead" + ".png";
+		try {
+			spriteSheet = ImageIO.read(new File(resource));
+		} catch (IOException e) {
+			System.err.println("Image not found at '" + resource + "'");
+		}
+		images.put(State.Dead, new HashMap<>());
+		images.get(State.Dead).put(Facing.N, new LinkedList<BufferedImage>());
+		images.get(State.Dead).get(Facing.N).add(spriteSheet);
+	}
+	
 	/**
 	 * Checks if the player hits any enemies when they attack.
 	 *
@@ -344,6 +376,13 @@ public class Player implements GameVariables {
 					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
 			images.get(currentState).get(currentFacing).add(img);
 			drawCount = 0;
+			// Check currentState before test to increase performance with a quicker test.
+			if (currentState == State.Attack && img == finalAttackImages.get(currentFacing)) {
+				unlockState();
+				unlockFacing();
+				currentState = State.Idle;
+				attackCount = 0;
+			}
 		}
 
 		// TODO remove
@@ -361,13 +400,6 @@ public class Player implements GameVariables {
 //
 //		}
 
-		if (attackCount == FRAMESPERSWITCH * 4) {
-			unlockState();
-			unlockFacing();
-			currentState = State.Idle;
-			attackCount = 0;
-		}
-
 	}
 
 	/**
@@ -383,14 +415,27 @@ public class Player implements GameVariables {
 		health = 100;
 	}
 
+	/**
+	 * Set the drawcount back to zero.
+	 */
 	public void resetDrawCount() {
 		drawCount = 0;
 	}
 
+	/**
+	 * Return whether or not the player's state is currently locked.
+	 * 
+	 * @return boolean true or false.
+	 */
 	public boolean isStateLocked() {
 		return stateLocked;
 	}
-
+	
+	/**
+	 * Return whether or not the player's direction is currently locked.
+	 * 
+	 * @return boolean true or false.
+	 */
 	public boolean isFacingLocked() {
 		return facingLocked;
 	}
@@ -449,15 +494,27 @@ public class Player implements GameVariables {
 
 	/**
 	 * Return the current health of player.
+	 * 
+	 * @return int current health of the player.
 	 */
 	public int getHealth() {
 		return health;
 	}
 
+	/**
+	 * While the player is being hit by an enemy, this will return true.
+	 * 
+	 * @return boolean if the player is getting attacked.
+	 */
 	public boolean isGettingAttacked() {
 		return gettingAttacked;
 	}
 
+	/**
+	 * Set whether or not the player is attacking.
+	 * 
+	 * @param t boolean true to set the player to be attacking and false to be not attacking.
+	 */
 	public void setGettingAttacked(boolean t) {
 		gettingAttacked = t;
 	}
@@ -612,8 +669,8 @@ public class Player implements GameVariables {
 		initializeGUI();
 
 		// Change these two variables to modify the animations tested
-		State playerState = State.Attack; // Test the player state images (Move, Idle, etc.)
-		Facing direction = Facing.E; // Test the direction the player is facing
+		State playerState = State.Dead; // Test the player state images (Move, Idle, etc.)
+		Facing direction = Facing.N; // Test the direction the player is facing
 		int speed = (int) (0.1 * 1000); // Set seconds (first number) between each image.
 
 		while (true) {
