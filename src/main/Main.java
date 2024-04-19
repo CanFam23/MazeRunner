@@ -46,12 +46,6 @@ import panels.finalWinScreen;
  * @see GamePanel
  */
 public class Main {
-	
-	/**
-	 * Change time so if user wins
-	 * Score is 360 - enmiesKilled * -15
-	 * 
-	 */
 
 	/** Timer object used for timing how long the player has. */
 	private static Timer timer;
@@ -59,17 +53,38 @@ public class Main {
 	/** Window used to display the game. */
 	private static JFrame window;
 
-	/** Total seconds the player has been playing the game. */
-	private static int secondsTotal = 0;
+	/** Total seconds the player has been playing the level. */
+	private static int secondsLevel = 0;
 
 	/** Time elapsed for level. */
 	private static int timeAmount = 120;
-
+	
 	/**
-	 * Users best time. Starts off with the max value a int can be, since user has
-	 * never completed game.
+	 * Total time allowed for all three levels.
 	 */
-	private static int bestTime = Integer.MAX_VALUE;
+	private static final int TOTAL_TIME_ALLOWED = timeAmount * 3;
+	
+	/**
+	 * Max score you can gain by killing all enemies in every level.
+	 * We got this number by finding the average number of enemies
+	 * in each version of each level, and then multiplying by 15 because
+	 * each enemy killed adds 15 seconds to the time.
+	 */
+	private static final int MAX_SCORE_FROM_ENEMIES = 945;
+	
+	/**
+	 * Max score the player can get. 
+	 */
+	private static final int MAX_SCORE = TOTAL_TIME_ALLOWED + MAX_SCORE_FROM_ENEMIES;
+	
+	/**
+	 * Total time the player takes to beat all levels.
+	 */
+	private static int totalTimePlayed = 0;
+	
+
+	/** Remaining seconds left for the player on current level. */
+	public static int seconds_left = timeAmount;
 
 	/** The main game panel where the game is rendered. */
 	private static GamePanel gamePanel;
@@ -87,6 +102,9 @@ public class Main {
 	private static HomeScreen homePanel;
 	
 	
+	/**
+	 * Win screen.
+	 */
 	private static finalWinScreen winner; 
 
 	/** Stores player's name. */
@@ -95,16 +113,22 @@ public class Main {
 	/** Keeps track of leaderboard, and updates it when called. */
 	public final static Leaderboard leaderboard = new Leaderboard("leaderboards/overall_time_leaderboard.txt");
 
-	/** Remaining seconds left for the player. */
-	public static int seconds_left = timeAmount;
-
-	/** Total enemies killed by the player. */
-	public static int totalEnemiesKilled = 0;
-
 	/** Keeps track of if time should be added. */
 	public static boolean addTime = false;
 	
+	/**
+	 * Keeps track if user has been added to leaderboard.
+	 */
 	public static boolean addedToLeaderboard = true;
+	
+	/** Total enemies killed by the player. */
+	public static int totalEnemiesKilled = 0;
+
+	
+	/**
+	 * Number of enemies killed for current level.
+	 */
+	public static int enemiesKilled = 0;
 
 	/**
 	 * Main method to start the game.
@@ -189,7 +213,7 @@ public class Main {
 			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				secondsTotal++;
+				secondsLevel++;
 				seconds_left--;
 				int currentLevel = GamePanel.getCurrentLevel();
 				window.setTitle("Maze Runner - Level: " + currentLevel);
@@ -268,7 +292,8 @@ public class Main {
 	 */
 	public static void resetTime() {
 		seconds_left = timeAmount;
-		totalEnemiesKilled = 0;
+		totalEnemiesKilled += enemiesKilled;
+		enemiesKilled = 0;
 		window.setTitle("Maze Runner - Use Arrows to start time");
 		gamePanel.addKeyListener(new KeyAdapter() {
 			private boolean timerStarted = false;
@@ -301,15 +326,17 @@ public class Main {
 	 */
 	public static void addTime(int t) {
 		seconds_left += 15;
-		secondsTotal -= 15;
 		addTime = false;
 	}
 
 	public static void enemyKilled() {
-		totalEnemiesKilled += 1;
+		enemiesKilled += 1;
 	}
 
 	public static void showNextLevelPanel(boolean show) {
+		System.out.println("Total enemies killed: " + totalEnemiesKilled);
+		System.out.println("Total time: " + totalTimePlayed);
+		
 		String formattedString = String.format("Completed Level in %d seconds", 120 - seconds_left);
 		window.setTitle(formattedString);
 		window.setVisible(true);
@@ -348,10 +375,10 @@ public class Main {
 		homePanel.setVisible(false);
 	}
 	
-	public static void showFinalWinScreen(boolean show) {
-		leaderboard.updateleaderboardFile();
+	public static void showFinalWinScreen(boolean show) {		
 		final String formattedString = String.format("YOU WIN");
-		System.out.println("WInner");
+		leaderboard.updateleaderboardFile();
+
 		window.setTitle(formattedString);
 		window.setVisible(true);
 		window.getContentPane().add(winner);
@@ -375,17 +402,17 @@ public class Main {
 		GamePanel.continueLoop();
 	}
 	
-	public static void addScoreToLeader() {
-		final int added = leaderboard.addEntry(playerName, bestTime);
+	public static void addScoreToLeader() {		
+		final int playerScore = MAX_SCORE - (totalTimePlayed + totalEnemiesKilled * 15);
+		final int added = leaderboard.addEntry(playerName, playerScore);
 		if(added != -1) {
 			addedToLeaderboard = true;
 		}
 	}
 	
-	public static void updateBestTime() {
-		if (secondsTotal < bestTime) {
-			bestTime = secondsTotal;
-		}
+	public static void updateTotalTimeAndEnemies() {
+		totalTimePlayed += secondsLevel;
+		totalEnemiesKilled += enemiesKilled;
 	}
 
 	public static void restartGame() {
@@ -405,8 +432,6 @@ public class Main {
 		window.pack();
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
-
-		updateBestTime();
 
 		// Add action listener to the button in HomeScreen
 		homePanel.getStartButton().addActionListener(new ActionListener() {
