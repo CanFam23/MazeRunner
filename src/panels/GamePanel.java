@@ -75,10 +75,10 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	};
 
 	/** Number of levels in game. */
-	private final int NUM_LEVELS = 0;
+	private final int NUM_LEVELS = 3;
 
 	/** Current level the player is on. */
-	private static int current_level = 0;
+	private static int current_level = 1;
 
 	/**
 	 * Create our player. Initialize later to offer player selection of different
@@ -185,9 +185,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.loadLevel(current_level, levelVersionNumber);
 
 		// Create our player and load the images
-		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)
-//		ourPlayer.load_images("Knight1"); // Civilian1(black)
-		
+		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)		
 
 	}
 
@@ -269,7 +267,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			keyH.downPressed = false;
 			keyH.rightPressed = false;
 			keyH.leftPressed = false;
+			Main.updateTotalTimeAndEnemies();
 			if (current_level == NUM_LEVELS) {
+				//User won game
 				reset();
 				resetLevel();
 				Main.addScoreToLeader();
@@ -277,11 +277,13 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 				Main.showFinalWinScreen(true);
 			} else {
+				//Go to next level.
 				Main.showNextLevelPanel(true);
 				while (Main.otherPanelRunning()) {
 					System.out.print("");
 				}
 				reset();
+				cmanager.reset();
 				current_level++;
 				levelVersionNumber = random.nextInt(1,5);
 				cmanager.loadLevel(current_level, levelVersionNumber);
@@ -293,9 +295,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		// Our player is out of health (passed out, fainted, dead)
 		if (ourPlayer.getHealth() < 1) {
-			cmanager.restart();
-			cmanager.stopKnockback();
-			ourPlayer.reset();
 			if (deathAnimation == false) {
 				deathCount = 0;
 				deathAnimation = true;
@@ -308,9 +307,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				deathAnimation = false;
 				ourPlayer.unlockState();
 				ourPlayer.unlockFacing();
+				cmanager.restart();
+				cmanager.stopKnockback();
 				ourPlayer.reset();
-				cmanager.reset();
-				cmanager.loadLevel(current_level, levelVersionNumber);
 			} else {
 				deathCount++;
 			}
@@ -333,9 +332,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			boolean botCollided = cmanager.checkCollision(deltas.get(Facing.S));
 			boolean rightCollided = cmanager.checkCollision(deltas.get(Facing.E));
 			boolean leftCollided = cmanager.checkCollision(deltas.get(Facing.W));
-			
-//			System.out.println(topCollided + " " + botCollided + " " + rightCollided + "  "+ leftCollided);
-//			System.out.println(cmanager.getActiveChunks().size());
 
 			// Uses key presses to determine where to move walls
 			if (keyH.upPressed && !topCollided) {
@@ -462,7 +458,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		final String timeLeft = "Time left: " + String.valueOf(Main.seconds_left) + " seconds";
 		g2.drawString(timeLeft, timeX, timeY);
 
-		final String enemiesKilled = "Enemies killed: " + String.valueOf(Main.totalEnemiesKilled);
+		final String enemiesKilled = "Enemies killed: " + String.valueOf(Main.enemiesKilled);
 		g2.drawString(enemiesKilled, enemyKillCountX, enemyKillCountY);
 
 		// If adding time, tell the user its happening
@@ -491,8 +487,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		final int titleX = getWidth() - healthBarWidth - padding; // X coordinate of the title (aligned with health bar)
 		final int titleY = padding - 5; // Y coordinate of the title (just above the health bar)
 		final int healthPercentage = (int) (((float) ourPlayer.getHealth() / 10000) * 100); // Assuming maximum health
-																							// is
-		// 10000
 
 		// Draw title
 		g.setColor(Color.WHITE);
@@ -608,14 +602,14 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			System.err.println("Game loop isn't running, when it should be!");
 		}
 
-		gp.stopLoop();
+		GamePanel.stopLoop();
 		// Testing if gameLoop is paused when it should be
 		if (gp.isRunning()) {
 			allPassed = false;
 			System.err.println("Game loop is running, when it should be stopped!");
 		}
 
-		gp.continueLoop();
+		GamePanel.continueLoop();
 
 		// Testing if gameLoop starts again correctly
 		if (!gp.isRunning()) {
