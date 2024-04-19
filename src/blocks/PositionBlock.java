@@ -137,21 +137,24 @@ public class PositionBlock implements GameVariables {
 	protected int y;
 
 	/**
-	 * Constructs a new StartingBlock with the given parameters.
+	 * Constructs a new StartingBlock based on the starting position.
 	 *
 	 * @param x      The x-coordinate relative to the top-left coordinate of the
 	 *               chunk.
 	 * @param y      The y-coordinate relative to the top-left coordinate of the
 	 *               chunk.
-	 * @param width  The width of the block.
-	 * @param height The height of the block.
-	 * @param c      The color of the block.
 	 */
 	public PositionBlock(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
 	
+	/**
+	 * Set the size for all PositionBlocks
+	 * 
+	 * @param width int width for all PositionBlocks in pixels.
+	 * @param height int height for all PositionBlocks in pixels.
+	 */
 	public static void setBlockSize(int width, int height) {
 		PositionBlock.width = width;
 		PositionBlock.height = height;

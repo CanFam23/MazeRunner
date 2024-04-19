@@ -41,10 +41,9 @@ public class HomeScreen extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Background image to use.
-	 */
+	/** Background image to use.*/
 	private BufferedImage backgroundImage;
+	
 	private JPanel mainPanel;
 	private JPanel instructionsPanel;
 	private JPanel scoreboardPanel;

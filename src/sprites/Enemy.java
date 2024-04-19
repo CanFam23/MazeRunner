@@ -37,7 +37,7 @@ public abstract class Enemy implements GameVariables {
 	/**
 	 * Calculates the distance between two points using the
 	 * <a href="https://www.purplemath.com/modules/distform.htm">distance
-	 * formula<a/>.
+	 * formula</a>.
 	 *
 	 * @param x1 First x coordinate.
 	 * @param y1 First y coordinate.
@@ -601,7 +601,9 @@ public abstract class Enemy implements GameVariables {
 	}
 
 	/**
-	 * Return the current health of player.
+	 * Return the current health of enemy (how many more hits they can sustain).
+	 * 
+	 * @return hitCount how many times the enemy can be hit before fainting.
 	 */
 	public int getHitCount() {
 		return hitCount;

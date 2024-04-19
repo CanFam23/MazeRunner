@@ -22,20 +22,20 @@ public class StartingBlock extends PositionBlock {
 	private static VolatileImage image;
 
 	/**
-	 * Constructs a new StartingBlock with the given parameters.
-	 *
-	 * @param x                  The x-coordinate relative to the top-left
-	 *                           coordinate of the chunk.
-	 * @param y                  The y-coordinate relative to the top-left
-	 *                           coordinate of the chunk.
-	 * @param width              The width of the block.
-	 * @param height             The height of the block.
-	 * @param positionBlockImage The color of the block.
+	 * Constructs a new StartingBlock based on the block's starting position.
+	 * 
+	 * @param x int starting x position.
+	 * @param y int starting y position.
 	 */
 	public StartingBlock(int x, int y) {
 		super(x, y);
 	}
 
+	/**
+	 * Statically set the VolatileImage for all starting blocks.
+	 * 
+	 * @param positionBlockImage VolatileImage that will be used for all starting blocks.
+	 */
 	public static void setImage(VolatileImage positionBlockImage) {
 		image = positionBlockImage;
 	}

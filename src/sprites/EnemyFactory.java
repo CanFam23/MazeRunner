@@ -18,7 +18,13 @@ import javax.imageio.ImageIO;
  */
 public abstract class EnemyFactory {
 
-	// Function that can be used by a user.
+	/**
+	 * A user can create an enemy by calling this method and specifying the starting coordinates of the enemy.
+	 * 
+	 * @param x upper-left x coordinate of the enemy.
+	 * @param y upper-left y coordinate of the enemy.
+	 * @return Enemy the created enemy
+	 */
 	public abstract Enemy createEnemy(int x, int y);
 
 	// Store the padding for each enemy within it's factory class.
