@@ -1,6 +1,6 @@
 Leaderboard
 AndrewDene;324
 NickClouse;430
-NathanAWES:434
+NathanAWES;434
 MollyOConn;545
 ILoveJavaL;560
