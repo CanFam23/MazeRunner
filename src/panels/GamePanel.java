@@ -107,7 +107,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private int deathCount = 0;
 	
 	/** How many frames will pass from the start of the death animation to the end.  */
-	private final int DEATHANIMATIONTIME = 150;
+	private final int DEATHANIMATIONTIME = 300;
 
 	/**
 	 * Version of the current level, each level has 5 versions.
@@ -305,6 +305,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				cmanager.stopKnockback();
 			} else if (deathCount == DEATHANIMATIONTIME) {
 				deathAnimation = false;
+				v.reset();
 				ourPlayer.unlockState();
 				ourPlayer.unlockFacing();
 				cmanager.restart();
@@ -372,6 +373,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				ourPlayer.handleAttack();
 			}
 		}
+		if (ourPlayer.getHealth() < 10000 && !ourPlayer.isGettingAttacked() && !deathAnimation) {
+			ourPlayer.addHealth(1);
+		}
 
 		cmanager.updateCoords(dx, dy);
 		cmanager.updateEnemies();
@@ -430,9 +434,10 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.draw(g2);
 		cmanager.drawEnemies(g2);
 		
-//		v.drawVision(g2);
-		if (ourPlayer.getHealth() < 10000 && !ourPlayer.isGettingAttacked() && !deathAnimation) {
-			ourPlayer.addHealth(1);
+		if(deathAnimation) {
+			v.updateRadius();
+			v.createVis();
+			v.drawVision(g2);
 		}
 
 		drawHealthBar(g);
