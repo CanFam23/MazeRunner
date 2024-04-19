@@ -72,10 +72,10 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	};
 
 	/** Number of levels in game. */
-	private final int NUM_LEVELS = 3;
+	private final int NUM_LEVELS = 0;
 
 	/** Current level the player is on. */
-	private static int current_level = 1;
+	private static int current_level = 0;
 
 	/**
 	 * Create our player. Initialize later to offer player selection of different
@@ -258,10 +258,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			if (current_level == NUM_LEVELS) {
 				reset();
 				resetLevel();
-				Main.updateBestTime();
 				Main.addScoreToLeader();
 				Main.resetTime();
-				// TO do: if scoreboard display different screen
 				Main.showFinalWinScreen(true);
 			} else {
 				Main.showNextLevelPanel(true);
@@ -279,10 +277,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 
 		if (ourPlayer.getHealth() < 1) {
+			cmanager.restart();
 			cmanager.stopKnockback();
 			ourPlayer.reset();
-			cmanager.reset();
-			cmanager.loadLevel(current_level, levelVersionNumber);
 		}
 
 		// Move Player
@@ -299,6 +296,9 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			boolean botCollided = cmanager.checkCollision(deltas.get(Facing.S));
 			boolean rightCollided = cmanager.checkCollision(deltas.get(Facing.E));
 			boolean leftCollided = cmanager.checkCollision(deltas.get(Facing.W));
+			
+//			System.out.println(topCollided + " " + botCollided + " " + rightCollided + "  "+ leftCollided);
+//			System.out.println(cmanager.getActiveChunks().size());
 
 			// Uses key presses to determine where to move walls
 			if (keyH.upPressed && !topCollided) {

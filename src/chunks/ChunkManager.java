@@ -199,6 +199,7 @@ public class ChunkManager implements GameVariables {
 	 */
 	public boolean loadLevel(int levelNum, int levelVersionNumber) {
 
+		levelNum = 0;
 		levelName = "level_" + levelNum + "_v" + levelVersionNumber;
 		if (levelNum == 0) {
 			levelName = "level_0";
@@ -451,6 +452,15 @@ public class ChunkManager implements GameVariables {
 		for (Enemy e : Enemy.activeEnemies) {
 			e.move();
 		}
+	}
+	
+	/** TODO test
+	 * Repositions maze so the player 
+	 * goes back to the start block. 
+	 */
+	public void restart() {
+		setStartLocation();
+		updateEnemies();
 	}
 
 	/**
