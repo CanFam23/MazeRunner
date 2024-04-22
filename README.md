@@ -108,9 +108,9 @@ If you have a suggestion that would make our game better, please fork the repo a
 <!-- CONTACT -->
 ## Contact
 
-<p>**Andrew Denegar** - adenegar@carroll.edu</p>
-<p>**Molly O'Connor** - moconnor@carroll.edu</p>
-<p>**Nick Clouse** - nclouse@carroll.edu</p>
+* **Andrew Denegar** - adenegar@carroll.edu
+* **Molly O'Connor** - moconnor@carroll.edu
+* **Nick Clouse** - nclouse@carroll.edu
 
 Project Link: [https://github.com/CanFam23/MazeRunner]([https://github.com/CanFam23/MazeRunner)
 
