@@ -155,6 +155,7 @@ public class GameOverLOSE extends JPanel {
 		}
 		return button;
 	}
+	
 	private JPanel createScoreboardPanel() {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setBackground(Color.BLACK);
@@ -214,7 +215,6 @@ public class GameOverLOSE extends JPanel {
 	}
 
 	private static void newGame() {
-
 		GamePanel.resetLevel();
 		Main.resetTime();
 		Main.disablePanels();

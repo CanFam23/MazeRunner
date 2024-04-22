@@ -57,31 +57,30 @@ public class Main {
 	private static int secondsLevel = 0;
 
 	/** Time elapsed for level. */
-	private static int timeAmount = 2;
-	
+	private static int timeAmount = 120;
+
 	/**
 	 * Total time allowed for all three levels.
 	 */
 	private static final int TOTAL_TIME_ALLOWED = timeAmount * 3;
-	
+
 	/**
-	 * Max score you can gain by killing all enemies in every level.
-	 * We got this number by finding the highest number of enemies for
-	 * each level, and then adding them up and multiplying that number by 15
-	 * because that how many seconds each enemy is worth.
+	 * Max score you can gain by killing all enemies in every level. We got this
+	 * number by finding the highest number of enemies for each level, and then
+	 * adding them up and multiplying that number by 15 because that how many
+	 * seconds each enemy is worth.
 	 */
 	private static final int MAX_SCORE_FROM_ENEMIES = 1095;
-	
+
 	/**
-	 * Max score the player can get. 
+	 * Max score the player can get.
 	 */
-	private static final int MAX_SCORE = MAX_SCORE_FROM_ENEMIES-TOTAL_TIME_ALLOWED;
-	
+	private static final int MAX_SCORE = MAX_SCORE_FROM_ENEMIES - TOTAL_TIME_ALLOWED;
+
 	/**
 	 * Total time the player takes to beat all levels.
 	 */
 	private static int totalTimePlayed = 0;
-	
 
 	/** Remaining seconds left for the player on current level. */
 	public static int seconds_left = timeAmount;
@@ -100,12 +99,11 @@ public class Main {
 
 	/** Home screen. */
 	private static HomeScreen homePanel;
-	
-	
+
 	/**
 	 * Win screen.
 	 */
-	private static finalWinScreen winner; 
+	private static finalWinScreen winner;
 
 	/** Stores player's name. */
 	private static String playerName = "";
@@ -115,16 +113,15 @@ public class Main {
 
 	/** Keeps track of if time should be added. */
 	public static boolean addTime = false;
-	
+
 	/**
 	 * Keeps track if user has been added to leaderboard.
 	 */
 	public static boolean addedToLeaderboard = true;
-	
+
 	/** Total enemies killed by the player. */
 	public static int totalEnemiesKilled = 0;
 
-	
 	/**
 	 * Number of enemies killed for current level.
 	 */
@@ -152,11 +149,11 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = homePanel.getName();
-				if(name.isBlank()) {
+				if (name.isBlank()) {
 					JOptionPane.showMessageDialog(window, "Please enter a name!");
-				}else if(name.length() > 10) {
+				} else if (name.length() > 10) {
 					JOptionPane.showMessageDialog(window, "Name can't be longer than 10 characters!");
-				}else {
+				} else {
 					playerName = name;
 					homePanel.setVisible(false);
 					runMainCode();
@@ -214,11 +211,12 @@ public class Main {
 			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				secondsLevel++;
-				seconds_left--;
+				secondsLevel++; // running total of time taken to complete level
+				seconds_left--; // time they have left to complete
 				int currentLevel = GamePanel.getCurrentLevel();
 				window.setTitle("Maze Runner - Level: " + currentLevel);
 				if (seconds_left <= 0) {
+					// player lost logic
 					GamePanel.stopLoop();
 					timer.stop();
 					gameOverPanel(true);
@@ -265,7 +263,7 @@ public class Main {
 				System.out.println("Average FPS: " + gamePanel.getFPS());
 				GamePanel.stopLoop();
 				// Check if user has won at least once.
-				if(!gamePanel.hasWon()) {
+				if (!gamePanel.hasWon()) {
 					JOptionPane.showMessageDialog(window, "Why didn't you finish the game???");
 					System.exit(0);
 				}
@@ -316,6 +314,9 @@ public class Main {
 		});
 	}
 
+	/**
+	 * Stops the timer
+	 */
 	public static void stopTime() {
 		timer.stop();
 	}
@@ -330,14 +331,20 @@ public class Main {
 		addTime = false;
 	}
 
+	/**
+	 * Adds 1 to the players enemy kill count
+	 */
 	public static void enemyKilled() {
 		enemiesKilled += 1;
 	}
 
+	/**
+	 * Disables the other panels and displays the "Next Level" game panel
+	 */
 	public static void showNextLevelPanel(boolean show) {
 		System.out.println("Total enemies killed: " + totalEnemiesKilled);
 		System.out.println("Total time: " + totalTimePlayed);
-		
+
 		String formattedString = String.format("Completed Level in %d seconds", 120 - seconds_left);
 		window.setTitle(formattedString);
 		window.setVisible(true);
@@ -349,9 +356,11 @@ public class Main {
 		nextLevel.setIsGameOverRunning(true);
 		gamePanel.setVisible(false);
 		homePanel.setVisible(false);
-
 	}
 
+	/**
+	 * Disables the other panels and displays the main game panel
+	 */
 	public static void showGamePanel() {
 		window.setVisible(true);
 		timeOut.setVisible(false);
@@ -364,6 +373,10 @@ public class Main {
 
 	}
 
+	/**
+	 * Disables the other panels and displays the "Game Over" game panel, when
+	 * player runs out of time
+	 */
 	public static void gameOverPanel(boolean show) {
 		final String formattedString = String.format("Failed to complete the level in 120 seconds");
 		window.setTitle(formattedString);
@@ -375,11 +388,13 @@ public class Main {
 		gamePanel.setVisible(false);
 		homePanel.setVisible(false);
 	}
-	
-	public static void showFinalWinScreen(boolean show) {		
+
+	/**
+	 * Disables the other panels and displays the "You win" game panel
+	 */
+	public static void showFinalWinScreen(boolean show) {
 		final String formattedString = String.format("YOU WIN");
 		leaderboard.updateleaderboardFile();
-
 		window.setTitle(formattedString);
 		window.setVisible(true);
 		window.getContentPane().add(winner);
@@ -389,7 +404,10 @@ public class Main {
 		gamePanel.setVisible(false);
 		homePanel.setVisible(false);
 	}
-	
+
+	/**
+	 * Returns true if the next level panel is still running and being seen
+	 */
 	public static boolean otherPanelRunning() {
 		if (nextLevel.isGameOverRunning()) {
 			return true;
@@ -397,32 +415,45 @@ public class Main {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * removes the game over screen, used when the player chooses play again after
+	 * running out of time in a level.
+	 */
 	public static void disablePanels() {
 		window.remove(timeOut);
 		GamePanel.continueLoop();
 	}
-	
-	public static void addScoreToLeader() {		
+
+	/**
+	 * Calculates the players score and adds them to the leader board
+	 */
+	public static void addScoreToLeader() {
 		final int playerScore = MAX_SCORE + totalTimePlayed - (totalEnemiesKilled * 15);
 		final int added = leaderboard.addEntry(playerName, playerScore);
-		if(added != -1) {
+		if (added != -1) {
 			addedToLeaderboard = true;
 		}
 	}
-	
+
+	/**
+	 * Updates the total time and the total enemies a player has killed in a level
+	 */
 	public static void updateTotalTimeAndEnemies() {
 		totalTimePlayed += secondsLevel;
 		totalEnemiesKilled += enemiesKilled;
 	}
 
+	/**
+	 * Resets the game and removes the old window and starts a new one
+	 */
 	public static void restartGame() {
-	    // Dispose of the current window
-	    window.dispose();
-	    window.remove(gamePanel);
-	    window.remove(timeOut);
-	    window.remove(homePanel);
-	    window.remove(nextLevel);
+		// Dispose of the current window
+		window.dispose();
+		window.remove(gamePanel);
+		window.remove(timeOut);
+		window.remove(homePanel);
+		window.remove(nextLevel);
 
 		window = new JFrame();
 		homePanel = new HomeScreen();
@@ -439,13 +470,13 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = homePanel.getName();
-				if(name.isBlank()) {
+				if (name.isBlank()) {
 					JOptionPane.showMessageDialog(window, "Please enter a name!");
-				}else if(name.length() > 10) {
+				} else if (name.length() > 10) {
 					JOptionPane.showMessageDialog(window, "Name can't be longer than 10 characters!");
-				}else if(name.contains(";")) {
+				} else if (name.contains(";")) {
 					JOptionPane.showMessageDialog(window, "Name can't contain ';' character");
-				}else {
+				} else {
 					playerName = name;
 					homePanel.setVisible(false);
 					gamePanel.setVisible(true);
