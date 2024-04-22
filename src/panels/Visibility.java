@@ -44,10 +44,10 @@ public class Visibility implements GameVariables {
 	private final int centerY = SCREEN_HEIGHT / 2;
 
 	/** Starting radius of the circle. */
-	private final int startingRadius = 400;
+	private final int startingRadius = 600;
 
 	/** Amount to decrease the radius by. */
-	private final int decreaseAmount = 100;
+	private int decreaseAmount = 2;
 
 	/**
 	 * New 'blank' color that is transparent. Used to make the gradient go from
@@ -113,16 +113,27 @@ public class Visibility implements GameVariables {
 	 * Decreases the radius by preset amount.
 	 */
 	public void updateRadius() {
-		radius -= decreaseAmount;
-		if (radius <= 0) {
-			radius = 400;
+		if (radius-decreaseAmount > 0) {
+			if(decreaseAmount <= 6 && radius % 80 == 0) {
+				decreaseAmount+=2;
+			}
+			radius -= decreaseAmount;
 		}
+	}
+	
+	/**
+	 * Resets radius and decreaseAmount to default values.
+	 */
+	public void reset() {
+		radius = startingRadius;
+		decreaseAmount = 2;
 	}
 
 	/**
-	 * Resets radius, updates radius of visibility to current value of radius.
+	 * Updates radius of visibility to current value of radius.
+	 * Makes a new General path for each side.
 	 */
-	public void reset() {
+	public void createVis() {
 		// Drawing the right side
 		rightSide = new GeneralPath();
 		// Move to the starting point (top point)
@@ -253,7 +264,7 @@ public class Visibility implements GameVariables {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 					visibility.updateRadius();
-					visibility.reset();
+					visibility.createVis();
 					panel.repaint();
 				}
 			}
