@@ -47,23 +47,46 @@ import panels.finalWinScreen;
  */
 public class Main {
 
-	/** Timer object used for timing how long the player has. */
-	private static Timer timer;
+	/**
+	 * Keeps track if user has been added to leaderboard.
+	 */
+	public static boolean addedToLeaderboard = true;
 
-	/** Window used to display the game. */
-	private static JFrame window;
+	/** Keeps track of if time should be added. */
+	public static boolean addTime = false;
 
-	/** Total seconds the player has been playing the level. */
-	private static int secondsLevel = 0;
+	/**
+	 * Number of enemies killed for current level.
+	 */
+	public static int enemiesKilled = 0;
 
+	/** Keeps track of leaderboard, and updates it when called. */
+	public final static Leaderboard leaderboard = new Leaderboard("leaderboards/overall_time_leaderboard.txt");
+
+	/** Remaining seconds left for the player on current level. */
+	public static int seconds_left = 120;
+
+	/** Total enemies killed by the player. */
+	public static int totalEnemiesKilled = 0;
+
+	/** Background image that is the same as the maze walls. */
+	private static BufferedImage backgroundImage = null;
+
+	/** The main game panel where the game is rendered. */
+	private static GamePanel gamePanel;
+
+	/** Home screen. */
+	private static HomeScreen homePanel;
+	
 	/** Time elapsed for level. */
-	private static int timeAmount = 120;
+	private static final int timeAmount = 120;
 	
 	/**
 	 * Total time allowed for all three levels.
 	 */
 	private static final int TOTAL_TIME_ALLOWED = timeAmount * 3;
-	
+
+
 	/**
 	 * Max score you can gain by killing all enemies in every level.
 	 * We got this number by finding the highest number of enemies for
@@ -71,64 +94,87 @@ public class Main {
 	 * because that how many seconds each enemy is worth.
 	 */
 	private static final int MAX_SCORE_FROM_ENEMIES = 1095;
+
 	
 	/**
-	 * Max score the player can get. 
+	 * Max score the player can get.
 	 */
 	private static final int MAX_SCORE = MAX_SCORE_FROM_ENEMIES-TOTAL_TIME_ALLOWED;
+
+	/** Win screen when user reaches end of a level. */
+	private static GameOverWIN nextLevel;
+
+	/** Stores player's name. */
+	private static String playerName = "";
+
+	/** Total seconds the player has been playing the level. */
+	private static int secondsLevel = 0;
 	
 	/**
 	 * Total time the player takes to beat all levels.
 	 */
 	private static int totalTimePlayed = 0;
-	
-
-	/** Remaining seconds left for the player on current level. */
-	public static int seconds_left = timeAmount;
-
-	/** The main game panel where the game is rendered. */
-	private static GamePanel gamePanel;
-
-	/** Background image that is the same as the maze walls. */
-	private static BufferedImage backgroundImage = null;
-
-	/** Win screen when user reaches end of a level. */
-	private static GameOverWIN nextLevel;
 
 	/** Lose screen when user runs out of time. */
 	private static GameOverLOSE timeOut;
 
-	/** Home screen. */
-	private static HomeScreen homePanel;
-	
-	
+	/** Timer object used for timing how long the player has. */
+	private static Timer timer;
+
+
+	/** Window used to display the game. */
+	private static JFrame window;
+
 	/**
 	 * Win screen.
 	 */
-	private static finalWinScreen winner; 
+	private static finalWinScreen winner;
 
-	/** Stores player's name. */
-	private static String playerName = "";
+	public static void addScoreToLeader() {
+		final int playerScore = MAX_SCORE + totalTimePlayed - (totalEnemiesKilled * 15);
+		final int added = leaderboard.addEntry(playerName, playerScore);
+		if(added != -1) {
+			addedToLeaderboard = true;
+		}
+	}
 
-	/** Keeps track of leaderboard, and updates it when called. */
-	public final static Leaderboard leaderboard = new Leaderboard("leaderboards/overall_time_leaderboard.txt");
-
-	/** Keeps track of if time should be added. */
-	public static boolean addTime = false;
-	
 	/**
-	 * Keeps track if user has been added to leaderboard.
+	 * Adds more time to the time player has left.
+	 *
+	 * @param t Time to add.
 	 */
-	public static boolean addedToLeaderboard = true;
-	
-	/** Total enemies killed by the player. */
-	public static int totalEnemiesKilled = 0;
+	public static void addTime(int t) {
+		seconds_left += 15;
+		addTime = false;
+	}
 
-	
 	/**
-	 * Number of enemies killed for current level.
+	 * Closes the main window. Stops the game and disposes of the main window.
 	 */
-	public static int enemiesKilled = 0;
+	public static void closeMainWindow() {
+		window.dispose();
+	}
+
+	public static void disablePanels() {
+		window.remove(timeOut);
+		GamePanel.continueLoop();
+	}
+
+	public static void enemyKilled() {
+		enemiesKilled += 1;
+	}
+
+	public static void gameOverPanel(boolean show) {
+		final String formattedString = String.format("Failed to complete the level in 120 seconds");
+		window.setTitle(formattedString);
+		window.setVisible(true);
+		window.getContentPane().add(timeOut);
+		timeOut.requestFocusInWindow();
+		timeOut.setVisible(show);
+		timeOut.setFocusable(show);
+		gamePanel.setVisible(false);
+		homePanel.setVisible(false);
+	}
 
 	/**
 	 * Main method to start the game.
@@ -150,7 +196,7 @@ public class Main {
 		homePanel.getStartButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name = homePanel.getName();
+				final String name = homePanel.getName();
 				if(name.isBlank()) {
 					JOptionPane.showMessageDialog(window, "Please enter a name!");
 				}else if(name.length() > 10) {
@@ -158,6 +204,84 @@ public class Main {
 				}else {
 					playerName = name;
 					homePanel.setVisible(false);
+					runMainCode();
+				}
+			}
+		});
+	}
+
+	public static boolean otherPanelRunning() {
+		if (nextLevel.isGameOverRunning()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Resets the game timer and associated variables. Stops the timer, resets the
+	 * elapsed time, and starts listening for arrow key presses to restart the
+	 * timer.
+	 */
+	public static void resetTime() {
+		seconds_left = timeAmount;
+		totalEnemiesKilled += enemiesKilled;
+		enemiesKilled = 0;
+		window.setTitle("Maze Runner - Use Arrows to start time");
+		gamePanel.addKeyListener(new KeyAdapter() {
+			private boolean timerStarted = false;
+
+			/**
+			 * Made to check for key press. When a key is pressed, the timer starts.
+			 *
+			 * @param e KeyEvent to process
+			 */
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// Start the timer only if it hasn't been started yet and arrow keys are pressed
+				if (!timerStarted && (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN
+						|| e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT)) {
+					timerStarted = true;
+					timer.start();
+				}
+			}
+		});
+	}
+
+	public static void restartGame() {
+	    // Dispose of the current window
+	    window.dispose();
+	    window.remove(gamePanel);
+	    window.remove(timeOut);
+	    window.remove(homePanel);
+	    window.remove(nextLevel);
+
+		window = new JFrame();
+		homePanel = new HomeScreen();
+		// Set up the window and display the HomeScreen panel
+		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		window.setPreferredSize(new Dimension(1000, 800));
+		window.getContentPane().add(homePanel);
+		window.pack();
+		window.setLocationRelativeTo(null);
+		window.setVisible(true);
+
+		// Add action listener to the button in HomeScreen
+		homePanel.getStartButton().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				final String name = homePanel.getName();
+				if(name.isBlank()) {
+					JOptionPane.showMessageDialog(window, "Please enter a name!");
+				}else if(name.length() > 10) {
+					JOptionPane.showMessageDialog(window, "Name can't be longer than 10 characters!");
+				}else if(name.contains(";")) {
+					JOptionPane.showMessageDialog(window, "Name can't contain ';' character");
+				}else {
+					playerName = name;
+					homePanel.setVisible(false);
+					gamePanel.setVisible(true);
+					GamePanel.continueLoop();
 					runMainCode();
 				}
 			}
@@ -172,7 +296,7 @@ public class Main {
 		// Load Background Image
 		try {
 			backgroundImage = ImageIO.read(new File("images/backgroundBlock.png"));
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("Failed to load backgroundBlock.png!");
 		}
 
@@ -215,7 +339,7 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				secondsLevel++;
 				seconds_left--;
-				int currentLevel = GamePanel.getCurrentLevel();
+				final int currentLevel = GamePanel.getCurrentLevel();
 				window.setTitle("Maze Runner - Level: " + currentLevel);
 				if (seconds_left <= 0) {
 					GamePanel.stopLoop();
@@ -278,77 +402,18 @@ public class Main {
 		gamePanel.startGameThread();
 	}
 
-	/**
-	 * Closes the main window. Stops the game and disposes of the main window.
-	 */
-	public static void closeMainWindow() {
-		window.dispose();
-	}
+	public static void showFinalWinScreen(boolean show) {
+		final String formattedString = String.format("YOU WIN");
+		leaderboard.updateleaderboardFile();
 
-	/**
-	 * Resets the game timer and associated variables. Stops the timer, resets the
-	 * elapsed time, and starts listening for arrow key presses to restart the
-	 * timer.
-	 */
-	public static void resetTime() {
-		seconds_left = timeAmount;
-		totalEnemiesKilled += enemiesKilled;
-		enemiesKilled = 0;
-		window.setTitle("Maze Runner - Use Arrows to start time");
-		gamePanel.addKeyListener(new KeyAdapter() {
-			private boolean timerStarted = false;
-
-			/**
-			 * Made to check for key press. When a key is pressed, the timer starts.
-			 *
-			 * @param e KeyEvent to process
-			 */
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// Start the timer only if it hasn't been started yet and arrow keys are pressed
-				if (!timerStarted && (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN
-						|| e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT)) {
-					timerStarted = true;
-					timer.start();
-				}
-			}
-		});
-	}
-
-	public static void stopTime() {
-		timer.stop();
-	}
-
-	/**
-	 * Adds more time to the time player has left.
-	 * 
-	 * @param t Time to add.
-	 */
-	public static void addTime(int t) {
-		seconds_left += 15;
-		addTime = false;
-	}
-
-	public static void enemyKilled() {
-		enemiesKilled += 1;
-	}
-
-	public static void showNextLevelPanel(boolean show) {
-		System.out.println("Total enemies killed: " + totalEnemiesKilled);
-		System.out.println("Total time: " + totalTimePlayed);
-		
-		String formattedString = String.format("Completed Level in %d seconds", 120 - seconds_left);
 		window.setTitle(formattedString);
 		window.setVisible(true);
-		window.getContentPane().add(nextLevel);
-		nextLevel.requestFocusInWindow();
-		nextLevel.setVisible(show);
-		nextLevel.setFocusable(show);
-		nextLevel.setVisible(true);
-		nextLevel.setIsGameOverRunning(true);
+		window.getContentPane().add(winner);
+		winner.requestFocusInWindow();
+		winner.setVisible(show);
+		winner.setFocusable(show);
 		gamePanel.setVisible(false);
 		homePanel.setVisible(false);
-
 	}
 
 	public static void showGamePanel() {
@@ -363,95 +428,30 @@ public class Main {
 
 	}
 
-	public static void gameOverPanel(boolean show) {
-		final String formattedString = String.format("Failed to complete the level in 120 seconds");
-		window.setTitle(formattedString);
-		window.setVisible(true);
-		window.getContentPane().add(timeOut);
-		timeOut.requestFocusInWindow();
-		timeOut.setVisible(show);
-		timeOut.setFocusable(show);
-		gamePanel.setVisible(false);
-		homePanel.setVisible(false);
-	}
-	
-	public static void showFinalWinScreen(boolean show) {		
-		final String formattedString = String.format("YOU WIN");
-		leaderboard.updateleaderboardFile();
+	public static void showNextLevelPanel(boolean show) {
+		System.out.println("Total enemies killed: " + totalEnemiesKilled);
+		System.out.println("Total time: " + totalTimePlayed);
 
+		final String formattedString = String.format("Completed Level in %d seconds", 120 - seconds_left);
 		window.setTitle(formattedString);
 		window.setVisible(true);
-		window.getContentPane().add(winner);
-		winner.requestFocusInWindow();
-		winner.setVisible(show);
-		winner.setFocusable(show);
+		window.getContentPane().add(nextLevel);
+		nextLevel.requestFocusInWindow();
+		nextLevel.setVisible(show);
+		nextLevel.setFocusable(show);
+		nextLevel.setVisible(true);
+		nextLevel.setIsGameOverRunning(true);
 		gamePanel.setVisible(false);
 		homePanel.setVisible(false);
+
 	}
-	
-	public static boolean otherPanelRunning() {
-		if (nextLevel.isGameOverRunning()) {
-			return true;
-		} else {
-			return false;
-		}
+
+	public static void stopTime() {
+		timer.stop();
 	}
-	
-	public static void disablePanels() {
-		window.remove(timeOut);
-		GamePanel.continueLoop();
-	}
-	
-	public static void addScoreToLeader() {		
-		final int playerScore = MAX_SCORE + totalTimePlayed - (totalEnemiesKilled * 15);
-		final int added = leaderboard.addEntry(playerName, playerScore);
-		if(added != -1) {
-			addedToLeaderboard = true;
-		}
-	}
-	
+
 	public static void updateTotalTimeAndEnemies() {
 		totalTimePlayed += secondsLevel;
 		totalEnemiesKilled += enemiesKilled;
-	}
-
-	public static void restartGame() {
-	    // Dispose of the current window
-	    window.dispose();
-	    window.remove(gamePanel);
-	    window.remove(timeOut);
-	    window.remove(homePanel);
-	    window.remove(nextLevel);
-
-		window = new JFrame();
-		homePanel = new HomeScreen();
-		// Set up the window and display the HomeScreen panel
-		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		window.setPreferredSize(new Dimension(1000, 800));
-		window.getContentPane().add(homePanel);
-		window.pack();
-		window.setLocationRelativeTo(null);
-		window.setVisible(true);
-
-		// Add action listener to the button in HomeScreen
-		homePanel.getStartButton().addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String name = homePanel.getName();
-				if(name.isBlank()) {
-					JOptionPane.showMessageDialog(window, "Please enter a name!");
-				}else if(name.length() > 10) {
-					JOptionPane.showMessageDialog(window, "Name can't be longer than 10 characters!");
-				}else if(name.contains(";")) {
-					JOptionPane.showMessageDialog(window, "Name can't contain ';' character");
-				}else {
-					playerName = name;
-					homePanel.setVisible(false);
-					gamePanel.setVisible(true);
-					GamePanel.continueLoop();
-					runMainCode();
-				}
-			}
-		});
 	}
 }

@@ -121,13 +121,17 @@ public class Visibility implements GameVariables {
 		}
 	}
 	
+	/**
+	 * Resets radius and decreaseAmount to default values.
+	 */
 	public void reset() {
 		radius = startingRadius;
-		decreaseAmount = 1;
+		decreaseAmount = 2;
 	}
 
 	/**
-	 * Resets radius, updates radius of visibility to current value of radius.
+	 * Updates radius of visibility to current value of radius.
+	 * Makes a new General path for each side.
 	 */
 	public void createVis() {
 		// Drawing the right side
