@@ -186,7 +186,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 		// Create our player and load the images
 		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)		
-
 	}
 
 	/**

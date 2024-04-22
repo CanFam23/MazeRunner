@@ -10,10 +10,13 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
@@ -243,7 +246,7 @@ public class Main {
 				}
 			}
 		});
-
+		
 		// Make sure the panel can receive focus
 		gamePanel.setFocusable(true);
 		gamePanel.requestFocusInWindow();
@@ -273,6 +276,22 @@ public class Main {
 
 			}
 		});
+		
+		Map nameMap = new HashMap<String, String>();
+		nameMap.put("Steve", "Civilian1");
+		Map imageMap = new HashMap<String, BufferedImage>();
+		
+		// Setup Image Panel
+        JPanel imagePanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                BufferedImage image = nameMap.get(homePanel.getComboBox());
+                if (image != null) {
+                    g.drawImage(image, 10, 10, this);
+                }
+            }
+        };
 
 		// starts game
 		gamePanel.startGameThread();
