@@ -112,7 +112,7 @@ If you have a suggestion that would make our game better, please fork the repo a
 * **Molly O'Connor** - moconnor@carroll.edu
 * **Nick Clouse** - nclouse@carroll.edu
 
-Project Link: [https://github.com/CanFam23/MazeRunner]([https://github.com/CanFam23/MazeRunner)
+Project Link: [https://github.com/CanFam23/MazeRunner](https://github.com/CanFam23/MazeRunner)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
