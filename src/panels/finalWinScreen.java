@@ -3,6 +3,7 @@ package panels;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -16,8 +17,10 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
@@ -44,8 +47,9 @@ public class finalWinScreen extends JPanel {
 
 	private boolean isRunning = true;
 
-    private JPanel mainPanel;
-    private JPanel instructionsPanel;
+	private JPanel mainPanel;
+	private JPanel scoreboardPanel;
+	private JPanel currentPanel;
     private JButton againButton;
     private JButton exitButton;
     private JButton scoreButton;
@@ -73,10 +77,13 @@ public class finalWinScreen extends JPanel {
 		}
 
 		setLayout(new BorderLayout());
+		
 		mainPanel = createMainPanel();
-		add(mainPanel, BorderLayout.CENTER);
+		scoreboardPanel = createScoreboardPanel();
 
-//		scoreBoardPanel = createScoreBoardPanel();
+		add(mainPanel, BorderLayout.CENTER);
+		currentPanel = mainPanel;
+
 	}
 
 	private JPanel createMainPanel() {
@@ -148,7 +155,7 @@ public class finalWinScreen extends JPanel {
         });
 
         if (text.equals("SCOREBOARD")) {
-//            button.addActionListener(e -> showInstructionsPanel());
+            button.addActionListener(e -> showScoreboardPanel());
         }
 
         if (text.equals("PLAY AGAIN")) {
@@ -160,6 +167,82 @@ public class finalWinScreen extends JPanel {
         }
         return button;
     }
+    
+    private JPanel createScoreboardPanel() {
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.setBackground(Color.BLACK);
+
+		// Create panel for the instructions box
+		JPanel scoreboardBoxPanel = new JPanel(new BorderLayout());
+		scoreboardBoxPanel.setBackground(Color.BLACK);
+		scoreboardBoxPanel.setBorder(BorderFactory.createEmptyBorder(25, 50, 50, 50)); // Add padding
+
+		String levelName = Main.leaderboard.getleaderboardName();
+		String[] entries = Main.leaderboard.leaderboardToString();
+
+		String scoreboard = "<html>";
+		scoreboard += "<br>" + levelName + "<br>";
+
+		for (int i = 0; i < entries.length; i++) {
+			scoreboard += "<br>" + (i + 1) + ". " + entries[i] + "<br>";
+		}
+		scoreboard += "<html>";
+
+		// Create label for scoreboard text
+		JLabel scoreboardLabel = new JLabel(scoreboard);
+		scoreboardLabel.setForeground(Color.WHITE);
+		scoreboardLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
+		scoreboardLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		scoreboardLabel.setVerticalAlignment(SwingConstants.TOP); // Align text to the top
+
+		JLabel scoreboardTxtLabel = new JLabel(
+				"<html><br>-The leaderboard keeps track of the fastest time (In seconds) it takes"
+						+ " to complete all 3 levels.<br>"
+						+ "<br>-Want to be among the greats? Go back to the home page and press start!<br><html>");
+		scoreboardTxtLabel.setForeground(Color.WHITE);
+		scoreboardTxtLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
+		scoreboardTxtLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		scoreboardTxtLabel.setVerticalAlignment(SwingConstants.CENTER); // Align text to the top
+
+		// Add instructions label to the center of the instructions box panel
+		scoreboardBoxPanel.add(scoreboardLabel, BorderLayout.NORTH);
+		scoreboardBoxPanel.add(scoreboardTxtLabel, BorderLayout.CENTER);
+
+		// Create exit button
+		backButton = createButton("BACK");
+
+		backButton.addActionListener(e -> showMainPanel());
+
+		// Create a panel to hold the back button and center it
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		buttonPanel.setBackground(Color.BLACK);
+		buttonPanel.add(backButton);
+
+		// Add button panel to the bottom of the instructions box panel
+		scoreboardBoxPanel.add(buttonPanel, BorderLayout.SOUTH);
+		// Add instructions box panel to the center of the main panel
+		panel.add(scoreboardBoxPanel, BorderLayout.CENTER);
+
+		return panel;
+	}
+    
+	private void showScoreboardPanel() {
+		remove(mainPanel);
+		add(scoreboardPanel, BorderLayout.CENTER);
+		currentPanel = scoreboardPanel;
+		revalidate();
+		repaint();
+		scoreButton.setForeground(Color.WHITE);
+	}
+
+	private void showMainPanel() {
+		backButton.setForeground(Color.WHITE);
+		remove(currentPanel);
+		currentPanel = mainPanel;
+		add(mainPanel, BorderLayout.CENTER);
+		revalidate();
+		repaint();
+	}
 
 	/**
 	 * Returns true if the game over panel is running, false otherwise.
@@ -168,7 +251,6 @@ public class finalWinScreen extends JPanel {
 		return isRunning;
 	}
 	
-
 	/**
 	 * Main method
 	 *
