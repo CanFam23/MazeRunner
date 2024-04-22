@@ -13,6 +13,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -51,6 +52,7 @@ public class HomeScreen extends JPanel {
 	private JButton instructionButton;
 	private JButton scoreButton;
 	private JButton backButton;
+	private JComboBox<String> PlayerSelectBox;
 
 	private JPanel currentPanel;
 
@@ -82,6 +84,26 @@ public class HomeScreen extends JPanel {
 			}
 		};
 
+		// List character options that a player can choose from.
+		String[] playerOptions = new String[] {
+				"Civilian1",
+				"Civilian1(black)",
+				"Civilian2",
+				"Civilian2(black)",
+				"Knight1"
+		};
+		
+		// Create the box where the user can select their character.
+		PlayerSelectBox = new JComboBox<String>(playerOptions);
+		PlayerSelectBox.setSelectedIndex(0);
+		
+		PlayerSelectBox.setBounds(150, 400,
+	             100, 20);
+		panel.add(PlayerSelectBox);
+		
+//		PlayerSelectBox.setBounds(25 + insets.left, 5 + insets.top,
+//	             size.width, size.height);
+		
 		JPanel buttonPanel = new JPanel(new BorderLayout()); // Use BorderLayout for buttonPanel
 		buttonPanel.setBackground(Color.BLACK);
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // top, left, bottom, right
@@ -295,6 +317,10 @@ public class HomeScreen extends JPanel {
 		repaint();
 	}
 
+	public JComboBox<String> getComboBox() {
+		return PlayerSelectBox;
+	}
+	
 	// Method to get the startButton instance
 	public JButton getStartButton() {
 		return startButton;
