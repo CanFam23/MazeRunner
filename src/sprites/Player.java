@@ -192,8 +192,6 @@ public class Player implements GameVariables {
 			}
 		}
 		// Split the spritesheet into individual images.
-		// TODO: The image reading process could be improved in the future:
-		// - Resize images originally, then you won't have to resize them here
 		if (spriteSheet != null) {
 			// Create a new HashMap for the specified player state.
 			images.put(playerState, new HashMap<>());
@@ -384,22 +382,6 @@ public class Player implements GameVariables {
 				attackCount = 0;
 			}
 		}
-
-		// TODO remove
-		// Show Player hitbox
-//		g.setColor(Color.RED);
-//		g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
-//		g.setColor(Color.BLUE);
-//		g.drawRect(PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment,
-//					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2);
-		
-		// Show attacking area
-//		g.setColor(Color.blue);
-//		if (getState().equals("Attack")) {
-//			g.draw(hitboxes.get(currentFacing));
-//
-//		}
-
 	}
 
 	/**

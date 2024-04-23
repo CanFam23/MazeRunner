@@ -17,12 +17,14 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
+import chunks.ChunkManager;
 import gameTools.Leaderboard;
 import panels.GameOverLOSE;
 import panels.GameOverWIN;
 import panels.GamePanel;
 import panels.HomeScreen;
 import panels.finalWinScreen;
+import sprites.Enemy;
 
 /**
  * <p>
@@ -54,7 +56,7 @@ public class Main {
 	private static JFrame window;
 
 	/** Total seconds the player has been playing the level. */
-	private static int secondsLevel = 0;
+	public static int secondsLevel = 0;
 
 	/** Time elapsed for level. */
 	private static int timeAmount = 120;
@@ -80,7 +82,7 @@ public class Main {
 	/**
 	 * Total time the player takes to beat all levels.
 	 */
-	private static int totalTimePlayed = 0;
+	public static int totalTimePlayed = 0;
 
 	/** Remaining seconds left for the player on current level. */
 	public static int seconds_left = timeAmount;
@@ -291,8 +293,8 @@ public class Main {
 	 */
 	public static void resetTime() {
 		seconds_left = timeAmount;
-		totalEnemiesKilled += enemiesKilled;
 		enemiesKilled = 0;
+		secondsLevel = 0;
 		window.setTitle("Maze Runner - Use Arrows to start time");
 		gamePanel.addKeyListener(new KeyAdapter() {
 			private boolean timerStarted = false;
@@ -342,13 +344,11 @@ public class Main {
 	 * Disables the other panels and displays the "Next Level" game panel
 	 */
 	public static void showNextLevelPanel(boolean show) {
-		System.out.println("Total enemies killed: " + totalEnemiesKilled);
-		System.out.println("Total time: " + totalTimePlayed);
-
-		String formattedString = String.format("Completed Level in %d seconds", 120 - seconds_left);
-		window.setTitle(formattedString);
 		window.setVisible(true);
 		window.getContentPane().add(nextLevel);
+		
+		nextLevel.updatePanel();
+		
 		nextLevel.requestFocusInWindow();
 		nextLevel.setVisible(show);
 		nextLevel.setFocusable(show);
@@ -382,6 +382,8 @@ public class Main {
 		window.setTitle(formattedString);
 		window.setVisible(true);
 		window.getContentPane().add(timeOut);
+		updateTotalTimeAndEnemies();
+		timeOut.updatePanel();
 		timeOut.requestFocusInWindow();
 		timeOut.setVisible(show);
 		timeOut.setFocusable(show);
@@ -394,7 +396,9 @@ public class Main {
 	 */
 	public static void showFinalWinScreen(boolean show) {
 		final String formattedString = String.format("YOU WIN");
-		leaderboard.updateleaderboardFile();
+		
+		//leaderboard.updateleaderboardFile();
+		winner.updatePanel();
 		window.setTitle(formattedString);
 		window.setVisible(true);
 		window.getContentPane().add(winner);
@@ -429,11 +433,15 @@ public class Main {
 	 * Calculates the players score and adds them to the leader board
 	 */
 	public static void addScoreToLeader() {
-		final int playerScore = MAX_SCORE + totalTimePlayed - (totalEnemiesKilled * 15);
+		final int playerScore = calculateScore();
 		final int added = leaderboard.addEntry(playerName, playerScore);
 		if (added != -1) {
 			addedToLeaderboard = true;
 		}
+	}
+	
+	public static int calculateScore() {
+		return MAX_SCORE + totalTimePlayed - (totalEnemiesKilled * 15);
 	}
 
 	/**
@@ -448,6 +456,14 @@ public class Main {
 	 * Resets the game and removes the old window and starts a new one
 	 */
 	public static void restartGame() {
+		seconds_left = timeAmount;
+		totalEnemiesKilled = 0;
+		totalTimePlayed = 0;
+		enemiesKilled = 0;
+		secondsLevel = 0;
+		ChunkManager.activeChunks.clear();
+		Enemy.activeEnemies.clear();
+		Enemy.enemies.clear();
 		// Dispose of the current window
 		window.dispose();
 		window.remove(gamePanel);
@@ -469,7 +485,7 @@ public class Main {
 		homePanel.getStartButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name = homePanel.getName();
+				String name = homePanel.getName().trim();
 				if (name.isBlank()) {
 					JOptionPane.showMessageDialog(window, "Please enter a name!");
 				} else if (name.length() > 10) {

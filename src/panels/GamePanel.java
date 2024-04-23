@@ -269,13 +269,14 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			keyH.leftPressed = false;
 			Main.updateTotalTimeAndEnemies();
 			if (current_level == NUM_LEVELS) {
+				Main.addScoreToLeader();
+				
+
+				Main.showFinalWinScreen(true);
 				//User won game
 				reset();
 				resetLevel();
-				Main.addScoreToLeader();
 				Main.resetTime();
-
-				Main.showFinalWinScreen(true);
 			} else {
 				//Go to next level.
 				Main.showNextLevelPanel(true);

@@ -141,11 +141,10 @@ public abstract class Enemy implements GameVariables {
 	 */
 	protected int roamingSpeed;
 
-	// TODO Figure out real number
 	/**
 	 * Tracks the hit count of our enemy
 	 */
-	private int hitCount = 3; // 3 hits to make an enemy die? change number?
+	private int hitCount = 3;
 
 	/**
 	 * All directions the enemy can move.
@@ -182,15 +181,10 @@ public abstract class Enemy implements GameVariables {
 	protected Map<State, List<BufferedImage>> images;
 
 	/**
-	 * TODO Comment this, idk what it does
+	 * Padding used when attacking, attacking images
+	 * are slightly different sizes. 
 	 */
 	protected int[] PADDING;
-
-	/**
-	 * Keeps track if enemy is chasing player, only used for drawing a line between
-	 * enemy and player TODO remove
-	 */
-	protected boolean chasing = false;
 
 	/** How many times the player is knocked back. */
 	private final int maxKnockbackCount = 10;
@@ -295,7 +289,6 @@ public abstract class Enemy implements GameVariables {
 		} else {
 			// If player is within the detection range, enemy should move towards the player
 			if (inRangeOfPlayer()) {
-				chasing = true;
 				final int[] newDeltas = newPosition();
 
 				final int dx = newDeltas[0];
@@ -309,7 +302,6 @@ public abstract class Enemy implements GameVariables {
 
 			} else {
 				GamePanel.ourPlayer.setGettingAttacked(false);
-				chasing = false;
 				changeState(roamingSpeed, 0);
 				roam();
 			}
@@ -667,12 +659,6 @@ public abstract class Enemy implements GameVariables {
 			facingLocked = false;
 			currentState = State.Idle;
 		}
-
-		// TODO remove
-//		g.setColor(Color.RED);
-//		g.drawRect(final_x, final_y, WIDTH, HEIGHT);
-//		if(chasing)
-//			g.drawLine(final_x + WIDTH/2, final_y + HEIGHT/2, PLAYER_X + PLAYER_WIDTH/2, PLAYER_Y + PLAYER_HEIGHT/2);
 	}
 
 	/**
