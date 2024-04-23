@@ -132,7 +132,7 @@ public class GameOverLOSE extends JPanel {
 		button.addMouseListener(new java.awt.event.MouseAdapter() {
 			@Override
 			public void mouseEntered(java.awt.event.MouseEvent evt) {
-				button.setForeground(Color.BLUE);
+				button.setForeground(Color.RED);
 				button.setBackground(Color.WHITE);
 			}
 
