@@ -1,6 +1,7 @@
 package sprites;
 
 import java.awt.image.BufferedImage;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +19,13 @@ public class MageFactory extends EnemyFactory {
 	/** Hold images (which should be the same for all Mages) */
 	static private Map<Enemy.State, List<BufferedImage>> images = new HashMap<>();
 
-	static private int NUMATTACKINGIMAGES = 6;
+	static private final int NUMATTACKINGIMAGES = 6;
 
+	static private final int NUMDEATHIMAGES = 6;
+	
 	static private int[] PADDING;
+	
+	static public BufferedImage finalDeathImage;
 
 	private MageFactory() {
 		// Store the padding for each enemy within it's factory class.
@@ -47,7 +52,7 @@ public class MageFactory extends EnemyFactory {
 
 	@Override
 	public Enemy createEnemy(int x, int y) {
-		return new Mage(x, y, images, PADDING, NUMATTACKINGIMAGES);
+		return new Mage(x, y, images, PADDING, NUMATTACKINGIMAGES, finalDeathImage);
 	}
 
 	@Override
@@ -55,13 +60,17 @@ public class MageFactory extends EnemyFactory {
 		final String character_name = "Mage";
 		final String FILE_LOCATION = "Textures/Mage/";
 		int imageNumber = 3; // This is the number of images in the spriteSheet
-		int imageNumber2 = 6; // Idle and Move differ from Attack and Dead
 
 		// Load a sprite sheet for each player state
 		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Idle, imageNumber, images);
 		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Move, imageNumber, images);
 		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Attack, NUMATTACKINGIMAGES, images);
-		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Dead, imageNumber2, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Dead, NUMDEATHIMAGES, images);
+		set_final_death_image();
 	}
 
+	private void set_final_death_image() {
+		finalDeathImage = images.get(Enemy.State.Dead).get(NUMDEATHIMAGES - 1);
+	}
+	
 }
