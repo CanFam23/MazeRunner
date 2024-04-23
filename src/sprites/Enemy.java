@@ -200,7 +200,7 @@ public abstract class Enemy implements GameVariables {
 
 	/** Used to check if player should be knocked back. */
 	private boolean knockback = false;
-
+	
 	/** Keeps track of how many times player is knocked back. */
 	private int knockbackCounter = 0;
 
@@ -605,7 +605,7 @@ public abstract class Enemy implements GameVariables {
 				Main.addTime = true;
 				GamePanel.ourPlayer.setGettingAttacked(false);
 				drawCount = 0;
-			}
+			} 
 		}
 	}
 
@@ -640,8 +640,9 @@ public abstract class Enemy implements GameVariables {
 	 * Draw the enemy to the screen.
 	 *
 	 * @param g Graphics2D object used for drawing.
+	 * @return 
 	 */
-	public synchronized void draw(Graphics2D g) {
+	public synchronized boolean draw(Graphics2D g) {
 		// Store position based on movement of the map
 		final int final_x = ChunkManager.xOffset + position_x;
 		final int final_y = ChunkManager.yOffset + position_y;
@@ -677,8 +678,7 @@ public abstract class Enemy implements GameVariables {
 			images.get(currentState).add(img); // Add the current image to the back of the list.
 			drawCount = 0;
 			if (currentState == State.Dead && img == finalDeathImage) {
-				enemies.remove(this);
-				activeEnemies.remove(this);
+				return true;
 			}
 		}
 		if (attackCount >= (DRAW_FRAMES + 1) * NUMATTACKINGIMAGES) {
@@ -687,7 +687,8 @@ public abstract class Enemy implements GameVariables {
 			facingLocked = false;
 			currentState = State.Idle;
 		}
-
+		return false;
+		
 		// TODO remove
 //		g.setColor(Color.RED);
 //		g.drawRect(final_x, final_y, WIDTH, HEIGHT);

@@ -9,7 +9,9 @@ import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -557,9 +559,19 @@ public class ChunkManager implements GameVariables {
 	 * @param g2d The 2D graphics to draw on.
 	 */
 	public synchronized void drawEnemies(Graphics2D g2d) {
+		final List<Enemy> toRemove = new ArrayList<Enemy>();
+		
 		for (Enemy e : Enemy.activeEnemies) {
-			e.draw(g2d);
+			if (e.draw(g2d)) {
+				toRemove.add(e);
+			}
 		}
+		
+		for (Enemy e : toRemove) {
+			Enemy.activeEnemies.remove(e);
+			Enemy.enemies.remove(e);
+		}
+		
 	}
 
 	/**
