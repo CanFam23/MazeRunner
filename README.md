@@ -1,4 +1,3 @@
-## Links dont work right now
 <a name="readme-top"></a>
 
 # MazeRunner
