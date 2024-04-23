@@ -18,7 +18,11 @@ public class GhostFactory extends EnemyFactory {
 	/** Hold images (which should be the same for all Ghosts) */
 	static private Map<Enemy.State, List<BufferedImage>> images = new HashMap<>();
 
-	static private int NUMATTACKINGIMAGES = 10;
+	static private final int NUMATTACKINGIMAGES = 10;
+	
+	static private final int NUMDEATHIMAGES = 4;
+	
+	static private BufferedImage finalDeathImage;
 
 	private GhostFactory() {
 		// Store the padding for each enemy within it's factory class.
@@ -45,7 +49,7 @@ public class GhostFactory extends EnemyFactory {
 
 	@Override
 	public Enemy createEnemy(int x, int y) {
-		return new Ghost(x, y, images, PADDING, NUMATTACKINGIMAGES);
+		return new Ghost(x, y, images, PADDING, NUMATTACKINGIMAGES, finalDeathImage);
 	}
 
 	@Override
@@ -58,7 +62,11 @@ public class GhostFactory extends EnemyFactory {
 		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Idle, imageNumber, images);
 		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Move, imageNumber, images);
 		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Attack, NUMATTACKINGIMAGES, images);
-		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Dead, 4, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Dead, NUMDEATHIMAGES, images);
+		set_final_death_image();
 	}
-
+	
+	private void set_final_death_image() {
+		finalDeathImage = images.get(Enemy.State.Dead).get(NUMDEATHIMAGES - 1);
+	}
 }

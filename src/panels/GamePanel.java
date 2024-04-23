@@ -457,7 +457,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 * @param g2 Graphics to draw on.
 	 */
 	private void drawStats(Graphics2D g2) {
-		g2.setColor(Color.red);
+		g2.setColor(Color.WHITE);
 
 		// Set the custom font
 		g2.setFont(customFont);
