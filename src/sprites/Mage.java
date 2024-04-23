@@ -21,11 +21,12 @@ public class Mage extends Enemy {
 	 * @param PADDING      image padding to remove for non-moving images
 	 * @param attackImages the number of attacking images
 	 */
-	public Mage(int x, int y, Map<State, List<BufferedImage>> images, int[] PADDING, int attackImages) {
+	public Mage(int x, int y, Map<State, List<BufferedImage>> images, int[] PADDING, int attackImages, BufferedImage finalDeathImage) {
 		this.images = images;
 		this.PADDING = PADDING;
 		this.NUMATTACKINGIMAGES = attackImages;
 		this.damage = 2500;
+		this.finalDeathImage = finalDeathImage;
 		WIDTH = 70;
 		HEIGHT = 70;
 		position_x = x;
