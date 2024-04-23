@@ -637,10 +637,11 @@ public abstract class Enemy implements GameVariables {
 	}
 
 	/**
-	 * Draw the enemy to the screen.
+	 * Draw the enemy to the screen. Return true if the enemy should be removed from the enemy list. This
+	 * 	happens when the death animation moves through a full loop of the death images.
 	 *
 	 * @param g Graphics2D object used for drawing.
-	 * @return 
+	 * @return true if this enemy should be removed from the enemy list.
 	 */
 	public synchronized boolean draw(Graphics2D g) {
 		// Store position based on movement of the map
