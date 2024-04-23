@@ -63,6 +63,13 @@ public abstract class EnemyFactory {
 				BufferedImage img = spriteSheet.getSubimage(0, (height / imageNumber) * i, width, height / imageNumber);
 				images.get(playerState).add(img);
 			}
+		} else if (playerState == sprites.Enemy.State.Dead) {
+			for (int i = imageNumber - 1; i >= 0; i--) {
+				BufferedImage img = spriteSheet.getSubimage(LEFT_PADDING, (height / imageNumber) * i + TOP_PADDING,
+						(width - LEFT_PADDING) - RIGHT_PADDING,
+						((height / imageNumber) - TOP_PADDING) - BOTTOM_PADDING);
+				images.get(playerState).add(img);
+			}
 		} else {
 			for (int i = 0; i < imageNumber; i++) {
 				BufferedImage img = spriteSheet.getSubimage(LEFT_PADDING, (height / imageNumber) * i + TOP_PADDING,

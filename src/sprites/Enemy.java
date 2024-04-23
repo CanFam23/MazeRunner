@@ -180,6 +180,9 @@ public abstract class Enemy implements GameVariables {
 	 * 'Facing' except for being flipped left and right.
 	 */
 	protected Map<State, List<BufferedImage>> images;
+	
+	/** Holds the final death image which will be used to end the enemy death animation. */
+	protected BufferedImage finalDeathImage;
 
 	/**
 	 * TODO Comment this, idk what it does
@@ -365,6 +368,15 @@ public abstract class Enemy implements GameVariables {
 				currentFacing = Facing.W;
 			}
 		}
+	}
+	
+	/**
+	 * What is the current state of our enemy?
+	 * 
+	 * @return the current state of our enemy.
+	 */
+	public State getState() {
+		return currentState;
 	}
 
 	/**
@@ -585,11 +597,15 @@ public abstract class Enemy implements GameVariables {
 	public void subtractHitCount(int amount) {
 		hitCount -= amount;
 		if (hitCount <= 0) {
-			GamePanel.ourPlayer.setGettingAttacked(false);
-			enemies.remove(this);
-			activeEnemies.remove(this);
-			Main.addTime = true;
-			Main.enemyKilled();
+			if (currentState != State.Dead) {
+				stateLocked = true;
+				facingLocked = true;
+				currentState = State.Dead;
+				Main.enemyKilled();
+				Main.addTime = true;
+				GamePanel.ourPlayer.setGettingAttacked(false);
+				drawCount = 0;
+			}
 		}
 	}
 
@@ -625,7 +641,7 @@ public abstract class Enemy implements GameVariables {
 	 *
 	 * @param g Graphics2D object used for drawing.
 	 */
-	public void draw(Graphics2D g) {
+	public synchronized void draw(Graphics2D g) {
 		// Store position based on movement of the map
 		final int final_x = ChunkManager.xOffset + position_x;
 		final int final_y = ChunkManager.yOffset + position_y;
@@ -660,6 +676,10 @@ public abstract class Enemy implements GameVariables {
 			}
 			images.get(currentState).add(img); // Add the current image to the back of the list.
 			drawCount = 0;
+			if (currentState == State.Dead && img == finalDeathImage) {
+				enemies.remove(this);
+				activeEnemies.remove(this);
+			}
 		}
 		if (attackCount >= (DRAW_FRAMES + 1) * NUMATTACKINGIMAGES) {
 			attackCount = 0;

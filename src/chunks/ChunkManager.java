@@ -452,7 +452,9 @@ public class ChunkManager implements GameVariables {
 
 		// Move enemies that are active
 		for (Enemy e : Enemy.activeEnemies) {
-			e.move();
+			if (e.getState() != State.Dead) {
+				e.move();
+			}
 		}
 	}
 	

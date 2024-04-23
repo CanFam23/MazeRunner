@@ -21,11 +21,12 @@ public class Ghost extends Enemy {
 	 * @param PADDING      image padding to remove for non-moving images
 	 * @param attackImages the number of attacking images
 	 */
-	public Ghost(int x, int y, Map<State, List<BufferedImage>> images, int[] PADDING, int attackImages) {
+	public Ghost(int x, int y, Map<State, List<BufferedImage>> images, int[] PADDING, int attackImages, BufferedImage finalDeathImage) {
 		this.images = images;
 		this.PADDING = PADDING;
 		this.NUMATTACKINGIMAGES = attackImages;
 		this.damage = 2000;
+		this.finalDeathImage = finalDeathImage;
 		WIDTH = 60;
 		HEIGHT = 60;
 		position_x = x;
