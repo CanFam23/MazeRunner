@@ -2,7 +2,7 @@ package gameTools;
 
 /**
  * <p>
- * This class is used to store the two collision functions we use for our game,
+ * Stores the two collision functions we use for our game,
  * MazeRunner. We put these files in a separate class and made them static, so
  * other classes can use them without needed their own methods or having to
  * create a CollisionDetection object.

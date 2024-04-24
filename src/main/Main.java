@@ -1,6 +1,9 @@
 package main;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -128,6 +131,21 @@ public class Main {
 	 * Number of enemies killed for current level.
 	 */
 	public static int enemiesKilled = 0;
+	
+    /**
+     * Create a transparent cursor. Used when player is player the game, so the cursor
+     * disappears from the screen.
+     */
+    private static final Cursor transparentCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+            new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
+            new Point(),
+            "InvisibleCursor");
+    
+    /**
+     * Default Cursor, used when player is in between levels or at home/end screen.
+     */
+    private static final Cursor defaultCursor = Cursor.getDefaultCursor();
+
 
 	/**
 	 * Main method to start the game.
@@ -145,6 +163,7 @@ public class Main {
 		window.pack();
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
+
 
 		// Add action listener to the button in HomeScreen
 		homePanel.getStartButton().addActionListener(new ActionListener() {
@@ -264,16 +283,13 @@ public class Main {
 			public void windowClosing(WindowEvent e) {
 				System.out.println("Average FPS: " + gamePanel.getFPS());
 				GamePanel.stopLoop();
-				// Check if user has won at least once.
-				if (!gamePanel.hasWon()) {
-					JOptionPane.showMessageDialog(window, "Why didn't you finish the game???");
-					System.exit(0);
-				}
 				window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				window.dispose(); // Close the window
-
+				System.exit(0);
 			}
 		});
+		
+		window.setCursor(transparentCursor);
 
 		// starts game
 		gamePanel.startGameThread();
@@ -342,8 +358,12 @@ public class Main {
 
 	/**
 	 * Disables the other panels and displays the "Next Level" game panel
+	 * 
+	 * @param show If next level screen should be displayed.
 	 */
 	public static void showNextLevelPanel(boolean show) {
+		window.setCursor(defaultCursor);
+		
 		window.setVisible(true);
 		window.getContentPane().add(nextLevel);
 		
@@ -362,6 +382,8 @@ public class Main {
 	 * Disables the other panels and displays the main game panel
 	 */
 	public static void showGamePanel() {
+		window.setCursor(transparentCursor);
+		
 		window.setVisible(true);
 		timeOut.setVisible(false);
 		window.getContentPane().add(gamePanel);
@@ -376,8 +398,12 @@ public class Main {
 	/**
 	 * Disables the other panels and displays the "Game Over" game panel, when
 	 * player runs out of time
+	 * 
+	 * @param show If game over screen should be displayed.
 	 */
 	public static void gameOverPanel(boolean show) {
+		window.setCursor(defaultCursor);
+		
 		final String formattedString = String.format("Failed to complete the level in 120 seconds");
 		window.setTitle(formattedString);
 		window.setVisible(true);
@@ -393,8 +419,12 @@ public class Main {
 
 	/**
 	 * Disables the other panels and displays the "You win" game panel
+	 * 
+	 * @param show If final win screen should be displayed.
 	 */
 	public static void showFinalWinScreen(boolean show) {
+		window.setCursor(defaultCursor);
+
 		final String formattedString = String.format("YOU WIN");
 		
 		//leaderboard.updateleaderboardFile();
@@ -411,6 +441,8 @@ public class Main {
 
 	/**
 	 * Returns true if the next level panel is still running and being seen
+	 * 
+	 * @return true if gameOver is running
 	 */
 	public static boolean otherPanelRunning() {
 		if (nextLevel.isGameOverRunning()) {
@@ -440,6 +472,12 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Calculates the score of the player. The score is based off of how many enemies killed
+	 * and the total time played.
+	 * 
+	 * @return The current score for the player.
+	 */
 	public static int calculateScore() {
 		return MAX_SCORE + totalTimePlayed - (totalEnemiesKilled * 15);
 	}

@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities;
 
 /**
  * <p>
- * This class handles key events. Implements KeyListener
+ * Handles key events.
  * </p>
  *
  * @author Nick Clouse
@@ -21,8 +21,6 @@ import javax.swing.SwingUtilities;
  * @author Molly O'Connor
  *
  * @since Febuary 20, 2024
- *
- * @see KeyListener
  */
 public class KeyHandler implements KeyListener {
 

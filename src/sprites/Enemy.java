@@ -843,7 +843,7 @@ public abstract class Enemy implements GameVariables {
 			}
 		}
 
-		cmanager.updateCoords(-WALL_WIDTH * 3, 0);
+		cmanager.updateCoords(-WALL_WIDTH * 3, -WALL_HEIGHT);
 		cmanager.updateEnemies();
 
 		// Move enemies
@@ -851,7 +851,7 @@ public abstract class Enemy implements GameVariables {
 			e.move();
 
 		}
-
+	
 		// Testing some methods again now that the enemies are closer to the player
 
 		// Testing inRangeOfPlayer
@@ -902,10 +902,9 @@ public abstract class Enemy implements GameVariables {
 		tester.resetKnockback();
 		tester.move();
 		final int[] newMoveCoords = tester.getPosition();
-		// Since we reset the knockback, and the enemy is already right next to the
-		// player, it shouldn't move.
-		if (newMoveCoords[0] != postKnockbackCoords[0] && newMoveCoords[1] != postKnockbackCoords[1]) {
-			System.err.println("Enemy move when it shouldn't have!");
+		// Enemy should move towards player
+		if (newMoveCoords[0] == postKnockbackCoords[0] && newMoveCoords[1] == postKnockbackCoords[1]) {
+			System.err.println("Enemy didn't move when it should have!");
 			allPassed = false;
 		}
 
