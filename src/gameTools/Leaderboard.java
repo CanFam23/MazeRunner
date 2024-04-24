@@ -11,8 +11,7 @@ import java.util.Scanner;
 
 /**
  * <p>
- * Leaderboard is used to load and update the leaderboards for each level, and
- * the leaderboard that tracks the fastest times to complete the game.
+ * Loads and updates the leaderboard that tracks the fastest times to complete the game.
  * </p>
  *
  * @author Nick Clouse
@@ -185,6 +184,8 @@ public class Leaderboard implements GameVariables {
 
 	/**
 	 * Loads the leaderboard under the file name.
+	 * 
+	 * @param fileName The file to use.
 	 */
 	public void loadleaderboard(String fileName) {
 		try (final Scanner input = new Scanner(new File(fileName))) {

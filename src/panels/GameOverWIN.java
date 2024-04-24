@@ -36,29 +36,9 @@ import main.Main;
  *
  * @since February 28, 2024
  */
-public class GameOverWIN extends JPanel {
-	/**
-	 * Serial Version UID
-	 */
-	private static final long serialVersionUID = 8986657739517647875L;
+public class GameOverWIN extends Screen {
 
-	/**
-	 * Background image for panel
-	 */
-	private BufferedImage backgroundImage;
-
-	/**
-	 * Indicates whether the game over panel is running or not.
-	 */
-	private boolean isRunning = true;
-
-	private JPanel mainPanel;
-	private JPanel scoreboardPanel;
-	private JPanel currentPanel;
-	private JButton nextLevelButton;
-	private JButton exitButton;
-	private JButton scoreButton;
-	private JButton backButton;
+	private static final long serialVersionUID = -275253873056634627L;
 
 	/**
 	 * Constructs new GameOverWIN panel
@@ -81,14 +61,12 @@ public class GameOverWIN extends JPanel {
 
 	}
 	
-	public void updatePanel() {
-		remove(mainPanel);
-		mainPanel = createMainPanel();
-		add(mainPanel,BorderLayout.CENTER);
-		currentPanel = mainPanel;
-	}
-	
-	private JPanel createMainPanel() {
+	/**
+	 * Creates the main panel.
+	 * 
+	 * @return The main JPanel.
+	 */
+	protected JPanel createMainPanel() {
 		final JPanel panel = new JPanel() {
 	        private static final long serialVersionUID = -3229646309021769985L;
 
@@ -185,146 +163,10 @@ public class GameOverWIN extends JPanel {
 	    return panel;
 	}
 
-	private JButton createButton(String text) {
-		final Dimension buttonSize = new Dimension(225, 50);
-		final JButton button = new JButton(text);
-		button.setPreferredSize(buttonSize);
-		button.setFont(new Font("Monospaced", Font.PLAIN, 24));
-		button.setForeground(Color.WHITE);
-		button.setBackground(Color.BLACK);
-		button.setFocusable(false);
-
-		// Set the content area background color
-		button.setContentAreaFilled(false);
-		button.setOpaque(false);
-
-		// Create a line border with white color and 2 pixels thickness
-		final Color brighterPurple = new Color(120, 0, 200); // Adjusted RGB values for brighter purple
-		final Border border = BorderFactory.createLineBorder(brighterPurple, 1);
-
-		// Set the border for the button
-		button.setBorder(border);
-
-		button.addMouseListener(new java.awt.event.MouseAdapter() {
-			@Override
-			public void mouseEntered(java.awt.event.MouseEvent evt) {
-				button.setForeground(Color.RED);
-				button.setBackground(Color.WHITE);
-			}
-
-			@Override
-			public void mouseExited(java.awt.event.MouseEvent evt) {
-				button.setForeground(Color.WHITE);
-			}
-		});
-
-		if (text.equals("SCOREBOARD")) {
-	            button.addActionListener(e -> showScoreboardPanel());
-		}
-
-		if (text.equals("NEXT LEVEL")) {
-			button.addActionListener(e -> setIsGameOverRunning(false));
-		}
-
-		if (text.equals("EXIT")) {
-			button.addActionListener(e -> System.exit(0));
-		}
-		return button;
-	}
-	
-	private JPanel createScoreboardPanel() {
-		final JPanel panel = new JPanel(new BorderLayout());
-		panel.setBackground(Color.BLACK);
-
-		// Create panel for the instructions box
-		final JPanel scoreboardBoxPanel = new JPanel(new BorderLayout());
-		scoreboardBoxPanel.setBackground(Color.BLACK);
-		scoreboardBoxPanel.setBorder(BorderFactory.createEmptyBorder(25, 50, 50, 50)); // Add padding
-
-		final String levelName = Main.leaderboard.getleaderboardName();
-		final String[] entries = Main.leaderboard.leaderboardToString();
-
-		String scoreboard = "<html>";
-		scoreboard += "<br>" + levelName + "<br>";
-
-		for (int i = 0; i < entries.length; i++) {
-			scoreboard += "<br>" + (i + 1) + ". " + entries[i] + "<br>";
-		}
-		scoreboard += "<html>";
-
-		// Create label for scoreboard text
-		final JLabel scoreboardLabel = new JLabel(scoreboard);
-		scoreboardLabel.setForeground(Color.WHITE);
-		scoreboardLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
-		scoreboardLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		scoreboardLabel.setVerticalAlignment(SwingConstants.TOP); // Align text to the top
-
-		final JLabel scoreboardTxtLabel = new JLabel(
-				"<html><br>-The leaderboard keeps track of the fastest time (In seconds) it takes"
-						+ " to complete all 3 levels.<br>"
-						+ "<br>-Want to be among the greats? Go back to the home page and play again!<br><html>");
-		scoreboardTxtLabel.setForeground(Color.WHITE);
-		scoreboardTxtLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
-		scoreboardTxtLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		scoreboardTxtLabel.setVerticalAlignment(SwingConstants.CENTER); // Align text to the top
-
-		// Add instructions label to the center of the instructions box panel
-		scoreboardBoxPanel.add(scoreboardLabel, BorderLayout.NORTH);
-		scoreboardBoxPanel.add(scoreboardTxtLabel, BorderLayout.CENTER);
-
-		// Create exit button
-		backButton = createButton("BACK");
-
-		backButton.addActionListener(e -> showMainPanel());
-
-		// Create a panel to hold the back button and center it
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		buttonPanel.setBackground(Color.BLACK);
-		buttonPanel.add(backButton);
-
-		// Add button panel to the bottom of the instructions box panel
-		scoreboardBoxPanel.add(buttonPanel, BorderLayout.SOUTH);
-		// Add instructions box panel to the center of the main panel
-		panel.add(scoreboardBoxPanel, BorderLayout.CENTER);
-
-		return panel;
-	}
 	/**
-	 * Returns true if the game over panel is running, false otherwise.
-	 */
-	public boolean isGameOverRunning() {
-		return isRunning;
-	}
-
-	/**
-	 * Returns true if the game over panel is running, false otherwise.
-	 */
-	public void setIsGameOverRunning(boolean t) {
-		isRunning = t;
-	}
-	
-	private void showScoreboardPanel() {
-		remove(mainPanel);
-		add(scoreboardPanel, BorderLayout.CENTER);
-		currentPanel = scoreboardPanel;
-		revalidate();
-		repaint();
-		scoreButton.setForeground(Color.WHITE);
-	}
-	
-	private void showMainPanel() {
-		backButton.setForeground(Color.WHITE);
-		remove(currentPanel);
-		currentPanel = mainPanel;
-		add(mainPanel, BorderLayout.CENTER);
-		revalidate();
-		repaint();
-	}
-
-	/**
-	* Main method
+	* Main method, used for testing.
 	*
-	* @param args arguements passed
+	* @param args arguements passed.
 	*/
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("Next Level Test");
