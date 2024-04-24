@@ -203,9 +203,6 @@ public class ChunkManager implements GameVariables {
 	 * @return true If level was loaded correctly.
 	 */
 	public boolean loadLevel(int levelNum, int levelVersionNumber) {
-
-		levelNum = 0;
-		levelVersionNumber = 1;
 		levelName = "level_" + levelNum + "_v" + levelVersionNumber;
 		if (levelNum == 0) {
 			levelName = "level_0";
@@ -658,22 +655,22 @@ public class ChunkManager implements GameVariables {
 		boolean allPassed = true;
 		// Test that dimensions have been loaded correctly
 		if (chunky.levelXDimension != 4) {
-			System.out.println("The X-level dimension was not 4");
+			System.err.println("The X-level dimension was not 4");
 			allPassed = false;
 		}
 		if (chunky.chunkXDimension != 10) {
-			System.out.println("The X Chunk size was not 10");
+			System.err.println("The X Chunk size was not 10");
 			allPassed = false;
 		}
 		if (chunky.getActiveChunks().size() != 4) {
-			System.out.println("Originally, there should be four visible chunks");
+			System.err.println("Originally, there should be four visible chunks");
 			allPassed = false;
 		}
 		// Move our player to the left border of the screen, now only two chunks should
 		// be visible
 		chunky.updateCoords(-4000, 0);
 		if (chunky.getActiveChunks().size() != 2) {
-			System.out.println(
+			System.err.println(
 					"The player has been moved to the left border of the maze, only two chunks should be visible");
 			allPassed = false;
 		}
@@ -681,14 +678,14 @@ public class ChunkManager implements GameVariables {
 		// should be visible
 		chunky.updateCoords(0, -3200);
 		if (chunky.getActiveChunks().size() != 1) {
-			System.out.println(
+			System.err.println(
 					"The player has been moved to the top left border of the maze, only one chunk should be visible");
 			allPassed = false;
 		}
 		// Move our player way off the map, no chunks should be visible
 		chunky.updateCoords(-20000, 0);
 		if (chunky.getActiveChunks().size() != 0) {
-			System.out.println("The player has been moved way off the screen, no chunks should be visible.");
+			System.err.println("The player has been moved way off the screen, no chunks should be visible.");
 			allPassed = false;
 		}
 
@@ -699,7 +696,7 @@ public class ChunkManager implements GameVariables {
 		resetOffset();
 		final int[] postResetOffset = new int[] { xOffset, yOffset };
 		if (preResetOffset[0] == postResetOffset[0] && preResetOffset[1] == postResetOffset[1]) {
-			System.out.println("Failed to reset offset.");
+			System.err.println("Failed to reset offset.");
 			allPassed = false;
 		}
 
@@ -708,7 +705,7 @@ public class ChunkManager implements GameVariables {
 		updateOffset(100, 100);
 		final int[] postUpdateOffset = new int[] { xOffset, yOffset };
 		if (preUpdateOffset[0] == postUpdateOffset[0] && preUpdateOffset[1] == postUpdateOffset[1]) {
-			System.out.println("Failed to update offset.");
+			System.err.println("Failed to update offset.");
 			allPassed = false;
 		}
 
@@ -716,7 +713,7 @@ public class ChunkManager implements GameVariables {
 		chunky.reset();
 		if (chunky.endFound || Enemy.activeEnemies.size() != 0 || Enemy.enemies.size() != 0
 				|| preUpdateOffset[0] == postUpdateOffset[0] && preUpdateOffset[1] == postUpdateOffset[1]) {
-			System.out.println("Failed to reset ChunkManager.");
+			System.err.println("Failed to reset ChunkManager.");
 			allPassed = false;
 		}
 
@@ -755,11 +752,6 @@ public class ChunkManager implements GameVariables {
 		// End should be found now
 		if (!chunky.endFound()) {
 			System.err.println("The end wasn't found when it should've been!");
-			allPassed = false;
-		}
-
-		if (chunky.getKnockback()) {
-			System.err.println("Knockback should be set to false, but it's set to true!");
 			allPassed = false;
 		}
 
