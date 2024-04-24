@@ -131,21 +131,18 @@ public class Main {
 	 * Number of enemies killed for current level.
 	 */
 	public static int enemiesKilled = 0;
-	
-    /**
-     * Create a transparent cursor. Used when player is player the game, so the cursor
-     * disappears from the screen.
-     */
-    private static final Cursor transparentCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-            new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
-            new Point(),
-            "InvisibleCursor");
-    
-    /**
-     * Default Cursor, used when player is in between levels or at home/end screen.
-     */
-    private static final Cursor defaultCursor = Cursor.getDefaultCursor();
 
+	/**
+	 * Create a transparent cursor. Used when player is player the game, so the
+	 * cursor disappears from the screen.
+	 */
+	private static final Cursor transparentCursor = Toolkit.getDefaultToolkit()
+			.createCustomCursor(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB), new Point(), "InvisibleCursor");
+
+	/**
+	 * Default Cursor, used when player is in between levels or at home/end screen.
+	 */
+	private static final Cursor defaultCursor = Cursor.getDefaultCursor();
 
 	/**
 	 * Main method to start the game.
@@ -163,7 +160,6 @@ public class Main {
 		window.pack();
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
-
 
 		// Add action listener to the button in HomeScreen
 		homePanel.getStartButton().addActionListener(new ActionListener() {
@@ -288,7 +284,7 @@ public class Main {
 				System.exit(0);
 			}
 		});
-		
+
 		window.setCursor(transparentCursor);
 
 		// starts game
@@ -363,17 +359,17 @@ public class Main {
 	 */
 	public static void showNextLevelPanel(boolean show) {
 		window.setCursor(defaultCursor);
-		
+
 		window.setVisible(true);
 		window.getContentPane().add(nextLevel);
-		
+
 		nextLevel.updatePanel();
-		
+
 		nextLevel.requestFocusInWindow();
 		nextLevel.setVisible(show);
 		nextLevel.setFocusable(show);
 		nextLevel.setVisible(true);
-		nextLevel.setIsGameOverRunning(true);
+		nextLevel.setRunning(true);
 		gamePanel.setVisible(false);
 		homePanel.setVisible(false);
 	}
@@ -383,7 +379,7 @@ public class Main {
 	 */
 	public static void showGamePanel() {
 		window.setCursor(transparentCursor);
-		
+
 		window.setVisible(true);
 		timeOut.setVisible(false);
 		window.getContentPane().add(gamePanel);
@@ -403,7 +399,7 @@ public class Main {
 	 */
 	public static void gameOverPanel(boolean show) {
 		window.setCursor(defaultCursor);
-		
+
 		final String formattedString = String.format("Failed to complete the level in 120 seconds");
 		window.setTitle(formattedString);
 		window.setVisible(true);
@@ -426,8 +422,8 @@ public class Main {
 		window.setCursor(defaultCursor);
 
 		final String formattedString = String.format("YOU WIN");
-		
-		//leaderboard.updateleaderboardFile();
+
+		// leaderboard.updateleaderboardFile();
 		winner.updatePanel();
 		window.setTitle(formattedString);
 		window.setVisible(true);
@@ -445,7 +441,7 @@ public class Main {
 	 * @return true if gameOver is running
 	 */
 	public static boolean otherPanelRunning() {
-		if (nextLevel.isGameOverRunning()) {
+		if (nextLevel.isRunning()) {
 			return true;
 		} else {
 			return false;
@@ -471,10 +467,10 @@ public class Main {
 			addedToLeaderboard = true;
 		}
 	}
-	
+
 	/**
-	 * Calculates the score of the player. The score is based off of how many enemies killed
-	 * and the total time played.
+	 * Calculates the score of the player. The score is based off of how many
+	 * enemies killed and the total time played.
 	 * 
 	 * @return The current score for the player.
 	 */
@@ -518,6 +514,9 @@ public class Main {
 		window.pack();
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
+
+		gamePanel.resetLevel();
+		gamePanel.reset();
 
 		// Add action listener to the button in HomeScreen
 		homePanel.getStartButton().addActionListener(new ActionListener() {

@@ -3,25 +3,21 @@ package panels;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
-import javax.swing.border.Border;
 
 import main.Main;
 
@@ -39,6 +35,9 @@ import main.Main;
  * @since February 28, 2024
  */
 public class GameOverLOSE extends Screen {
+	/**
+	 * Default serial version UID.
+	 */
 	private static final long serialVersionUID = -6221325201334468759L;
 
 	/**
@@ -54,7 +53,7 @@ public class GameOverLOSE extends Screen {
 		}
 
 		setLayout(new BorderLayout());
-		
+
 		mainPanel = createMainPanel();
 		scoreboardPanel = createScoreboardPanel();
 
@@ -78,64 +77,63 @@ public class GameOverLOSE extends Screen {
 				g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
 			}
 		};
-		
-		final Font f  = new Font("Monospaced", Font.PLAIN, 17);
-	    panel.setLayout(new BorderLayout()); // Set BorderLayout for the main panel
 
-	    final JPanel statsPanel = new JPanel();
-        statsPanel.setBackground(Color.BLACK);
-        statsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // top, left, bottom, right
-        statsPanel.setLayout(new GridBagLayout());
+		final Font f = new Font("Monospaced", Font.PLAIN, 17);
+		panel.setLayout(new BorderLayout()); // Set BorderLayout for the main panel
 
-        final JLabel enemiesKilled = new JLabel("Enemies Killed: " + Main.enemiesKilled);
-	    enemiesKilled.setForeground(Color.WHITE);
-	    enemiesKilled.setFont(f);
-	    enemiesKilled.setHorizontalAlignment(SwingConstants.CENTER);
-	    
-	    final JLabel totalEnemiesKilled = new JLabel("Total Enemies Killed: " +  Main.totalEnemiesKilled);
-	    totalEnemiesKilled.setForeground(Color.WHITE);
-	    totalEnemiesKilled.setFont(f);
-	    totalEnemiesKilled.setHorizontalAlignment(SwingConstants.CENTER);
-	    
-	    final JLabel timeLevel = new JLabel("Level time: " + Main.secondsLevel + " seconds");
-	    timeLevel.setForeground(Color.WHITE);
-	    timeLevel.setFont(f);
-	    timeLevel.setHorizontalAlignment(SwingConstants.CENTER);
-	    
-	    final JLabel timeTotal = new JLabel("Total Time: " + Main.totalTimePlayed + " seconds");
-	    timeTotal.setForeground(Color.WHITE);
-	    timeTotal.setFont(f);
-	    timeTotal.setHorizontalAlignment(SwingConstants.CENTER);
-	    
-	    final JLabel score = new JLabel("Final Score: " + Main.calculateScore());
-	    score.setForeground(Color.WHITE);
-	    score.setFont(f);
-	    score.setHorizontalAlignment(SwingConstants.CENTER);
-	    
+		final JPanel statsPanel = new JPanel();
+		statsPanel.setBackground(Color.BLACK);
+		statsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // top, left, bottom, right
+		statsPanel.setLayout(new GridBagLayout());
 
-	    // Create constraints
-        final GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0; // Expand horizontally
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+		final JLabel enemiesKilled = new JLabel("Enemies Killed: " + Main.enemiesKilled);
+		enemiesKilled.setForeground(Color.WHITE);
+		enemiesKilled.setFont(f);
+		enemiesKilled.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Add labels to the panel
-        statsPanel.add(enemiesKilled, gbc);
-        gbc.gridx++;
-        statsPanel.add(timeLevel, gbc);
-        gbc.gridy++;
-        gbc.gridx--;
-        statsPanel.add(totalEnemiesKilled, gbc);
-        gbc.gridx++;
-        statsPanel.add(timeTotal, gbc);
-        gbc.gridx = 0;
+		final JLabel totalEnemiesKilled = new JLabel("Total Enemies Killed: " + Main.totalEnemiesKilled);
+		totalEnemiesKilled.setForeground(Color.WHITE);
+		totalEnemiesKilled.setFont(f);
+		totalEnemiesKilled.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Center the score label in the column below the last one with text
-        gbc.gridy += 2; // Skip one row to move below the last row with text
-        gbc.gridwidth = 2; // Make the score label span 2 columns
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Reset fill to horizontally center the score label
-        statsPanel.add(score, gbc);
+		final JLabel timeLevel = new JLabel("Level time: " + Main.secondsLevel + " seconds");
+		timeLevel.setForeground(Color.WHITE);
+		timeLevel.setFont(f);
+		timeLevel.setHorizontalAlignment(SwingConstants.CENTER);
+
+		final JLabel timeTotal = new JLabel("Total Time: " + Main.totalTimePlayed + " seconds");
+		timeTotal.setForeground(Color.WHITE);
+		timeTotal.setFont(f);
+		timeTotal.setHorizontalAlignment(SwingConstants.CENTER);
+
+		final JLabel score = new JLabel("Final Score: " + Main.calculateScore());
+		score.setForeground(Color.WHITE);
+		score.setFont(f);
+		score.setHorizontalAlignment(SwingConstants.CENTER);
+
+		// Create constraints
+		final GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.weightx = 1.0; // Expand horizontally
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+
+		// Add labels to the panel
+		statsPanel.add(enemiesKilled, gbc);
+		gbc.gridx++;
+		statsPanel.add(timeLevel, gbc);
+		gbc.gridy++;
+		gbc.gridx--;
+		statsPanel.add(totalEnemiesKilled, gbc);
+		gbc.gridx++;
+		statsPanel.add(timeTotal, gbc);
+		gbc.gridx = 0;
+
+		// Center the score label in the column below the last one with text
+		gbc.gridy += 2; // Skip one row to move below the last row with text
+		gbc.gridwidth = 2; // Make the score label span 2 columns
+		gbc.fill = GridBagConstraints.HORIZONTAL; // Reset fill to horizontally center the score label
+		statsPanel.add(score, gbc);
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setBackground(Color.BLACK);
@@ -147,7 +145,7 @@ public class GameOverLOSE extends Screen {
 
 		buttonPanel.add(exitButton);
 		buttonPanel.add(againButton);
-		buttonPanel.add(scoreButton); 
+		buttonPanel.add(scoreButton);
 
 		// Add buttons with horizontal gap of 20 pixels
 		buttonPanel.add(exitButton);
@@ -157,16 +155,16 @@ public class GameOverLOSE extends Screen {
 		buttonPanel.add(scoreButton);
 
 		// Create a Box container with vertical orientation
-	    final Box box = Box.createVerticalBox();
-	    
-	    // Add statsPanel and buttonPanel to the Box container
-	    box.add(statsPanel);
-	    box.add(buttonPanel);
+		final Box box = Box.createVerticalBox();
 
-	    // Add the Box container to the main panel in BorderLayout.SOUTH
-	    panel.add(box, BorderLayout.SOUTH);
+		// Add statsPanel and buttonPanel to the Box container
+		box.add(statsPanel);
+		box.add(buttonPanel);
 
-	    return panel;
+		// Add the Box container to the main panel in BorderLayout.SOUTH
+		panel.add(box, BorderLayout.SOUTH);
+
+		return panel;
 
 	}
 

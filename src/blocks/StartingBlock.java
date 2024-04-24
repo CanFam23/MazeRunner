@@ -18,7 +18,9 @@ import java.awt.image.VolatileImage;
  * @since March 2, 2024
  */
 public class StartingBlock extends PositionBlock {
-
+	/**
+	 * Image for all starting blocks.
+	 */
 	private static VolatileImage image;
 
 	/**
@@ -34,7 +36,8 @@ public class StartingBlock extends PositionBlock {
 	/**
 	 * Statically set the VolatileImage for all starting blocks.
 	 * 
-	 * @param positionBlockImage VolatileImage that will be used for all starting blocks.
+	 * @param positionBlockImage VolatileImage that will be used for all starting
+	 *                           blocks.
 	 */
 	public static void setImage(VolatileImage positionBlockImage) {
 		image = positionBlockImage;

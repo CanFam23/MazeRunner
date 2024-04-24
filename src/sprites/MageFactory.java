@@ -1,7 +1,6 @@
 package sprites;
 
 import java.awt.image.BufferedImage;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,14 +18,29 @@ public class MageFactory extends EnemyFactory {
 	/** Hold images (which should be the same for all Mages) */
 	static private Map<Enemy.State, List<BufferedImage>> images = new HashMap<>();
 
+	/**
+	 * Number of attacking images.
+	 */
 	static private final int NUMATTACKINGIMAGES = 6;
 
+	/**
+	 * Number of death images.
+	 */
 	static private final int NUMDEATHIMAGES = 6;
-	
+
+	/**
+	 * Padding for images
+	 */
 	static private int[] PADDING;
-	
+
+	/**
+	 * Final death image.
+	 */
 	static public BufferedImage finalDeathImage;
 
+	/**
+	 * Creates a new mage factory.
+	 */
 	private MageFactory() {
 		// Store the padding for each enemy within it's factory class.
 		TOP_PADDING = 12;
@@ -38,7 +52,7 @@ public class MageFactory extends EnemyFactory {
 	}
 
 	/**
-	 * Singleton pattern returning the one instance of MageFactory to be used. 
+	 * Singleton pattern returning the one instance of MageFactory to be used.
 	 * 
 	 * @return MageFactory that can create Mage instances.
 	 */
@@ -69,8 +83,11 @@ public class MageFactory extends EnemyFactory {
 		set_final_death_image();
 	}
 
+	/**
+	 * Sets the final death image.
+	 */
 	private void set_final_death_image() {
 		finalDeathImage = images.get(Enemy.State.Dead).get(NUMDEATHIMAGES - 1);
 	}
-	
+
 }

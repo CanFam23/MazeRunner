@@ -11,7 +11,8 @@ import java.util.Scanner;
 
 /**
  * <p>
- * Loads and updates the leaderboard that tracks the fastest times to complete the game.
+ * Loads and updates the leaderboard that tracks the fastest times to complete
+ * the game.
  * </p>
  *
  * @author Nick Clouse
@@ -43,7 +44,7 @@ public class Leaderboard implements GameVariables {
 
 		final String fileName = "leaderboards/overall_time_leaderboard.txt";
 		final Leaderboard leaders = new Leaderboard(fileName);
-		
+
 		final Entry[] entries = Arrays.copyOf(leaders.getleaderboard(), leaders.getleaderboard().length);
 		final String name = leaders.getleaderboardName();
 
@@ -97,20 +98,21 @@ public class Leaderboard implements GameVariables {
 					System.err.println("Updated leaderboard with the wrong title!");
 					allPassed = false;
 				}
- 
+
 				for (int i = 0; i < entries.length; i++) {
 					final String line = input.nextLine();
 					final String[] currentEntry = line.split(";");
-					
-					//New entries should match currentEntry
-					if (!newEntries[i].name.equals(currentEntry[0]) || newEntries[i].score != Integer.parseInt(currentEntry[1])) {
+
+					// New entries should match currentEntry
+					if (!newEntries[i].name.equals(currentEntry[0])
+							|| newEntries[i].score != Integer.parseInt(currentEntry[1])) {
 						System.err.println("Updated leaderboard with a incorrect entry!");
 						allPassed = false;
 					}
-					
-					//Testing toString
+
+					// Testing toString
 					final String tempStr = line.replace(";", " ");
-					if(!newEntries[i].toString().equals(tempStr)) {
+					if (!newEntries[i].toString().equals(tempStr)) {
 						System.err.println("ToString failed!");
 						allPassed = false;
 					}
@@ -135,14 +137,14 @@ public class Leaderboard implements GameVariables {
 			}
 		}
 
-        // Sort the array by score using a Comparator
-        Arrays.sort(entries, Comparator.comparingInt(entry -> entry.score));
+		// Sort the array by score using a Comparator
+		Arrays.sort(entries, Comparator.comparingInt(entry -> entry.score));
 
-        // Print the sorted array
-        System.out.println("Sorted by score:");
-        for (Entry entry : entries) {
-            System.out.println(entry);
-        }
+		// Print the sorted array
+		System.out.println("Sorted by score:");
+		for (Entry entry : entries) {
+			System.out.println(entry);
+		}
 
 		// Set file back to what it was originally
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
@@ -189,27 +191,27 @@ public class Leaderboard implements GameVariables {
 	 */
 	public void loadleaderboard(String fileName) {
 		try (final Scanner input = new Scanner(new File(fileName))) {
-			Entry defaultEntry = new Entry("Name",Integer.MAX_VALUE);
+			Entry defaultEntry = new Entry("Name", Integer.MAX_VALUE);
 			while (input.hasNextLine()) {
 				levelName = input.nextLine();
 
 				for (int i = 0; i < 5; i++) {
-					
-					try{
+
+					try {
 						final String[] tempEntry = input.nextLine().split(";");
 						final String name = tempEntry[0];
-						
+
 						final int score = Integer.parseInt(tempEntry[1]);
-						Entry newEntry = new Entry(name,score);
+						Entry newEntry = new Entry(name, score);
 						leaderboard[i] = newEntry;
-					}catch(NumberFormatException e) {
+					} catch (NumberFormatException e) {
 						System.err.println("Error loading leaderboard scores! Using default value.");
 						leaderboard[i] = defaultEntry;
 					}
 				}
 			}
-			
-			//Sort leaderboard array by score of each entry object
+
+			// Sort leaderboard array by score of each entry object
 			Arrays.sort(leaderboard, Comparator.comparingInt(Entry -> Entry.score));
 		} catch (FileNotFoundException e) {
 			System.err.println(fileName + " was not found!");
@@ -221,9 +223,9 @@ public class Leaderboard implements GameVariables {
 	 */
 	public void updateleaderboardFile() {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-			//Sort leaderboard array by score of each entry object
+			// Sort leaderboard array by score of each entry object
 			Arrays.sort(leaderboard, Comparator.comparingInt(Entry -> Entry.score));
-			
+
 			// Add title
 			writer.write(levelName);
 			writer.newLine();
@@ -251,8 +253,8 @@ public class Leaderboard implements GameVariables {
 	 */
 	public int addEntry(String name, int score) {
 		int index = -1;
-		
-		//Sort leaderboard array by score of each entry object
+
+		// Sort leaderboard array by score of each entry object
 		Arrays.sort(leaderboard, Comparator.comparingInt(Entry -> Entry.score));
 
 		// Check each entry in the array
@@ -279,7 +281,7 @@ public class Leaderboard implements GameVariables {
 		}
 
 		// Add new entry
-		final Entry newEntry = new Entry(name,score);
+		final Entry newEntry = new Entry(name, score);
 		leaderboard[index] = newEntry;
 
 		return index;
@@ -293,7 +295,7 @@ public class Leaderboard implements GameVariables {
 	public Entry[] getleaderboard() {
 		return leaderboard;
 	}
-	
+
 	/**
 	 * Gets the leaderboard array, but converts every entry to a string.
 	 * 
@@ -301,13 +303,12 @@ public class Leaderboard implements GameVariables {
 	 */
 	public String[] leaderboardToString() {
 		final String[] leaderboardStr = new String[leaderboard.length];
-		
-		
-		for(int i = 0; i < leaderboard.length; i++) {
+
+		for (int i = 0; i < leaderboard.length; i++) {
 			final String entry = leaderboard[i].toString();
 			leaderboardStr[i] = entry;
 		}
-		
+
 		return leaderboardStr;
 	}
 
@@ -319,13 +320,12 @@ public class Leaderboard implements GameVariables {
 	public String getleaderboardName() {
 		return levelName;
 	}
-	
-	
+
 	/**
-	 * Used to store entries in the leaderboard.
-	 * Each entry has a 'name' and 'score.'
+	 * Used to store entries in the leaderboard. Each entry has a 'name' and
+	 * 'score.'
 	 */
-	private class Entry{
+	private class Entry {
 		/**
 		 * Name associated with the entry.
 		 */
@@ -334,22 +334,22 @@ public class Leaderboard implements GameVariables {
 		 * Score associated with the entry.
 		 */
 		public int score;
-		
+
 		/**
 		 * Makes a new Entry object.
 		 * 
-		 * @param name Name associated with entry.
+		 * @param name  Name associated with entry.
 		 * @param score Score associated with entry.
 		 */
-		Entry(String name, int score){
+		Entry(String name, int score) {
 			this.name = name;
 			this.score = score;
 		}
-		
+
 		/**
-		 *Converts Entry object to string.
+		 * Converts Entry object to string.
 		 *
-		 *@return String format of entry object.
+		 * @return String format of entry object.
 		 */
 		public String toString() {
 			return name + " " + score;

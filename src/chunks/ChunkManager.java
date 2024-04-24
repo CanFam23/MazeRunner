@@ -184,7 +184,7 @@ public class ChunkManager implements GameVariables {
 	 * ChunkManager to handle it. It's static so other classes can call it without
 	 * having to use a single instance of ChunkManager.
 	 *
-	 * @param d The direction the player should be knocked back.
+	 * @param d      The direction the player should be knocked back.
 	 * @param damage How much health the player will lose from the hit.
 	 */
 	public static void playerHit(Facing d, int damage) {
@@ -197,13 +197,15 @@ public class ChunkManager implements GameVariables {
 	 * Loads level from levelNum and creates a 2D array of chunks, which represent
 	 * each chunk of the maze.
 	 *
-	 * @param levelNum the level to load.
-	 * @param levelVersionNumber the randomly selected version of the level that will be played.
+	 * @param levelNum           the level to load.
+	 * @param levelVersionNumber the randomly selected version of the level that
+	 *                           will be played.
 	 * @return true If level was loaded correctly.
 	 */
 	public boolean loadLevel(int levelNum, int levelVersionNumber) {
 
 		levelNum = 0;
+		levelVersionNumber = 1;
 		levelName = "level_" + levelNum + "_v" + levelVersionNumber;
 		if (levelNum == 0) {
 			levelName = "level_0";
@@ -368,7 +370,7 @@ public class ChunkManager implements GameVariables {
 	 * Handles when the player is hit by a enemy. Sets knockback to true and decides
 	 * which way to knockback the player.
 	 *
-	 * @param d The direction to move the player.
+	 * @param d      The direction to move the player.
 	 * @param damage how much health the player will lose from this hit.
 	 */
 	public void handlePlayerHit(Facing d, int damage) {
@@ -460,10 +462,9 @@ public class ChunkManager implements GameVariables {
 			}
 		}
 	}
-	
-	/** TODO test
-	 * Repositions maze so the player 
-	 * goes back to the start block. 
+
+	/**
+	 * TODO test Repositions maze so the player goes back to the start block.
 	 */
 	public void restart() {
 		setStartLocation();
@@ -561,18 +562,18 @@ public class ChunkManager implements GameVariables {
 	 */
 	public synchronized void drawEnemies(Graphics2D g2d) {
 		final List<Enemy> toRemove = new ArrayList<Enemy>();
-		
+
 		for (Enemy e : Enemy.activeEnemies) {
 			if (e.draw(g2d)) {
 				toRemove.add(e);
 			}
 		}
-		
+
 		for (Enemy e : toRemove) {
 			Enemy.activeEnemies.remove(e);
 			Enemy.enemies.remove(e);
 		}
-		
+
 	}
 
 	/**
