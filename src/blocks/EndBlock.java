@@ -18,16 +18,16 @@ import java.awt.image.VolatileImage;
  * @since March 2, 2024
  */
 public class EndBlock extends PositionBlock {
-
+	/**
+	 * Image for all end blocks.
+	 */
 	private static VolatileImage image;
 
 	/**
 	 * Constructs a new EndBlock based on the starting position.
 	 *
-	 * @param x                  The x-coordinate relative to the top-left
-	 *                           coordinate of the chunk.
-	 * @param y                  The y-coordinate relative to the top-left
-	 *                           coordinate of the chunk.
+	 * @param x The x-coordinate relative to the top-left coordinate of the chunk.
+	 * @param y The y-coordinate relative to the top-left coordinate of the chunk.
 	 */
 	public EndBlock(int x, int y) {
 		super(x, y);

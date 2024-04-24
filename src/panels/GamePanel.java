@@ -47,6 +47,9 @@ import sprites.Player;
  * @see GameVariables
  */
 public class GamePanel extends JPanel implements Runnable, GameVariables {
+	/**
+	 * Default serial version UID.
+	 */
 	private static final long serialVersionUID = 123455L;
 
 	/** ChunkManager object. */
@@ -62,7 +65,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private final int speed = 6;
 
 	/**
-	 * deltas holds the distance that would be moved in each direction based on the player's speed.
+	 * deltas holds the distance that would be moved in each direction based on the
+	 * player's speed.
 	 */
 	@SuppressWarnings("serial")
 	Map<Facing, Integer[]> deltas = new HashMap<>() {
@@ -99,14 +103,19 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 * Background image.
 	 */
 	private Image backgroundImage;
-	
+
 	/** When deathAnimation is true, we are animating the player's death. */
 	private boolean deathAnimation = false;
-	
-	/** deathCount keeps track of the how many frames we have drawn since the start of the death animation. */
+
+	/**
+	 * deathCount keeps track of the how many frames we have drawn since the start
+	 * of the death animation.
+	 */
 	private int deathCount = 0;
-	
-	/** How many frames will pass from the start of the death animation to the end.  */
+
+	/**
+	 * How many frames will pass from the start of the death animation to the end.
+	 */
 	private final int DEATHANIMATIONTIME = 300;
 
 	/**
@@ -167,7 +176,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	/**
 	 * Constructs a GamePanel object.
 	 * 
-	 * @param backgroundImage is seen wherever there are not any position blocks (background)
+	 * @param backgroundImage is seen wherever there are not any position blocks
+	 *                        (background)
 	 */
 	public GamePanel(Image backgroundImage) {
 
@@ -185,7 +195,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.loadLevel(current_level, levelVersionNumber);
 
 		// Create our player and load the images
-		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)		
+		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)
 
 	}
 
@@ -260,7 +270,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			Main.addTime = false;
 			addingTime = false;
 			addTimeElapsed = 0;
-			
+
 			ourPlayer.reset();
 			// Disable player movements when end block is reached
 			keyH.upPressed = false;
@@ -270,15 +280,14 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			Main.updateTotalTimeAndEnemies();
 			if (current_level == NUM_LEVELS) {
 				Main.addScoreToLeader();
-				
 
 				Main.showFinalWinScreen(true);
-				//User won game
+				// User won game
 				reset();
 				resetLevel();
 				Main.resetTime();
 			} else {
-				//Go to next level.
+				// Go to next level.
 				Main.showNextLevelPanel(true);
 				while (Main.otherPanelRunning()) {
 					System.out.print("");
@@ -286,7 +295,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				reset();
 				cmanager.reset();
 				current_level++;
-				levelVersionNumber = random.nextInt(1,5);
+				levelVersionNumber = random.nextInt(1, 5);
 				cmanager.loadLevel(current_level, levelVersionNumber);
 				Main.showGamePanel();
 				Main.resetTime();
@@ -434,8 +443,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// blocks
 		cmanager.draw(g2);
 		cmanager.drawEnemies(g2);
-		
-		if(deathAnimation) {
+
+		if (deathAnimation) {
 			v.updateRadius();
 			v.createVis();
 			v.drawVision(g2);
@@ -472,7 +481,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			g2.drawString(addText, addTextX, addTextY);
 		}
 	}
-	
+
 	/**
 	 * Returns the integer indicating the current level of the game.
 	 * 
@@ -566,10 +575,10 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	/**
 	 * Set the level back to the very start
 	 */
-	public static void resetLevel() {
+	public void resetLevel() {
 		current_level = 1;
 	}
-	
+
 	/**
 	 * Testing driver for GamePanel.java
 	 * 

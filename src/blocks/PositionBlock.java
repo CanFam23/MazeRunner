@@ -66,12 +66,12 @@ public class PositionBlock implements GameVariables {
 		EndBlock.setImage(vImage);
 		Wall.setImage(vImage);
 		StartingBlock.setImage(vImage);
-		
+
 		PositionBlock.setBlockSize(WALL_WIDTH, WALL_HEIGHT);
 
 		// Testing a position block
 		PositionBlock pb = new PositionBlock(initialX, initialY);
-		
+
 		String blockType = "????";
 
 		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
@@ -80,7 +80,7 @@ public class PositionBlock implements GameVariables {
 
 		// Testing an empty block
 		pb = new EmptyBlock(initialX, initialY);
-		
+
 		blockType = "empt";
 
 		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
@@ -120,13 +120,13 @@ public class PositionBlock implements GameVariables {
 			System.err.println("At least 1 case failed!");
 		}
 	}
-	
+
 	/** Block Image. PositionBlock should never directly be drawn */
 	private VolatileImage image = null;
-	
+
 	/** Width of the block. */
 	protected static int width;
-	
+
 	/** Height of the block. */
 	protected static int height;
 
@@ -139,20 +139,18 @@ public class PositionBlock implements GameVariables {
 	/**
 	 * Constructs a new StartingBlock based on the starting position.
 	 *
-	 * @param x      The x-coordinate relative to the top-left coordinate of the
-	 *               chunk.
-	 * @param y      The y-coordinate relative to the top-left coordinate of the
-	 *               chunk.
+	 * @param x The x-coordinate relative to the top-left coordinate of the chunk.
+	 * @param y The y-coordinate relative to the top-left coordinate of the chunk.
 	 */
 	public PositionBlock(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	/**
 	 * Set the size for all PositionBlocks
 	 * 
-	 * @param width int width for all PositionBlocks in pixels.
+	 * @param width  int width for all PositionBlocks in pixels.
 	 * @param height int height for all PositionBlocks in pixels.
 	 */
 	public static void setBlockSize(int width, int height) {

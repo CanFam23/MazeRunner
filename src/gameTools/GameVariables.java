@@ -10,9 +10,9 @@ import sprites.Player;
 
 /**
  * <p>
- * Stores constant variables that multiple classes
- * need. Instead of storing a copy of each variable in each class, they can just
- * implement this interface and have access to all the variables.
+ * Stores constant variables that multiple classes need. Instead of storing a
+ * copy of each variable in each class, they can just implement this interface
+ * and have access to all the variables.
  * </p>
  *
  * @author Nick Clouse

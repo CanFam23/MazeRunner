@@ -18,7 +18,9 @@ import java.awt.image.VolatileImage;
  * @since March 2, 2024
  */
 public class Wall extends PositionBlock {
-
+	/**
+	 * Image for all wall blocks.
+	 */
 	private static VolatileImage image;
 
 	/**

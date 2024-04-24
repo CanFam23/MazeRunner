@@ -134,6 +134,9 @@ public abstract class Enemy implements GameVariables {
 	 */
 	protected int defaultSpeed;
 
+	/**
+	 * Number of attacking images.
+	 */
 	protected int NUMATTACKINGIMAGES;
 
 	/**
@@ -167,6 +170,10 @@ public abstract class Enemy implements GameVariables {
 	 * the direction or the state
 	 */
 	protected boolean stateLocked = false;
+
+	/**
+	 * Keeps track of if facing is locked.
+	 */
 	protected boolean facingLocked = false;
 
 	/** Set initial state. */
@@ -179,13 +186,15 @@ public abstract class Enemy implements GameVariables {
 	 * 'Facing' except for being flipped left and right.
 	 */
 	protected Map<State, List<BufferedImage>> images;
-	
-	/** Holds the final death image which will be used to end the enemy death animation. */
+
+	/**
+	 * Holds the final death image which will be used to end the enemy death
+	 * animation.
+	 */
 	protected BufferedImage finalDeathImage;
 
 	/**
-	 * Padding used when attacking, attacking images
-	 * are slightly different sizes. 
+	 * Padding used when attacking, attacking images are slightly different sizes.
 	 */
 	protected int[] PADDING;
 
@@ -194,7 +203,7 @@ public abstract class Enemy implements GameVariables {
 
 	/** Used to check if player should be knocked back. */
 	private boolean knockback = false;
-	
+
 	/** Keeps track of how many times player is knocked back. */
 	private int knockbackCounter = 0;
 
@@ -361,7 +370,7 @@ public abstract class Enemy implements GameVariables {
 			}
 		}
 	}
-	
+
 	/**
 	 * What is the current state of our enemy?
 	 * 
@@ -597,7 +606,7 @@ public abstract class Enemy implements GameVariables {
 				Main.addTime = true;
 				GamePanel.ourPlayer.setGettingAttacked(false);
 				drawCount = 0;
-			} 
+			}
 		}
 	}
 
@@ -629,8 +638,9 @@ public abstract class Enemy implements GameVariables {
 	}
 
 	/**
-	 * Draw the enemy to the screen. Return true if the enemy should be removed from the enemy list. This
-	 * 	happens when the death animation moves through a full loop of the death images.
+	 * Draw the enemy to the screen. Return true if the enemy should be removed from
+	 * the enemy list. This happens when the death animation moves through a full
+	 * loop of the death images.
 	 *
 	 * @param g Graphics2D object used for drawing.
 	 * @return true if this enemy should be removed from the enemy list.
@@ -690,7 +700,7 @@ public abstract class Enemy implements GameVariables {
 	 * @param args Arguments passed.
 	 */
 	public static void main(String[] args) {
-		
+
 		// Create factories that will create our images.
 		EnemyFactory mageCreator = MageFactory.getInstance();
 		EnemyFactory ghostCreator = GhostFactory.getInstance();
@@ -851,7 +861,7 @@ public abstract class Enemy implements GameVariables {
 			e.move();
 
 		}
-	
+
 		// Testing some methods again now that the enemies are closer to the player
 
 		// Testing inRangeOfPlayer
@@ -915,15 +925,32 @@ public abstract class Enemy implements GameVariables {
 		}
 	}
 
-	// Drawing panel used solely for testing purposes
+	/**
+	 * Drawing panel used solely for testing purposes
+	 */
 	static class DrawingPanel extends JPanel {
+		/**
+		 * Default serial version UID.
+		 */
 		private static final long serialVersionUID = 1L;
+
+		/**
+		 * Keeps track of drawable enemies.
+		 */
 		private List<Enemy> drawables = new ArrayList<>();
 
+		/**
+		 * Makes a new drawing panel.
+		 */
 		public DrawingPanel() {
 			setPreferredSize(new Dimension(800, 600)); // Set the size of the panel
 		}
 
+		/**
+		 * Adds a enemy to drawable list.
+		 * 
+		 * @param drawable The enemy to add to drawable.
+		 */
 		public void addDrawable(Enemy drawable) {
 			drawables.add(drawable);
 		}

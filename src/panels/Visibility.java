@@ -113,14 +113,14 @@ public class Visibility implements GameVariables {
 	 * Decreases the radius by preset amount.
 	 */
 	public void updateRadius() {
-		if (radius-decreaseAmount > 0) {
-			if(decreaseAmount <= 6 && radius % 80 == 0) {
-				decreaseAmount+=2;
+		if (radius - decreaseAmount > 0) {
+			if (decreaseAmount <= 6 && radius % 80 == 0) {
+				decreaseAmount += 2;
 			}
 			radius -= decreaseAmount;
 		}
 	}
-	
+
 	/**
 	 * Resets radius and decreaseAmount to default values.
 	 */
@@ -130,8 +130,8 @@ public class Visibility implements GameVariables {
 	}
 
 	/**
-	 * Updates radius of visibility to current value of radius.
-	 * Makes a new General path for each side.
+	 * Updates radius of visibility to current value of radius. Makes a new General
+	 * path for each side.
 	 */
 	public void createVis() {
 		// Drawing the right side

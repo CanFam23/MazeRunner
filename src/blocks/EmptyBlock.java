@@ -19,15 +19,16 @@ import java.awt.image.VolatileImage;
  */
 public class EmptyBlock extends PositionBlock {
 
+	/**
+	 * Image for all empty blocks.
+	 */
 	private static VolatileImage image;
 
 	/**
 	 * Constructs a new EmptyBlock based on the starting position.
 	 *
-	 * @param x                  The x-coordinate relative to the top-left
-	 *                           coordinate of the chunk.
-	 * @param y                  The y-coordinate relative to the top-left
-	 *                           coordinate of the chunk.
+	 * @param x The x-coordinate relative to the top-left coordinate of the chunk.
+	 * @param y The y-coordinate relative to the top-left coordinate of the chunk.
 	 */
 	public EmptyBlock(int x, int y) {
 		super(x, y);

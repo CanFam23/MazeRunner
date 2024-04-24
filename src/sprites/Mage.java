@@ -15,13 +15,15 @@ public class Mage extends Enemy {
 	/**
 	 * Create a Mage, which should be done through a MageFactory.
 	 *
-	 * @param x            starting x position
-	 * @param y            starting y position
-	 * @param images       static images for mage
-	 * @param PADDING      image padding to remove for non-moving images
-	 * @param attackImages the number of attacking images
+	 * @param x               starting x position
+	 * @param y               starting y position
+	 * @param images          static images for mage
+	 * @param PADDING         image padding to remove for non-moving images
+	 * @param attackImages    the number of attacking images
+	 * @param finalDeathImage the final death image of the mage.
 	 */
-	public Mage(int x, int y, Map<State, List<BufferedImage>> images, int[] PADDING, int attackImages, BufferedImage finalDeathImage) {
+	public Mage(int x, int y, Map<State, List<BufferedImage>> images, int[] PADDING, int attackImages,
+			BufferedImage finalDeathImage) {
 		this.images = images;
 		this.PADDING = PADDING;
 		this.NUMATTACKINGIMAGES = attackImages;
