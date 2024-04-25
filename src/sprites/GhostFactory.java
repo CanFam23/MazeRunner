@@ -12,8 +12,10 @@ import java.util.Map;
  */
 public class GhostFactory extends EnemyFactory {
 
-	/** Singleton: Only one GhostFactory should be created. */
-	private static GhostFactory single_instance = null;
+	/**
+	 * Final death image.
+	 */
+	static private BufferedImage finalDeathImage;
 
 	/** Hold images (which should be the same for all Ghosts) */
 	static private Map<Enemy.State, List<BufferedImage>> images = new HashMap<>();
@@ -28,10 +30,21 @@ public class GhostFactory extends EnemyFactory {
 	 */
 	static private final int NUMDEATHIMAGES = 4;
 
+	/** Singleton: Only one GhostFactory should be created. */
+	private static GhostFactory single_instance = null;
+
 	/**
-	 * Final death image.
+	 * Singleton pattern returning the one instance of GhostFactory to be used.
+	 *
+	 * @return GhostFactory that can create Ghost instances.
 	 */
-	static private BufferedImage finalDeathImage;
+	public static synchronized GhostFactory getInstance() {
+		if (single_instance == null) {
+			single_instance = new GhostFactory();
+		}
+
+		return single_instance;
+	}
 
 	/**
 	 * Creates a new ghost factory
@@ -46,36 +59,9 @@ public class GhostFactory extends EnemyFactory {
 		load_images();
 	}
 
-	/**
-	 * Singleton pattern returning the one instance of GhostFactory to be used.
-	 * 
-	 * @return GhostFactory that can create Ghost instances.
-	 */
-	public static synchronized GhostFactory getInstance() {
-		if (single_instance == null) {
-			single_instance = new GhostFactory();
-		}
-
-		return single_instance;
-	}
-
 	@Override
 	public Enemy createEnemy(int x, int y) {
 		return new Ghost(x, y, images, PADDING, NUMATTACKINGIMAGES, finalDeathImage);
-	}
-
-	@Override
-	protected void load_images() {
-		final String character_name = "Ghost";
-		final String FILE_LOCATION = "Textures/Ghost/";
-		int imageNumber = 3; // This is the number of images in the spriteSheet
-
-		// Load a spritesheet for each player state
-		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Idle, imageNumber, images);
-		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Move, imageNumber, images);
-		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Attack, NUMATTACKINGIMAGES, images);
-		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Dead, NUMDEATHIMAGES, images);
-		set_final_death_image();
 	}
 
 	/**
@@ -83,5 +69,19 @@ public class GhostFactory extends EnemyFactory {
 	 */
 	private void set_final_death_image() {
 		finalDeathImage = images.get(Enemy.State.Dead).get(NUMDEATHIMAGES - 1);
+	}
+
+	@Override
+	protected void load_images() {
+		final String character_name = "Ghost";
+		final String FILE_LOCATION = "Textures/Ghost/";
+		final int imageNumber = 3; // This is the number of images in the spriteSheet
+
+		// Load a spritesheet for each player state
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Idle, imageNumber, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Move, imageNumber, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Attack, NUMATTACKINGIMAGES, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Dead, NUMDEATHIMAGES, images);
+		set_final_death_image();
 	}
 }

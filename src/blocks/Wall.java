@@ -24,22 +24,22 @@ public class Wall extends PositionBlock {
 	private static VolatileImage image;
 
 	/**
+	 * Statically set the VolatileImage for all walls.
+	 *
+	 * @param positionBlockImage VolatileImage that will be used for all walls.
+	 */
+	public static void setImage(VolatileImage positionBlockImage) {
+		image = positionBlockImage;
+	}
+
+	/**
 	 * Constructs a new Wall based on the wall's starting position.
-	 * 
+	 *
 	 * @param x int starting x position.
 	 * @param y int starting y position.
 	 */
 	public Wall(int x, int y) {
 		super(x, y);
-	}
-
-	/**
-	 * Statically set the VolatileImage for all walls.
-	 * 
-	 * @param positionBlockImage VolatileImage that will be used for all walls.
-	 */
-	public static void setImage(VolatileImage positionBlockImage) {
-		image = positionBlockImage;
 	}
 
 	@Override

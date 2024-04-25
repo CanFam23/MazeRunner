@@ -53,8 +53,7 @@ import sprites.Enemy;
 public class Main {
 
 	/**
-	 * Score is time_left
-	 * Scoreboard for level 1,2, and total score
+	 * Score is time_left Scoreboard for level 1,2, and total score
 	 */
 
 	/**
@@ -132,8 +131,8 @@ public class Main {
 	 * Adds player score to respective leaderboard.
 	 */
 	public static void addScoreToLeader() {
-		//If player reached third level,
-		if(GamePanel.getCurrentLevel() == 3) {
+		// If player reached third level,
+		if (GamePanel.getCurrentLevel() == 3) {
 			final Leaderboard leader = Leaderboard.levels.get(GamePanel.getCurrentLevel());
 			final int added = leader.addEntry(playerName, totalTimePlayed);
 			if (added != -1) {
@@ -163,6 +162,7 @@ public class Main {
 	public static void closeMainWindow() {
 		window.dispose();
 	}
+
 	/**
 	 * Removes the game over screen, used when the player chooses play again after
 	 * running out of time in a level.
@@ -203,15 +203,14 @@ public class Main {
 	}
 
 	/**
-	 * Gets the current level the player is on. If the
-	 * homePanel hasn't been initialized yet or it's currently
-	 * being displayed, then it returns 3 so the overall leaderboard
-	 * can be displayed.
+	 * Gets the current level the player is on. If the homePanel hasn't been
+	 * initialized yet or it's currently being displayed, then it returns 3 so the
+	 * overall leaderboard can be displayed.
 	 *
 	 * @return The current level.
 	 */
 	public static int getLevel() {
-		if(homePanel == null || homePanel.isRunning()) {
+		if (homePanel == null || homePanel.isRunning()) {
 			return 3;
 		}
 
@@ -224,16 +223,16 @@ public class Main {
 	 * @return The current score for the player.
 	 */
 	public static int getScore() {
-		//If they beat final level, get their total score
-		if(GamePanel.getCurrentLevel() == 3) {
+		// If they beat final level, get their total score
+		if (GamePanel.getCurrentLevel() == 3) {
 			return totalTimePlayed;
 		}
 
-		//So home screen score is 0
-		if(homePanel == null || homePanel.isRunning()) {
+		// So home screen score is 0
+		if (homePanel == null || homePanel.isRunning()) {
 			return 0;
 		}
-		
+
 		return seconds_left;
 	}
 
@@ -259,7 +258,7 @@ public class Main {
 		homePanel.getStartButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name = homePanel.getName();
+				final String name = homePanel.getName();
 				if (name.isBlank()) {
 					JOptionPane.showMessageDialog(window, "Please enter a name!");
 				} else if (name.length() > 10) {
@@ -320,7 +319,7 @@ public class Main {
 	 * Resets the game and removes the old window and starts a new one
 	 */
 	public static void restartGame() {
-		if(window == null) {
+		if (window == null) {
 			return;
 		}
 		seconds_left = timeAmount;
@@ -354,7 +353,7 @@ public class Main {
 		homePanel.getStartButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name = homePanel.getName().trim();
+				final String name = homePanel.getName().trim();
 				if (name.isBlank()) {
 					JOptionPane.showMessageDialog(window, "Please enter a name!");
 				} else if (name.length() > 10) {
@@ -381,7 +380,7 @@ public class Main {
 		// Load Background Image
 		try {
 			backgroundImage = ImageIO.read(new File("images/backgroundBlock.png"));
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("Failed to load backgroundBlock.png!");
 		}
 
@@ -422,7 +421,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				seconds_left--; // time they have left to complete
-				int currentLevel = GamePanel.getCurrentLevel();
+				final int currentLevel = GamePanel.getCurrentLevel();
 				window.setTitle("Maze Runner - Level: " + currentLevel);
 				if (seconds_left <= 0) {
 					// player lost logic

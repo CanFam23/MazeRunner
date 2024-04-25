@@ -25,6 +25,15 @@ public class EmptyBlock extends PositionBlock {
 	private static VolatileImage image;
 
 	/**
+	 * Statically set the image for all empty blocks.
+	 *
+	 * @param positionBlockImage the image that will be used for empty blocks.
+	 */
+	public static void setImage(VolatileImage positionBlockImage) {
+		image = positionBlockImage;
+	}
+
+	/**
 	 * Constructs a new EmptyBlock based on the starting position.
 	 *
 	 * @param x The x-coordinate relative to the top-left coordinate of the chunk.
@@ -32,15 +41,6 @@ public class EmptyBlock extends PositionBlock {
 	 */
 	public EmptyBlock(int x, int y) {
 		super(x, y);
-	}
-
-	/**
-	 * Statically set the image for all empty blocks.
-	 * 
-	 * @param positionBlockImage the image that will be used for empty blocks.
-	 */
-	public static void setImage(VolatileImage positionBlockImage) {
-		image = positionBlockImage;
 	}
 
 	@Override
