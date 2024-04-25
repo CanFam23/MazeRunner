@@ -12,8 +12,10 @@ import java.util.Map;
  */
 public class MageFactory extends EnemyFactory {
 
-	/** Singleton: Only one MageFactory should be created. */
-	private static MageFactory single_instance = null;
+	/**
+	 * Final death image.
+	 */
+	static public BufferedImage finalDeathImage;
 
 	/** Hold images (which should be the same for all Mages) */
 	static private Map<Enemy.State, List<BufferedImage>> images = new HashMap<>();
@@ -33,10 +35,21 @@ public class MageFactory extends EnemyFactory {
 	 */
 	static private int[] PADDING;
 
+	/** Singleton: Only one MageFactory should be created. */
+	private static MageFactory single_instance = null;
+
 	/**
-	 * Final death image.
+	 * Singleton pattern returning the one instance of MageFactory to be used.
+	 *
+	 * @return MageFactory that can create Mage instances.
 	 */
-	static public BufferedImage finalDeathImage;
+	public static synchronized MageFactory getInstance() {
+		if (single_instance == null) {
+			single_instance = new MageFactory();
+		}
+
+		return single_instance;
+	}
 
 	/**
 	 * Creates a new mage factory.
@@ -51,36 +64,9 @@ public class MageFactory extends EnemyFactory {
 		load_images();
 	}
 
-	/**
-	 * Singleton pattern returning the one instance of MageFactory to be used.
-	 * 
-	 * @return MageFactory that can create Mage instances.
-	 */
-	public static synchronized MageFactory getInstance() {
-		if (single_instance == null) {
-			single_instance = new MageFactory();
-		}
-
-		return single_instance;
-	}
-
 	@Override
 	public Enemy createEnemy(int x, int y) {
 		return new Mage(x, y, images, PADDING, NUMATTACKINGIMAGES, finalDeathImage);
-	}
-
-	@Override
-	protected void load_images() {
-		final String character_name = "Mage";
-		final String FILE_LOCATION = "Textures/Mage/";
-		int imageNumber = 3; // This is the number of images in the spriteSheet
-
-		// Load a sprite sheet for each player state
-		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Idle, imageNumber, images);
-		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Move, imageNumber, images);
-		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Attack, NUMATTACKINGIMAGES, images);
-		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Dead, NUMDEATHIMAGES, images);
-		set_final_death_image();
 	}
 
 	/**
@@ -88,6 +74,20 @@ public class MageFactory extends EnemyFactory {
 	 */
 	private void set_final_death_image() {
 		finalDeathImage = images.get(Enemy.State.Dead).get(NUMDEATHIMAGES - 1);
+	}
+
+	@Override
+	protected void load_images() {
+		final String character_name = "Mage";
+		final String FILE_LOCATION = "Textures/Mage/";
+		final int imageNumber = 3; // This is the number of images in the spriteSheet
+
+		// Load a sprite sheet for each player state
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Idle, imageNumber, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Move, imageNumber, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Attack, NUMATTACKINGIMAGES, images);
+		load_spritesheet(FILE_LOCATION, character_name, sprites.Enemy.State.Dead, NUMDEATHIMAGES, images);
+		set_final_death_image();
 	}
 
 }

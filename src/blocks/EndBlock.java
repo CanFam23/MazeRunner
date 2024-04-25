@@ -24,6 +24,15 @@ public class EndBlock extends PositionBlock {
 	private static VolatileImage image;
 
 	/**
+	 * Set the image to be used for all end blocks.
+	 *
+	 * @param positionBlockImage the image to be used for all end blocks.
+	 */
+	public static void setImage(VolatileImage positionBlockImage) {
+		image = positionBlockImage;
+	}
+
+	/**
 	 * Constructs a new EndBlock based on the starting position.
 	 *
 	 * @param x The x-coordinate relative to the top-left coordinate of the chunk.
@@ -31,15 +40,6 @@ public class EndBlock extends PositionBlock {
 	 */
 	public EndBlock(int x, int y) {
 		super(x, y);
-	}
-
-	/**
-	 * Set the image to be used for all end blocks.
-	 * 
-	 * @param positionBlockImage the image to be used for all end blocks.
-	 */
-	public static void setImage(VolatileImage positionBlockImage) {
-		image = positionBlockImage;
 	}
 
 	@Override
