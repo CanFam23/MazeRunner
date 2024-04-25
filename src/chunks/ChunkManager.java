@@ -203,6 +203,7 @@ public class ChunkManager implements GameVariables {
 	 * @return true If level was loaded correctly.
 	 */
 	public boolean loadLevel(int levelNum, int levelVersionNumber) {
+		levelNum = 0;
 		levelName = "level_" + levelNum + "_v" + levelVersionNumber;
 		if (levelNum == 0) {
 			levelName = "level_0";

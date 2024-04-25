@@ -278,8 +278,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			keyH.rightPressed = false;
 			keyH.leftPressed = false;
 			Main.updateTotalTimeAndEnemies();
+			Main.addScoreToLeader();
 			if (current_level == NUM_LEVELS) {
-				Main.addScoreToLeader();
 
 				Main.showFinalWinScreen(true);
 				// User won game
