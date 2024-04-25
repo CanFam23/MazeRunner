@@ -907,7 +907,7 @@ public abstract class Enemy implements GameVariables {
 	}
 
 	/**
-	 * Subtract health from the player.
+	 * Subtract health from the enemy.
 	 *
 	 * @param amount The amount of health to subtract.
 	 */
@@ -919,7 +919,7 @@ public abstract class Enemy implements GameVariables {
 				facingLocked = true;
 				currentState = State.Dead;
 				Main.enemyKilled();
-				Main.addTime = true;
+				Main.addTime(15);
 				GamePanel.ourPlayer.setGettingAttacked(false);
 				drawCount = 0;
 			}

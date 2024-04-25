@@ -435,8 +435,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 						 */
 						if (addTimeElapsed >= maxAddTime || Main.seconds_left <= 3) {
 							addingTime = false;
+							Main.addTime = false;
 							addTimeElapsed = 0;
-							Main.addTime(15);
 						}
 					}
 					fpsTracker.add(frames);
