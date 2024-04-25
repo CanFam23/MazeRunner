@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -18,11 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
-import javax.swing.border.Border;
-
-import main.Main;
 
 /**
  * <p>
@@ -35,33 +30,44 @@ import main.Main;
  *
  * @since February 28, 2024
  */
-public class HomeScreen extends JPanel {
+public class HomeScreen extends Screen {
 
 	/**
 	 * Serial Version UID.
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/** Background image to use.*/
-	private BufferedImage backgroundImage;
-	
-	private JPanel mainPanel;
-	private JPanel instructionsPanel;
-	private JPanel scoreboardPanel;
-	private JButton startButton;
-	private JButton instructionButton;
-	private JButton scoreButton;
-	private JButton backButton;
-	private JComboBox<String> PlayerSelectBox;
+	/**
+	 * Main method
+	 *
+	 * @param args arguements passed
+	 */
+	public static void main(String[] args) {
+		final JFrame frame = new JFrame("HomeScreen Window Test");
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-	private JPanel currentPanel;
+		final HomeScreen homePanel = new HomeScreen();
+		homePanel.setPreferredSize(new Dimension(1000, 800));
 
+		frame.add(homePanel);
+
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+	}
+
+	/**
+	 * Text field used to store players name.
+	 */
 	JTextField nameField;
 
+	/**
+	 * Creates a new home screen.
+	 */
 	public HomeScreen() {
 		try {
 			backgroundImage = ImageIO.read(new File("images/HomeScreen.png"));
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("Failed to load home screen background image!");
 		}
 
@@ -75,8 +81,25 @@ public class HomeScreen extends JPanel {
 		currentPanel = mainPanel;
 	}
 
-	private JPanel createMainPanel() {
-		JPanel panel = new JPanel() {
+	@Override
+	public String getName() {
+		return nameField.getText();
+	}
+
+	/**
+	 * Get the startButton instance
+	 *
+	 * @return The start button
+	 */
+	public JButton getStartButton() {
+		return startButton;
+	}
+
+	@Override
+	protected JPanel createMainPanel() {
+		final JPanel panel = new JPanel() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
@@ -84,6 +107,7 @@ public class HomeScreen extends JPanel {
 			}
 		};
 
+<<<<<<< HEAD
 		// List character options that a player can choose from.
 		String[] playerOptions = new String[] {
 				"Civilian1",
@@ -105,13 +129,16 @@ public class HomeScreen extends JPanel {
 //	             size.width, size.height);
 		
 		JPanel buttonPanel = new JPanel(new BorderLayout()); // Use BorderLayout for buttonPanel
+=======
+		final JPanel buttonPanel = new JPanel(new BorderLayout()); // Use BorderLayout for buttonPanel
+>>>>>>> main
 		buttonPanel.setBackground(Color.BLACK);
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // top, left, bottom, right
 
 		// Create a panel for the nameLabel and nameField
-		JPanel nameInputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		final JPanel nameInputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		nameInputPanel.setBackground(Color.BLACK); // Adjust as needed
-		JLabel nameLabel = new JLabel("Enter Your Name: ");
+		final JLabel nameLabel = new JLabel("Enter Your Name: ");
 		nameLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
 		nameLabel.setForeground(Color.WHITE); // Set label text color
 		nameField = new JTextField(10); // 10 columns for the text field
@@ -122,7 +149,7 @@ public class HomeScreen extends JPanel {
 		buttonPanel.add(nameInputPanel, BorderLayout.CENTER);
 
 		// Create a panel for the buttons with FlowLayout (horizontal)
-		JPanel buttonsFlowPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
+		final JPanel buttonsFlowPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
 		buttonsFlowPanel.setBackground(Color.BLACK); // Adjust as needed
 
 		instructionButton = createButton("INSTRUCTIONS");
@@ -145,6 +172,7 @@ public class HomeScreen extends JPanel {
 		return panel;
 
 	}
+<<<<<<< HEAD
 
 	private JPanel createInstructionsPanel() {
 		JPanel panel = new JPanel(new BorderLayout());
@@ -380,3 +408,6 @@ public class HomeScreen extends JPanel {
 //        }
 //    }
 //}
+=======
+}
+>>>>>>> main
