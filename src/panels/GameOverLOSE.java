@@ -34,6 +34,25 @@ public class GameOverLOSE extends Screen {
 	private static final long serialVersionUID = -6221325201334468759L;
 
 	/**
+	 * Main method, used for testing
+	 *
+	 * @param args arguements passed
+	 */
+	public static void main(String[] args) {
+		final JFrame frame = new JFrame("Game Over Window Test");
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+		final GameOverLOSE gameOver = new GameOverLOSE();
+		gameOver.setPreferredSize(new Dimension(1000, 800));
+
+		frame.add(gameOver);
+
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+	}
+
+	/**
 	 * Creates JFrame and adds components. Displays the game over screen with
 	 * options to exit the game or play again.
 	 */
@@ -41,7 +60,7 @@ public class GameOverLOSE extends Screen {
 		// Load the image
 		try {
 			backgroundImage = ImageIO.read(new File("images/GameOver2.png"));
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("Failed to load game over screen background image!");
 		}
 
@@ -57,11 +76,12 @@ public class GameOverLOSE extends Screen {
 
 	/**
 	 * Creates the main JPanel and its contents.
-	 * 
+	 *
 	 * @return The main JPanel.
 	 */
+	@Override
 	protected JPanel createMainPanel() {
-		JPanel panel = new JPanel() {
+		final JPanel panel = new JPanel() {
 			private static final long serialVersionUID = 7206196828465176362L;
 
 			@Override
@@ -75,7 +95,7 @@ public class GameOverLOSE extends Screen {
 
 		final JPanel statsPanel = createStatsPanel();
 
-		JPanel buttonPanel = new JPanel();
+		final JPanel buttonPanel = new JPanel();
 		buttonPanel.setBackground(Color.BLACK);
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // top, left, bottom, right
 
@@ -106,24 +126,5 @@ public class GameOverLOSE extends Screen {
 
 		return panel;
 
-	}
-
-	/**
-	 * Main method, used for testing
-	 *
-	 * @param args arguements passed
-	 */
-	public static void main(String[] args) {
-		JFrame frame = new JFrame("Game Over Window Test");
-		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-		GameOverLOSE gameOver = new GameOverLOSE();
-		gameOver.setPreferredSize(new Dimension(1000, 800));
-
-		frame.add(gameOver);
-
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
 	}
 }

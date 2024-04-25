@@ -33,13 +33,32 @@ public class GameOverWIN extends Screen {
 	private static final long serialVersionUID = -275253873056634627L;
 
 	/**
+	 * Main method, used for testing.
+	 *
+	 * @param args arguements passed.
+	 */
+	public static void main(String[] args) {
+		final JFrame frame = new JFrame("Next Level Test");
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+		final GameOverWIN gameOverPanel = new GameOverWIN();
+		gameOverPanel.setPreferredSize(new Dimension(1000, 800));
+
+		frame.add(gameOverPanel);
+
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+	}
+
+	/**
 	 * Constructs new GameOverWIN panel
 	 */
 	public GameOverWIN() {
 		// Load the image
 		try {
 			backgroundImage = ImageIO.read(new File("images/YouWin.png"));
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("Failed to load win screen background image!");
 		}
 
@@ -55,9 +74,10 @@ public class GameOverWIN extends Screen {
 
 	/**
 	 * Creates the main panel.
-	 * 
+	 *
 	 * @return The main JPanel.
 	 */
+	@Override
 	protected JPanel createMainPanel() {
 		final JPanel panel = new JPanel() {
 			private static final long serialVersionUID = -3229646309021769985L;
@@ -99,24 +119,5 @@ public class GameOverWIN extends Screen {
 		panel.add(box, BorderLayout.SOUTH);
 
 		return panel;
-	}
-
-	/**
-	 * Main method, used for testing.
-	 *
-	 * @param args arguements passed.
-	 */
-	public static void main(String[] args) {
-		JFrame frame = new JFrame("Next Level Test");
-		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-		GameOverWIN gameOverPanel = new GameOverWIN();
-		gameOverPanel.setPreferredSize(new Dimension(1000, 800));
-
-		frame.add(gameOverPanel);
-
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
 	}
 }

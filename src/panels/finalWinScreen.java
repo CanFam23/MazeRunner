@@ -35,17 +35,36 @@ public class finalWinScreen extends Screen {
 	 * Default serial version UID.
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
+	/**
+	 * Main method, used for testing.
+	 *
+	 * @param args arguements passed
+	 */
+	public static void main(String[] args) {
+		final JFrame frame = new JFrame("Game Over Window Test");
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+		final finalWinScreen finalScreen = new finalWinScreen();
+		finalScreen.setPreferredSize(new Dimension(1000, 800));
+
+		frame.add(finalScreen);
+
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+	}
+
 	/**
 	 * Image for when user wins and makes background.
 	 */
 	private BufferedImage addedBackground;
-	
+
+
 	/**
 	 * Image for when user wins but doesn't make background.
 	 */
 	private BufferedImage notAddedBackground;
-
 
 	/**
 	 * Creates JFrame and adds components. Displays the game over screen with
@@ -56,7 +75,7 @@ public class finalWinScreen extends Screen {
 		try {
 			notAddedBackground = ImageIO.read(new File("images/winnerNoScoreboard.png"));
 			addedBackground = ImageIO.read(new File("images/winnerYesScoreboard.png"));
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("Failed to load game over screen background image(s)!");
 		}
 
@@ -72,11 +91,12 @@ public class finalWinScreen extends Screen {
 
 	/**
 	 * Creates the main panel.
-	 * 
+	 *
 	 * @return The new main panel.
 	 */
+	@Override
 	protected JPanel createMainPanel() {
-		JPanel panel = new JPanel() {
+		final JPanel panel = new JPanel() {
 			private static final long serialVersionUID = 9154151244682930913L;
 
 			@Override
@@ -95,7 +115,7 @@ public class finalWinScreen extends Screen {
 
 		final JPanel statsPanel = createStatsPanel();
 
-		JPanel buttonPanel = new JPanel();
+		final JPanel buttonPanel = new JPanel();
 		buttonPanel.setBackground(Color.BLACK);
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // top, left, bottom, right
 
@@ -126,24 +146,5 @@ public class finalWinScreen extends Screen {
 
 		return panel;
 
-	}
-
-	/**
-	 * Main method, used for testing.
-	 *
-	 * @param args arguements passed
-	 */
-	public static void main(String[] args) {
-		JFrame frame = new JFrame("Game Over Window Test");
-		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-		finalWinScreen finalScreen = new finalWinScreen();
-		finalScreen.setPreferredSize(new Dimension(1000, 800));
-
-		frame.add(finalScreen);
-
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
 	}
 }
