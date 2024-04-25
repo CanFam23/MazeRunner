@@ -1,6 +1,6 @@
 Level 2 Leaderboard
-AndrewDene;281
-NickClouse;267
-NathanAWES;244
-MollyOConn;215
-ILoveJavaL;205
+AndrewDene;201
+NickClouse;187
+NathanAWES;164
+MollyOConn;135
+ILoveJavaL;125
