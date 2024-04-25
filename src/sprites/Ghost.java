@@ -15,17 +15,20 @@ public class Ghost extends Enemy {
 	/**
 	 * Create a ghost, which should be done through a GhostFactory.
 	 *
-	 * @param x            starting x position
-	 * @param y            starting y position
-	 * @param images       static images for ghost
-	 * @param PADDING      image padding to remove for non-moving images
-	 * @param attackImages the number of attacking images
+	 * @param x               starting x position
+	 * @param y               starting y position
+	 * @param images          static images for ghost
+	 * @param PADDING         image padding to remove for non-moving images
+	 * @param attackImages    the number of attacking images
+	 * @param finalDeathImage the final death image of the ghost
 	 */
-	public Ghost(int x, int y, Map<State, List<BufferedImage>> images, int[] PADDING, int attackImages) {
+	public Ghost(int x, int y, Map<State, List<BufferedImage>> images, int[] PADDING, int attackImages,
+			BufferedImage finalDeathImage) {
 		this.images = images;
 		this.PADDING = PADDING;
 		this.NUMATTACKINGIMAGES = attackImages;
 		this.damage = 2000;
+		this.finalDeathImage = finalDeathImage;
 		WIDTH = 60;
 		HEIGHT = 60;
 		position_x = x;

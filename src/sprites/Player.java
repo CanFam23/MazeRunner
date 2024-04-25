@@ -85,17 +85,18 @@ public class Player implements GameVariables {
 
 	/** How many frames that pass before each image switch. */
 	private final int FRAMESPERSWITCH = 6;
-	
+
 	/**
 	 * Keeps track of if the player is getting attacked.
 	 */
 	private boolean gettingAttacked = false;
 
 	/**
-	 * Keeps track of the final attack images to determine when we should switch to the next animation.
+	 * Keeps track of the final attack images to determine when we should switch to
+	 * the next animation.
 	 */
 	private Map<Facing, BufferedImage> finalAttackImages;
-	
+
 	/**
 	 * A map of images that can be accessed by first specifying the player state and
 	 * direction faced.
@@ -154,7 +155,7 @@ public class Player implements GameVariables {
 		set_final_attack_images();
 		load_dead_image(character_name);
 	}
-	
+
 	/**
 	 * Set the final attack images to determine when the animation should stop.
 	 */
@@ -192,8 +193,6 @@ public class Player implements GameVariables {
 			}
 		}
 		// Split the spritesheet into individual images.
-		// TODO: The image reading process could be improved in the future:
-		// - Resize images originally, then you won't have to resize them here
 		if (spriteSheet != null) {
 			// Create a new HashMap for the specified player state.
 			images.put(playerState, new HashMap<>());
@@ -228,7 +227,12 @@ public class Player implements GameVariables {
 			}
 		}
 	}
-	
+
+	/**
+	 * Loads dead image for player.
+	 * 
+	 * @param character_name Name of character.
+	 */
 	private void load_dead_image(String character_name) {
 		BufferedImage spriteSheet = null;
 		final String resource;
@@ -242,7 +246,7 @@ public class Player implements GameVariables {
 		images.get(State.Dead).put(Facing.N, new LinkedList<BufferedImage>());
 		images.get(State.Dead).get(Facing.N).add(spriteSheet);
 	}
-	
+
 	/**
 	 * Checks if the player hits any enemies when they attack.
 	 *
@@ -384,22 +388,6 @@ public class Player implements GameVariables {
 				attackCount = 0;
 			}
 		}
-
-		// TODO remove
-		// Show Player hitbox
-//		g.setColor(Color.RED);
-//		g.drawRect(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
-//		g.setColor(Color.BLUE);
-//		g.drawRect(PLAYER_X - imageXAdjustment, PLAYER_Y - imageYAdjustment,
-//					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2);
-		
-		// Show attacking area
-//		g.setColor(Color.blue);
-//		if (getState().equals("Attack")) {
-//			g.draw(hitboxes.get(currentFacing));
-//
-//		}
-
 	}
 
 	/**
@@ -430,7 +418,7 @@ public class Player implements GameVariables {
 	public boolean isStateLocked() {
 		return stateLocked;
 	}
-	
+
 	/**
 	 * Return whether or not the player's direction is currently locked.
 	 * 
@@ -439,6 +427,7 @@ public class Player implements GameVariables {
 	public boolean isFacingLocked() {
 		return facingLocked;
 	}
+
 	/**
 	 * Set the state to be fixed.
 	 */
@@ -473,9 +462,9 @@ public class Player implements GameVariables {
 	 * @param amount The amount of health to subtract.
 	 */
 	public void subtractHealth(int amount) {
-		if(health - amount <= 0) {
+		if (health - amount <= 0) {
 			health = 0;
-		}else {
+		} else {
 			health -= amount;
 		}
 	}
@@ -510,7 +499,8 @@ public class Player implements GameVariables {
 	/**
 	 * Set whether or not the player is attacking.
 	 * 
-	 * @param t boolean true to set the player to be attacking and false to be not attacking.
+	 * @param t boolean true to set the player to be attacking and false to be not
+	 *          attacking.
 	 */
 	public void setGettingAttacked(boolean t) {
 		gettingAttacked = t;
@@ -523,7 +513,13 @@ public class Player implements GameVariables {
 	 * bottom because it shouldn't be used besides testing
 	 */
 	private static JFrame frame;
+	/**
+	 * JPanel used for testing.
+	 */
 	private static JPanel panel;
+	/**
+	 * Image used for testing the player.
+	 */
 	private static BufferedImage image;
 
 	/**

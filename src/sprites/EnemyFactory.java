@@ -18,19 +18,10 @@ import javax.imageio.ImageIO;
  */
 public abstract class EnemyFactory {
 
-	/**
-	 * A user can create an enemy by calling this method and specifying the starting coordinates of the enemy.
-	 * 
-	 * @param x upper-left x coordinate of the enemy.
-	 * @param y upper-left y coordinate of the enemy.
-	 * @return Enemy the created enemy
-	 */
-	public abstract Enemy createEnemy(int x, int y);
-
-	// Store the padding for each enemy within it's factory class.
-	protected int TOP_PADDING;
-	protected int RIGHT_PADDING;
+	/** bottom padding of enemy. */
 	protected int BOTTOM_PADDING;
+
+	/** left padding of enemy. */
 	protected int LEFT_PADDING;
 
 	/**
@@ -38,10 +29,35 @@ public abstract class EnemyFactory {
 	 */
 	protected int[] PADDING;
 
+	/** right padding of enemy. */
+	protected int RIGHT_PADDING;
+
+	// Store the padding for each enemy within it's factory class.
+	/** Top padding of enemy. */
+	protected int TOP_PADDING;
+
+	/**
+	 * A user can create an enemy by calling this method and specifying the starting
+	 * coordinates of the enemy.
+	 *
+	 * @param x upper-left x coordinate of the enemy.
+	 * @param y upper-left y coordinate of the enemy.
+	 * @return Enemy the created enemy
+	 */
+	public abstract Enemy createEnemy(int x, int y);
+
 	/** load_images should be implemented separately for each enemy */
 	protected abstract void load_images();
 
-	/** load_spritesheet should be the same for each enemy. */
+	/**
+	 * load_spritesheet should be the same for each enemy.
+	 *
+	 * @param FILE_LOCATION  Location of file
+	 * @param character_name Name of character.
+	 * @param playerState    State of enemy.
+	 * @param imageNumber    Image number.
+	 * @param images         Map of images.
+	 */
 	protected void load_spritesheet(String FILE_LOCATION, String character_name, Enemy.State playerState,
 			int imageNumber, Map<Enemy.State, List<BufferedImage>> images) {
 		BufferedImage spriteSheet = null;
@@ -50,7 +66,7 @@ public abstract class EnemyFactory {
 			final String resource = FILE_LOCATION + character_name + "_" + playerState.toString() + ".png";
 			try {
 				spriteSheet = ImageIO.read(new File(resource));
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				System.out.println("Image not found at '" + resource + "'");
 			}
 		}
@@ -60,13 +76,21 @@ public abstract class EnemyFactory {
 		final int width = spriteSheet.getWidth();
 		if (playerState == sprites.Enemy.State.Attack) {
 			for (int i = 0; i < imageNumber; i++) {
-				BufferedImage img = spriteSheet.getSubimage(0, (height / imageNumber) * i, width, height / imageNumber);
+				final BufferedImage img = spriteSheet.getSubimage(0, (height / imageNumber) * i, width,
+						height / imageNumber);
+				images.get(playerState).add(img);
+			}
+		} else if (playerState == sprites.Enemy.State.Dead) {
+			for (int i = imageNumber - 1; i >= 0; i--) {
+				final BufferedImage img = spriteSheet.getSubimage(LEFT_PADDING,
+						(height / imageNumber) * i + TOP_PADDING, (width - LEFT_PADDING) - RIGHT_PADDING,
+						((height / imageNumber) - TOP_PADDING) - BOTTOM_PADDING);
 				images.get(playerState).add(img);
 			}
 		} else {
 			for (int i = 0; i < imageNumber; i++) {
-				BufferedImage img = spriteSheet.getSubimage(LEFT_PADDING, (height / imageNumber) * i + TOP_PADDING,
-						(width - LEFT_PADDING) - RIGHT_PADDING,
+				final BufferedImage img = spriteSheet.getSubimage(LEFT_PADDING,
+						(height / imageNumber) * i + TOP_PADDING, (width - LEFT_PADDING) - RIGHT_PADDING,
 						((height / imageNumber) - TOP_PADDING) - BOTTOM_PADDING);
 				images.get(playerState).add(img);
 			}
