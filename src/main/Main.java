@@ -69,9 +69,6 @@ public class Main {
 	 */
 	public static int enemiesKilled = 0;
 
-	/** Keeps track of leaderboard, and updates it when called. */
-	public final static Leaderboard leaderboard = new Leaderboard("leaderboards/overall_time_leaderboard.txt");
-	
 	/** Time elapsed for level. */
 	public static int timeAmount = 120;
 
