@@ -20,6 +20,7 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
+import gameTools.Leaderboard;
 import main.Main;
 
 /**
@@ -129,62 +130,9 @@ public abstract class Screen extends JPanel {
 			}
 		};
 
-		final Font f = new Font("Monospaced", Font.PLAIN, 17);
 		panel.setLayout(new BorderLayout()); // Set BorderLayout for the main panel
 
-		final JPanel statsPanel = new JPanel();
-		statsPanel.setBackground(Color.BLACK);
-		statsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // top, left, bottom, right
-		statsPanel.setLayout(new GridBagLayout());
-
-		final JLabel enemiesKilled = new JLabel("Enemies Killed: " + Main.enemiesKilled);
-		enemiesKilled.setForeground(Color.WHITE);
-		enemiesKilled.setFont(f);
-		enemiesKilled.setHorizontalAlignment(SwingConstants.CENTER);
-
-		final JLabel totalEnemiesKilled = new JLabel("Total Enemies Killed: " + Main.totalEnemiesKilled);
-		totalEnemiesKilled.setForeground(Color.WHITE);
-		totalEnemiesKilled.setFont(f);
-		totalEnemiesKilled.setHorizontalAlignment(SwingConstants.CENTER);
-
-		final JLabel timeLevel = new JLabel("Level Completed in: " + Main.secondsLevel + " seconds");
-		timeLevel.setForeground(Color.WHITE);
-		timeLevel.setFont(f);
-		timeLevel.setHorizontalAlignment(SwingConstants.CENTER);
-
-		final JLabel timeTotal = new JLabel("Total Time: " + Main.totalTimePlayed + " seconds");
-		timeTotal.setForeground(Color.WHITE);
-		timeTotal.setFont(f);
-		timeTotal.setHorizontalAlignment(SwingConstants.CENTER);
-
-		final JLabel score = new JLabel("Current Score: " + Main.calculateScore());
-		score.setForeground(Color.WHITE);
-		score.setFont(f);
-		score.setHorizontalAlignment(SwingConstants.CENTER);
-
-		// Create constraints
-		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.weightx = 1.0; // Expand horizontally
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-
-		// Add labels to the panel
-		statsPanel.add(enemiesKilled, gbc);
-		gbc.gridx++;
-		statsPanel.add(timeLevel, gbc);
-		gbc.gridy++;
-		gbc.gridx--;
-		statsPanel.add(totalEnemiesKilled, gbc);
-		gbc.gridx++;
-		statsPanel.add(timeTotal, gbc);
-		gbc.gridx = 0;
-
-		// Center the score label in the column below the last one with text
-		gbc.gridy += 2; // Skip one row to move below the last row with text
-		gbc.gridwidth = 2; // Make the score label span 2 columns
-		gbc.fill = GridBagConstraints.HORIZONTAL; // Reset fill to horizontally center the score label
-		statsPanel.add(score, gbc);
+		final JPanel statsPanel = createStatsPanel();
 
 		final JPanel buttonPanel = new JPanel();
 		buttonPanel.setBackground(Color.BLACK);
@@ -212,6 +160,76 @@ public abstract class Screen extends JPanel {
 		panel.add(box, BorderLayout.SOUTH);
 
 		return panel;
+	}
+	
+	protected JPanel createStatsPanel() {
+		//font used
+		final Font f = new Font("Monospaced", Font.PLAIN, 17);
+		
+		//Make the stats panel
+		final JPanel statsPanel = new JPanel();
+		statsPanel.setBackground(Color.BLACK);
+		statsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // top, left, bottom, right
+		statsPanel.setLayout(new GridBagLayout());
+		
+		//Enemies killed label
+		final JLabel enemiesKilled = new JLabel("Enemies Killed: " + Main.enemiesKilled);
+		enemiesKilled.setForeground(Color.WHITE);
+		enemiesKilled.setFont(f);
+		enemiesKilled.setHorizontalAlignment(SwingConstants.CENTER);
+
+		//Total enemies killed label
+		final JLabel totalEnemiesKilled = new JLabel("Total Enemies Killed: " + Main.totalEnemiesKilled);
+		totalEnemiesKilled.setForeground(Color.WHITE);
+		totalEnemiesKilled.setFont(f);
+		totalEnemiesKilled.setHorizontalAlignment(SwingConstants.CENTER);
+
+		//Time left label
+		final JLabel timeLevel = new JLabel("Time left: " + Main.seconds_left + " seconds");
+		timeLevel.setForeground(Color.WHITE);
+		timeLevel.setFont(f);
+		timeLevel.setHorizontalAlignment(SwingConstants.CENTER);
+
+		//Total time left label
+		final JLabel timeTotal = new JLabel("Total Time left: " + Main.totalTimePlayed + " seconds");
+		timeTotal.setForeground(Color.WHITE);
+		timeTotal.setFont(f);
+		timeTotal.setHorizontalAlignment(SwingConstants.CENTER);
+
+		//Make new font, same as f font but in bold
+		Font fBold = f.deriveFont(Font.BOLD);
+		//Current score label
+		final JLabel score = new JLabel("Current Score: " + Main.totalTimePlayed);
+		score.setForeground(Color.WHITE);
+		score.setFont(fBold);
+		score.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		//Level label
+		final JLabel level = new JLabel("Level " + GamePanel.getCurrentLevel()+"/3");
+		level.setForeground(Color.WHITE);
+		level.setFont(fBold);
+		level.setHorizontalAlignment(SwingConstants.CENTER);
+
+		// Create constraints
+		final GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.weightx = 1.0; // Expand horizontally
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+
+		// Add labels to the panel
+		statsPanel.add(level, gbc);
+		gbc.gridx++;
+		statsPanel.add(timeLevel, gbc);
+		gbc.gridx++;
+		statsPanel.add(enemiesKilled, gbc);
+		gbc.gridy++;
+		gbc.gridx = 1;
+		statsPanel.add(score, gbc);
+		gbc.gridx++;
+		statsPanel.add(totalEnemiesKilled,gbc);
+
+		return statsPanel;
 	}
 
 	/**
@@ -277,7 +295,7 @@ public abstract class Screen extends JPanel {
 	/**
 	 * Starts a new game
 	 */
-	private static void newGame() {
+	protected static void newGame() {
 		Main.restartGame();
 	}
 
@@ -295,8 +313,9 @@ public abstract class Screen extends JPanel {
 		scoreboardBoxPanel.setBackground(Color.BLACK);
 		scoreboardBoxPanel.setBorder(BorderFactory.createEmptyBorder(25, 50, 50, 50)); // Add padding
 
-		final String levelName = Main.leaderboard.getleaderboardName();
-		final String[] entries = Main.leaderboard.leaderboardToString();
+		final Leaderboard leader = Leaderboard.levels.get(Main.getLevel());
+		final String levelName = leader.getleaderboardName();//Main.leaderboard.getleaderboardName();
+		final String[] entries = leader.leaderboardToString();
 
 		String scoreboard = "<html>";
 		scoreboard += "<br>" + levelName + "<br>";
@@ -304,6 +323,8 @@ public abstract class Screen extends JPanel {
 		for (int i = 0; i < entries.length; i++) {
 			scoreboard += "<br>" + (i + 1) + ". " + entries[i] + "<br>";
 		}
+		
+		scoreboard += "<br><br><br>"+"Your Score: " + Main.getScore()+"<br>";
 		scoreboard += "<html>";
 
 		// Create label for scoreboard text
@@ -314,9 +335,9 @@ public abstract class Screen extends JPanel {
 		scoreboardLabel.setVerticalAlignment(SwingConstants.TOP); // Align text to the top
 
 		final JLabel scoreboardTxtLabel = new JLabel(
-				"<html><br>-The leaderboard keeps track of the fastest time (In seconds) it takes"
-						+ " to complete all 3 levels.<br>"
-						+ "<br>-Want to be among the greats? Go back to the home page and play again!<br><html>");
+				"<html><br>-The leaderboard keeps track of the best scores users have got from completing the game.<br>"
+						+ "<br>-Your score is calculated by the time taken to complete each level and the number of enemies you kill.<br>"
+						+ "<br>-Want to be among the greats? Play and finish our game to try and join them!<br><html>");
 		scoreboardTxtLabel.setForeground(Color.WHITE);
 		scoreboardTxtLabel.setFont(new Font("Monospaced", Font.PLAIN, 18));
 		scoreboardTxtLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -336,9 +357,9 @@ public abstract class Screen extends JPanel {
 		buttonPanel.setBackground(Color.BLACK);
 		buttonPanel.add(backButton);
 
-		// Add button panel to the bottom of the instructions box panel
+		// Add button panel to the bottom of the scoreboard box panel
 		scoreboardBoxPanel.add(buttonPanel, BorderLayout.SOUTH);
-		// Add instructions box panel to the center of the main panel
+		// Add scoreboard panel to the center of the main panel
 		panel.add(scoreboardBoxPanel, BorderLayout.CENTER);
 
 		return panel;
@@ -365,7 +386,7 @@ public abstract class Screen extends JPanel {
 	/**
 	 * Shows the scoreboard panel.
 	 */
-	private void showScoreboardPanel() {
+	protected void showScoreboardPanel() {
 		remove(mainPanel);
 		add(scoreboardPanel, BorderLayout.CENTER);
 		currentPanel = scoreboardPanel;
@@ -377,7 +398,7 @@ public abstract class Screen extends JPanel {
 	/**
 	 * Shows the main panel.
 	 */
-	private void showMainPanel() {
+	protected void showMainPanel() {
 		backButton.setForeground(Color.WHITE);
 		remove(currentPanel);
 		currentPanel = mainPanel;
@@ -407,7 +428,7 @@ public abstract class Screen extends JPanel {
 						+ " <br><br>- You have a total of two minutes to complete each level. A timer will be displayed on the top of the screen to keep track of the remaining time. If the time runs out before you find the exit, you lose the game."
 						+ "<br><br>- Each level has 5 different mazes. Each time you start the game, a random maze is picked for each level.<br><br>"
 						+ "- Along the way, you may encounter enemies lurking in the maze. Your player has a health bar, which decreases if you collide with enemies. If your player's health reaches zero, you'll respawn at the beginning of the maze. However, fighting enemies also grants you an extra 15 seconds of time if you hit them 3 times. Use your health wisely to balance speed and safety."
-						+ "<br><br>- Your score is calculated by the time taken to complete each level and the number of enemies you kill. The faster you complete the three mazes and the more enemies you kill, the higher ranking you will have. Aim for the best time, kill as many enemies as you can, and challenge yourself to improve with each playthrough!");
+						+ "<br><br>- Your score is calculated by the time taken to complete each level and the number of enemies you kill. You start with a base score of 735, which changes based on your performance. Aim for the best time, kill as many enemies as you can, and challenge yourself to improve with each playthrough!");
 		instructionsLabel.setForeground(Color.WHITE);
 		instructionsLabel.setFont(new Font("Monospaced", Font.PLAIN, 17));
 		instructionsLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -439,7 +460,7 @@ public abstract class Screen extends JPanel {
 	/**
 	 * Shows intruction panel.
 	 */
-	private void showInstructionsPanel() {
+	protected void showInstructionsPanel() {
 		remove(mainPanel);
 		add(instructionsPanel, BorderLayout.CENTER);
 		currentPanel = instructionsPanel;

@@ -51,6 +51,11 @@ import sprites.Enemy;
  * @see GamePanel
  */
 public class Main {
+	
+	/**
+	 * Score is time_left
+	 * Scoreboard for level 1,2, and total score
+	 */
 
 	/** Timer object used for timing how long the player has. */
 	private static Timer timer;
@@ -58,29 +63,8 @@ public class Main {
 	/** Window used to display the game. */
 	private static JFrame window;
 
-	/** Total seconds the player has been playing the level. */
-	public static int secondsLevel = 0;
-
 	/** Time elapsed for level. */
 	private static int timeAmount = 120;
-
-	/**
-	 * Total time allowed for all three levels.
-	 */
-	private static final int TOTAL_TIME_ALLOWED = timeAmount * 3;
-
-	/**
-	 * Max score you can gain by killing all enemies in every level. We got this
-	 * number by finding the highest number of enemies for each level, and then
-	 * adding them up and multiplying that number by 15 because that how many
-	 * seconds each enemy is worth.
-	 */
-	private static final int MAX_SCORE_FROM_ENEMIES = 1095;
-
-	/**
-	 * Max score the player can get.
-	 */
-	private static final int MAX_SCORE = MAX_SCORE_FROM_ENEMIES - TOTAL_TIME_ALLOWED;
 
 	/**
 	 * Total time the player takes to beat all levels.
@@ -122,7 +106,7 @@ public class Main {
 	/**
 	 * Keeps track if user has been added to leaderboard.
 	 */
-	public static boolean addedToLeaderboard = true;
+	public static boolean addedToLeaderboard = false;
 
 	/** Total enemies killed by the player. */
 	public static int totalEnemiesKilled = 0;
@@ -161,6 +145,7 @@ public class Main {
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
 
+		homePanel.setRunning(true);
 		// Add action listener to the button in HomeScreen
 		homePanel.getStartButton().addActionListener(new ActionListener() {
 			@Override
@@ -173,6 +158,7 @@ public class Main {
 				} else {
 					playerName = name;
 					homePanel.setVisible(false);
+					homePanel.setRunning(false);
 					runMainCode();
 				}
 			}
@@ -211,7 +197,6 @@ public class Main {
 		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		window.setTitle("Maze Runner - Use Arrows to start time");
 
-		// window.setResizable(false);
 		// Creates new game panel object
 		timeOut.setVisible(false);
 		nextLevel.setVisible(false);
@@ -228,7 +213,6 @@ public class Main {
 			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				secondsLevel++; // running total of time taken to complete level
 				seconds_left--; // time they have left to complete
 				int currentLevel = GamePanel.getCurrentLevel();
 				window.setTitle("Maze Runner - Level: " + currentLevel);
@@ -292,6 +276,21 @@ public class Main {
 	}
 
 	/**
+	 * Gets the current level the player is on. If the 
+	 * homePanel hasn't been initialized yet or it's currently
+	 * being displayed, then it returns 3 so the overall leaderboard
+	 * can be displayed.
+	 * 
+	 * @return The current level.
+	 */
+	public static int getLevel() {
+		if(homePanel == null || homePanel.isRunning()) {
+			return 3;
+		}
+		
+		return GamePanel.getCurrentLevel();
+	}
+	/**
 	 * Closes the main window. Stops the game and disposes of the main window.
 	 */
 	public static void closeMainWindow() {
@@ -306,7 +305,6 @@ public class Main {
 	public static void resetTime() {
 		seconds_left = timeAmount;
 		enemiesKilled = 0;
-		secondsLevel = 0;
 		window.setTitle("Maze Runner - Use Arrows to start time");
 		gamePanel.addKeyListener(new KeyAdapter() {
 			private boolean timerStarted = false;
@@ -372,6 +370,7 @@ public class Main {
 		nextLevel.setRunning(true);
 		gamePanel.setVisible(false);
 		homePanel.setVisible(false);
+		homePanel.setRunning(false);
 	}
 
 	/**
@@ -388,6 +387,7 @@ public class Main {
 		gamePanel.startGameThread();
 		nextLevel.setVisible(false);
 		homePanel.setVisible(false);
+		homePanel.setRunning(false);
 
 	}
 
@@ -411,6 +411,7 @@ public class Main {
 		timeOut.setFocusable(show);
 		gamePanel.setVisible(false);
 		homePanel.setVisible(false);
+		homePanel.setRunning(false);
 	}
 
 	/**
@@ -433,6 +434,7 @@ public class Main {
 		winner.setFocusable(show);
 		gamePanel.setVisible(false);
 		homePanel.setVisible(false);
+		homePanel.setRunning(false);
 	}
 
 	/**
@@ -449,7 +451,7 @@ public class Main {
 	}
 
 	/**
-	 * removes the game over screen, used when the player chooses play again after
+	 * Removes the game over screen, used when the player chooses play again after
 	 * running out of time in a level.
 	 */
 	public static void disablePanels() {
@@ -458,31 +460,47 @@ public class Main {
 	}
 
 	/**
-	 * Calculates the players score and adds them to the leader board
+	 * Adds player score to respective leaderboard.
 	 */
 	public static void addScoreToLeader() {
-		final int playerScore = calculateScore();
-		final int added = leaderboard.addEntry(playerName, playerScore);
-		if (added != -1) {
-			addedToLeaderboard = true;
+		//If player reached third level, 
+		if(GamePanel.getCurrentLevel() == 3) {
+			final Leaderboard leader = Leaderboard.levels.get(GamePanel.getCurrentLevel());
+			final int added = leader.addEntry(playerName, totalTimePlayed);
+			if (added != -1) {
+				addedToLeaderboard = true;
+			}
+			return;
 		}
+		
+		final int playerScore = seconds_left;
+		final Leaderboard leader = Leaderboard.levels.get(GamePanel.getCurrentLevel());
+		leader.addEntry(playerName, playerScore);
 	}
 
 	/**
-	 * Calculates the score of the player. The score is based off of how many
-	 * enemies killed and the total time played.
+	 * Gets the score of the player.
 	 * 
 	 * @return The current score for the player.
 	 */
-	public static int calculateScore() {
-		return MAX_SCORE + totalTimePlayed - (totalEnemiesKilled * 15);
+	public static int getScore() {
+		//If they beat final level, get their total score
+		if(GamePanel.getCurrentLevel() == 3) {
+			return totalTimePlayed;
+		}
+		
+		//So start screen score is 0
+		if(homePanel == null || homePanel.isRunning()) {
+			return 0;
+		}
+		return seconds_left;
 	}
 
 	/**
 	 * Updates the total time and the total enemies a player has killed in a level
 	 */
 	public static void updateTotalTimeAndEnemies() {
-		totalTimePlayed += secondsLevel;
+		totalTimePlayed += seconds_left;
 		totalEnemiesKilled += enemiesKilled;
 	}
 
@@ -490,11 +508,13 @@ public class Main {
 	 * Resets the game and removes the old window and starts a new one
 	 */
 	public static void restartGame() {
+		if(window == null) {
+			return;
+		}
 		seconds_left = timeAmount;
 		totalEnemiesKilled = 0;
 		totalTimePlayed = 0;
 		enemiesKilled = 0;
-		secondsLevel = 0;
 		ChunkManager.activeChunks.clear();
 		Enemy.activeEnemies.clear();
 		Enemy.enemies.clear();

@@ -1,6 +1,6 @@
-Leaderboard
-AndrewDene;851
-NickClouse;875
-NathanAWES;903
-MollyOConn;923
-ILoveJavaL;988
+Total Score Leaderboard
+AndrewDene;1076
+NickClouse;1027
+NathanAWES;992
+MollyOConn;935
+ILoveJavaL;915
