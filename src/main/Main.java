@@ -131,19 +131,20 @@ public class Main {
 	 * Adds player score to respective leaderboard.
 	 */
 	public static void addScoreToLeader() {
+		final Leaderboard leader = Leaderboard.levels.get(GamePanel.getCurrentLevel());
 		// If player reached third level,
 		if (GamePanel.getCurrentLevel() == 3) {
-			final Leaderboard leader = Leaderboard.levels.get(GamePanel.getCurrentLevel());
 			final int added = leader.addEntry(playerName, totalTimePlayed);
 			if (added != -1) {
 				addedToLeaderboard = true;
 			}
+			leader.updateleaderboardFile();
 			return;
 		}
 
 		final int playerScore = seconds_left;
-		final Leaderboard leader = Leaderboard.levels.get(GamePanel.getCurrentLevel());
 		leader.addEntry(playerName, playerScore);
+		leader.updateleaderboardFile();
 	}
 
 	/**
@@ -153,7 +154,7 @@ public class Main {
 	 */
 	public static void addTime(int t) {
 		seconds_left += 15;
-		addTime = false;
+		addTime = true;
 	}
 
 	/**
