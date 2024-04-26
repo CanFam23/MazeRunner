@@ -144,7 +144,7 @@ public class Player implements GameVariables {
 	/**
 	 * For the display, we only need to load a subset of the total images.
 	 * 
-	 * @param character_name
+	 * @param character_name the name of the character to be loaded.
 	 */
 	public void load_display_images(String character_name) {
 		characterName = character_name;
@@ -409,6 +409,11 @@ public class Player implements GameVariables {
 		}
 	}
 	
+	/**
+	 * Draw the player for the home screen player display.
+	 * 
+	 * @param g The Graphics2D object to be drawn with.
+	 */
 	public synchronized void draw_display(Graphics2D g) {
 		if (images == null || images.get(currentState) == null)
 			return;
