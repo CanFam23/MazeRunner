@@ -63,6 +63,11 @@ public class Player implements GameVariables {
 	public static final int SIZE = 3;
 
 	/**
+	 * Store the character's name to be used for image loading.
+	 */
+	private String characterName = null;
+	
+	/**
 	 * Default the player to be holding a weapon.
 	 */
 	private boolean holdingWeapon = true;
@@ -81,7 +86,7 @@ public class Player implements GameVariables {
 	private State currentState = State.Idle;
 
 	/** Set initial player direction. */
-	private Facing currentFacing = Facing.N;
+	private Facing currentFacing = Facing.S;
 
 	/** How many frames that pass before each image switch. */
 	private final int FRAMESPERSWITCH = 6;
@@ -101,7 +106,7 @@ public class Player implements GameVariables {
 	 * A map of images that can be accessed by first specifying the player state and
 	 * direction faced.
 	 */
-	private static final Map<State, Map<Facing, List<BufferedImage>>> images = new HashMap<>();
+	private final Map<State, Map<Facing, List<BufferedImage>>> images = new HashMap<>();
 
 	/**
 	 * Enemies the player hit.
@@ -137,12 +142,26 @@ public class Player implements GameVariables {
 	private Facing attackFacing = Facing.N;
 
 	/**
+	 * For the display, we only need to load a subset of the total images.
+	 * 
+	 * @param character_name
+	 */
+	public void load_display_images(String character_name) {
+		characterName = character_name;
+		images.clear();
+		final int SPRITESHEET_WIDTH = 4;
+		final int SPRITESHEET_IDLE_HEIGHT = 2;
+		load_spritesheet(character_name, State.Idle, SPRITESHEET_WIDTH, SPRITESHEET_IDLE_HEIGHT);
+	}
+	
+	/**
 	 * Load images for each player state.
 	 *
 	 * @param character_name the name of the player file to be selected (Civilian1,
 	 *                       Civilian2, Civilian1(black), etc).
 	 */
 	public void load_images(String character_name) {
+		images.clear();
 		// Declare spritesheet dimensions
 		final int SPRITESHEET_WIDTH = 4;
 		final int SPRITESHEET_IDLE_HEIGHT = 2;
@@ -389,6 +408,36 @@ public class Player implements GameVariables {
 			}
 		}
 	}
+	
+	public synchronized void draw_display(Graphics2D g) {
+		if (images == null || images.get(currentState) == null)
+			return;
+		final BufferedImage myImage = images.get(currentState).get(currentFacing).get(0);
+		final int imageXAdjustment = (myImage.getWidth() * SIZE - PLAYER_WIDTH) / 2;
+		final int imageYAdjustment = (myImage.getHeight() * SIZE - PLAYER_HEIGHT) / 2;
+		final int displayPadding = 135;
+		if (currentState == State.Attack) {
+			attackCount += 1;
+		}
+		if (drawCount < FRAMESPERSWITCH - 1) { // For x ticks of the game loop, draw the same image.
+			g.drawImage(myImage, displayPadding - imageXAdjustment, displayPadding / 2 - imageYAdjustment,
+					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
+			drawCount++;
+		} else { // Then, switch the image to the next one in the sequence.
+			BufferedImage img = images.get(currentState).get(currentFacing).remove(0);
+			g.drawImage(img, displayPadding - imageXAdjustment, displayPadding / 2 - imageYAdjustment,
+					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
+			images.get(currentState).get(currentFacing).add(img);
+			drawCount = 0;
+			// Check currentState before test to increase performance with a quicker test.
+			if (currentState == State.Attack && img == finalAttackImages.get(currentFacing)) {
+				unlockState();
+				unlockFacing();
+				currentState = State.Idle;
+				attackCount = 0;
+			}
+		}
+	}
 
 	/**
 	 * Reset player state and direction.
@@ -543,7 +592,7 @@ public class Player implements GameVariables {
 				super.paintComponent(g);
 				// Draw the current image, if not null
 				if (image != null) {
-					final int sizeMult = 20;
+					final int sizeMult = 7;
 					g.drawImage(image, 0, 0, image.getWidth() * sizeMult, image.getHeight() * sizeMult, this);
 					g.setColor(Color.RED);
 					g.drawRect(0, 0, image.getWidth() * sizeMult, image.getHeight() * sizeMult);
@@ -554,6 +603,15 @@ public class Player implements GameVariables {
 		frame.add(panel);
 		frame.setSize(500, 500);
 		frame.setVisible(true);
+	}
+	
+	/**
+	 * Used for the player selection box to determine which player will be loaded in game. 
+	 * 
+	 * @return our character's name
+	 */
+	public String get_character_name() {
+		return characterName;
 	}
 
 	/**
@@ -662,19 +720,19 @@ public class Player implements GameVariables {
 		initializeGUI();
 
 		// Change these two variables to modify the animations tested
-		State playerState = State.Dead; // Test the player state images (Move, Idle, etc.)
-		Facing direction = Facing.N; // Test the direction the player is facing
+		State playerState = State.Attack; // Test the player state images (Move, Idle, etc.)
+		Facing direction = Facing.SE; // Test the direction the player is facing
 		int speed = (int) (0.1 * 1000); // Set seconds (first number) between each image.
 
 		while (true) {
-			BufferedImage img = Player.images.get(playerState).get(direction).remove(0);
+			BufferedImage img = p1.images.get(playerState).get(direction).remove(0);
 			displayImage(img);
 			try {
 				Thread.sleep(speed);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			Player.images.get(playerState).get(direction).add(img);
+			p1.images.get(playerState).get(direction).add(img);
 		}
 	}
 }

@@ -111,7 +111,10 @@ public class Main {
 
 	/** Timer object used for timing how long the player has. */
 	private static Timer timer;
-
+	
+	/** Default character name */
+	private static String characterName = "Civilian1";
+	
 	/**
 	 * Create a transparent cursor. Used when player is player the game, so the
 	 * cursor disappears from the screen.
@@ -476,26 +479,11 @@ public class Main {
 				System.exit(0);
 			}
 		});
-		
-		Map nameMap = new HashMap<String, String>();
-		nameMap.put("Steve", "Civilian1");
-		Map imageMap = new HashMap<String, BufferedImage>();
-		
-		// Setup Image Panel
-        JPanel imagePanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                BufferedImage image = nameMap.get(homePanel.getComboBox());
-                if (image != null) {
-                    g.drawImage(image, 10, 10, this);
-                }
-            }
-        };
 
 		window.setCursor(transparentCursor);
 
 		// starts game
+		gamePanel.loadPlayer(homePanel.get_display_player().get_character_name());
 		gamePanel.startGameThread();
 	}
 

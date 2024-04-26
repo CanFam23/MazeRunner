@@ -6,11 +6,24 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.swing.Timer;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -18,6 +31,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+
+import sprites.Player;
 
 /**
  * <p>
@@ -36,11 +51,31 @@ public class HomeScreen extends Screen {
 	 * Serial Version UID.
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
+	/**
+	 * Panel to draw the player for selection on.
+	 */
+	private static JPanel drawingPanel;
+	
+	// Create the player select buttons.
+	private final ImageIcon leftButtonDefault = new ImageIcon("images/Left-Default.png");
+	private final ImageIcon rightButtonDefault = new ImageIcon("images/Right-Default.png");
+	private final ImageIcon leftButtonHover = new ImageIcon("images/Left-Hover.png");
+	private final ImageIcon rightButtonHover = new ImageIcon("images/Right-Hover.png");
+	private final ImageIcon leftButtonClick = new ImageIcon("images/Left-Click.png");
+	private final ImageIcon rightButtonClick = new ImageIcon("images/Right-Click.png");
+	
+	/** This timer will control the redrawing of the player. */
+	private Timer timer;
+	
+	/** The player currently being displayed on the home screen. */
+	private Player displayPlayer;
+	
+	
 	/**
 	 * Main method
 	 *
-	 * @param args arguements passed
+	 * @param args arguments passed
 	 */
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame("HomeScreen Window Test");
@@ -94,10 +129,10 @@ public class HomeScreen extends Screen {
 	public JButton getStartButton() {
 		return startButton;
 	}
-
+	
 	@Override
 	protected JPanel createMainPanel() {
-		final JPanel panel = new JPanel() {
+		final JPanel panel = new JPanel(new BorderLayout()) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -125,7 +160,7 @@ public class HomeScreen extends Screen {
 		buttonPanel.add(nameInputPanel, BorderLayout.CENTER);
 
 		// Create a panel for the buttons with FlowLayout (horizontal)
-		final JPanel buttonsFlowPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
+		final JPanel buttonsFlowPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
 		buttonsFlowPanel.setBackground(Color.BLACK); // Adjust as needed
 
 		instructionButton = createButton("INSTRUCTIONS");
@@ -139,13 +174,160 @@ public class HomeScreen extends Screen {
 		// Add buttonsFlowPanel to the SOUTH of buttonPanel
 		buttonPanel.add(buttonsFlowPanel, BorderLayout.SOUTH);
 
-		// Set BorderLayout for the main panel
-		panel.setLayout(new BorderLayout());
+		// Create a JPanel to hold the player selection buttons and the player display
+		final JPanel SelectionPanel = new JPanel(new GridLayout(5, 1));
+		
+		// Create a JPanel for player selection
+		final JPanel playerFlowPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 50, 0));
+				
+		final JButton leftButton = new JButton(leftButtonDefault);
+		final JButton rightButton = new JButton(rightButtonDefault);
+		
+		// Remove button background
+		leftButton.setBorderPainted(false);
+		leftButton.setContentAreaFilled(false);
+		leftButton.setFocusPainted(false);
+		rightButton.setBorderPainted(false);
+		rightButton.setContentAreaFilled(false);
+		rightButton.setFocusPainted(false);
+		
+		List<Player> displayPlayerList = new LinkedList<Player>();
+		final Player Civilian1 = new Player();
+		Civilian1.load_display_images("Civilian1");
+		displayPlayerList.add(Civilian1);
+		displayPlayer = Civilian1;
+		
+		final Player Civilian1Black = new Player();
+		Civilian1Black.load_display_images("Civilian1(black)");
+		displayPlayerList.add(Civilian1Black);
+		
+		final Player Civilian2Black = new Player();
+		Civilian2Black.load_display_images("Civilian2(black)");
+		displayPlayerList.add(Civilian2Black);
+		
+		final Player Knight1 = new Player();
+		Knight1.load_display_images("Knight1");
+		displayPlayerList.add(Knight1);
+		
+		// Add button listeners
+		leftButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                leftButton.setIcon(leftButtonHover);
+            }
 
-		// Add the buttonPanel to the SOUTH
-		panel.add(buttonPanel, BorderLayout.SOUTH);
+            @Override
+            public void mouseExited(MouseEvent e) {
+                leftButton.setIcon(leftButtonDefault);
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+            	leftButton.setIcon(leftButtonClick);
+            	displayPlayerList.add(0, displayPlayerList.remove(displayPlayerList.size() - 1));
+            	displayPlayer = displayPlayerList.get(0);
+            }
+        });
+		
+		// Add button listeners
+		rightButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            	rightButton.setIcon(rightButtonHover);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            	rightButton.setIcon(rightButtonDefault);
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+            	rightButton.setIcon(rightButtonClick);
+            	displayPlayerList.add(displayPlayerList.remove(0));
+            	displayPlayer = displayPlayerList.get(0);
+//            	playerNameList.add(playerNameList.remove(0));
+//            	displayPlayer.load_images(playerNameList.get(0));
+            }
+        });
+		
+		// Add selection buttons to the panel
+		playerFlowPanel.add(leftButton);
+		playerFlowPanel.add(rightButton);
+
+		// Make the panel see through
+		playerFlowPanel.setOpaque(false);
+		
+		// Create Player display
+ 		initializeGUI();
+		
+		drawingPanel.setOpaque(false);
+
+		SelectionPanel.setOpaque(false);
+		
+		// Add panels to the main frame
+		
+		final JPanel sizingPanel = new JPanel();
+		sizingPanel.setBounds(0, 0, 100, 400);
+		sizingPanel.setOpaque(false);
+		final JPanel sizingPanel2 = new JPanel();
+		sizingPanel2.setBounds(0, 0, 100, 400);
+		sizingPanel2.setOpaque(false);
+		final JPanel sizingPanel3 = new JPanel();
+		sizingPanel3.setBounds(0, 0, 100, 400);
+		sizingPanel3.setOpaque(false);
+		
+		SelectionPanel.add(sizingPanel);
+		SelectionPanel.add(sizingPanel2);
+		SelectionPanel.add(sizingPanel3);
+		SelectionPanel.add(drawingPanel);
+		SelectionPanel.add(playerFlowPanel);
+		
+		panel.add(SelectionPanel, BorderLayout.WEST);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
 
 		return panel;
 
 	}
-}
+	
+	/**
+	 * We use this to determine which player should be loaded based on the display character selected when the game is started. 
+	 * 
+	 * @return our display player
+	 */
+	public Player get_display_player() {
+		return displayPlayer;
+	}
+	
+	/**
+	 * Initialize a basic GUI for testing.
+	 */
+	public void initializeGUI() {
+		drawingPanel = new JPanel() {
+			private static final long serialVersionUID = 1L;
+
+			/**
+			 * Paint component.
+			 *
+			 * @param g graphics to draw on.
+			 */
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				// Draw the current image, if not null
+				if (displayPlayer != null) {
+					displayPlayer.draw_display((Graphics2D) g);
+				}
+			}
+		};
+		startImageTimer();
+		}
+	
+		private void startImageTimer() {
+	        timer = new Timer(500, new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                repaint(); // This will call paintComponent method
+	            }
+	            });
+	        timer.start();
+	    }
+	}
