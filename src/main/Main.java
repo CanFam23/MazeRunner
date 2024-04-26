@@ -394,8 +394,8 @@ public class Main {
 		 */
 		if (gamePanel != null) {
 			gamePanel.reset();
-
 		}
+		
 		// Creates window
 		gamePanel = new GamePanel(backgroundImage);
 		nextLevel = new GameOverWIN();

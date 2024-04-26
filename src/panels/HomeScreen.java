@@ -58,11 +58,17 @@ public class HomeScreen extends Screen {
 	private static JPanel drawingPanel;
 	
 	// Create the player select buttons.
+	/** The default image for the left facing button */
 	private final ImageIcon leftButtonDefault = new ImageIcon("images/Left-Default.png");
+	/** The default image for the right facing button */
 	private final ImageIcon rightButtonDefault = new ImageIcon("images/Right-Default.png");
+	/** The mouse hover image for the left facing button */
 	private final ImageIcon leftButtonHover = new ImageIcon("images/Left-Hover.png");
+	/** The mouse hover image for the right facing button */
 	private final ImageIcon rightButtonHover = new ImageIcon("images/Right-Hover.png");
+	/** The clicked image for the left facing button */
 	private final ImageIcon leftButtonClick = new ImageIcon("images/Left-Click.png");
+	/** The clicked image for the right facing button */
 	private final ImageIcon rightButtonClick = new ImageIcon("images/Right-Click.png");
 	
 	/** This timer will control the redrawing of the player. */
@@ -322,7 +328,7 @@ public class HomeScreen extends Screen {
 		}
 	
 		private void startImageTimer() {
-	        timer = new Timer(500, new ActionListener() {
+	        timer = new Timer(100, new ActionListener() {
 	            @Override
 	            public void actionPerformed(ActionEvent e) {
 	                repaint(); // This will call paintComponent method

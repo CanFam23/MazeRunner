@@ -455,6 +455,11 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		gameThread.start();
 	}
 	
+	/**
+	 * Load the images for our player based on a character name.
+	 * 
+	 * @param character_name the name of the player to be loaded.
+	 */
 	public void loadPlayer(String character_name) {
 		ourPlayer.load_images(character_name);
 	}
