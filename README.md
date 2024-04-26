@@ -54,7 +54,7 @@ To get a local copy up and running follow these simple example steps.
 ### Prerequisites
 
 * **IDE**: Any IDE of your choosing, although we recommend Eclipse for optimal compatibility.
-* **Java**: Ensure Java is installed on your device. The project is compatible with Java version 17 or higher.
+* **Java**: Ensure Java is installed on your device. The project is compatible with Java version 17 or higher (Not tested with older versions).
 
 ### Installation
 The following folders are needed to run the game:

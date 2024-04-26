@@ -36,230 +36,6 @@ import gameTools.GameVariables;
  */
 public class Chunk implements GameVariables {
 
-	/** The group of blocks the chunk keeps track of. */
-	private PositionBlock[][] blocks;
-
-	/** Width of the chunk. */
-	private int chunkWidth;
-
-	/** Height of the chunk. */
-	private int chunkHeight;
-
-	/** If the chunk contains the start block. */
-	private boolean isStartChunk = false;
-
-	/** If the chunk contains the end block. */
-	private boolean isEndChunk = false;
-
-	/** X position of the top left corner of the chunk. */
-	public int xPosition;
-
-	/** Y position of the top left corner of the chunk. */
-	public int yPosition;
-
-	/**
-	 * Constructs a new Chunk with given dimensions and coordinates.
-	 *
-	 * @param xDimension number of rows in chunk.
-	 * @param yDimension number of columns in chunk.
-	 * @param xPosition  the top left x of the chunk relative to all other chunks.
-	 * @param yPosition  the top left y of the chunk relative to all other chunks.
-	 */
-	public Chunk(int xDimension, int yDimension, int xPosition, int yPosition) {
-		blocks = new PositionBlock[yDimension][xDimension];
-		this.xPosition = WALL_WIDTH * xPosition * xDimension;
-		this.yPosition = WALL_HEIGHT * yPosition * yDimension;
-
-		this.chunkWidth = xDimension * WALL_WIDTH;
-		this.chunkHeight = yDimension * WALL_HEIGHT;
-	}
-
-	/**
-	 * Adds a position block to the chunk with position xPosition and yPosition.
-	 *
-	 * @param xPosition is the x position that the block appears in the chunk.
-	 * @param yPosition is the y position that the block appears in the chunk.
-	 * @param block     can be any of the PositionBlock types (EmptyBlock, EndBlock,
-	 *                  Wall, etc.).
-	 */
-	public void add(int xPosition, int yPosition, PositionBlock block) {
-		blocks[yPosition][xPosition] = block;
-
-		if (block instanceof StartingBlock) {
-			isStartChunk = true;
-		}
-		if (block instanceof EndBlock) {
-			isEndChunk = true;
-		}
-	}
-
-	/**
-	 * Update the coordinates of the chunk.
-	 *
-	 * @param dx is the change in the x direction to the position of the chunk.
-	 * @param dy is the change in the y direction to the position of the chunk.
-	 */
-	public void updateCoords(int dx, int dy) {
-		xPosition += dx;
-		yPosition += dy;
-	}
-
-	/**
-	 * Draw every PositionBlock in the chunk.
-	 *
-	 * @param g is the Graphics2D object that will be drawn with.
-	 */
-	public void draw(Graphics2D g) {
-		for (PositionBlock[] block : blocks) {
-			for (int j = 0; j < block.length; j++) {
-				if (block[j] != null) {
-					block[j].draw(g, xPosition, yPosition);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Returns a boolean which represents if the chunk contains the start block.
-	 *
-	 * @return true if chunk is start chunk.
-	 */
-	public boolean isStartChunk() {
-		return isStartChunk;
-	}
-
-	/**
-	 * Returns a boolean which represents if the chunk contains the end block.
-	 *
-	 * @return true if chunk is end chunk.
-	 */
-	public boolean isEndChunk() {
-		return isEndChunk;
-	}
-
-	/**
-	 * Gets the coordinates of each corner of the chunk.
-	 *
-	 * @return 2D array of integers, which represent each 'corner' of a chunk.
-	 */
-	public int[][] getCoords() {
-		return new int[][] { { xPosition, xPosition + chunkWidth, xPosition + chunkWidth, xPosition },
-				{ yPosition, yPosition, yPosition + chunkHeight, yPosition + chunkHeight } };
-	}
-
-	/**
-	 * Gets the current y position of the chunk.
-	 *
-	 * @return y position of chunk.
-	 */
-	public int getXPosition() {
-		return xPosition;
-	}
-
-	/**
-	 * Gets the current x position of the chunk.
-	 *
-	 * @return x position of chunk.
-	 */
-	public int getYPosition() {
-		return yPosition;
-	}
-
-	/**
-	 * Checks if the chunk contains the given coordinates.
-	 *
-	 * @param xCoords The y coordinates to use.
-	 * @param yCoords The x coordinates to use.
-	 * @return true if the chunk contains those points.
-	 */
-	public boolean containsPoints(int[] xCoords, int[] yCoords) {
-
-		final int[] chunkXCoords = new int[] { xPosition, xPosition + chunkWidth, xPosition + chunkWidth, xPosition };
-		final int[] chunkYCoords = new int[] { yPosition, yPosition, yPosition + chunkHeight, yPosition + chunkHeight };
-
-		return CollisionDetection.getCollision(xCoords, yCoords, chunkXCoords, chunkYCoords);
-	}
-
-	/**
-	 * Checks for any collision between the given coordinates, and all walls in the
-	 * chunk. Deltas is used to displace the blocks if needed, to see if displacing
-	 * the blocks by those amounts would result in a collision.
-	 *
-	 * @param xCoords X coordinates to use.
-	 * @param yCoords Y coordinates to use.
-	 * @param deltas  Displacement of x and y.
-	 * @return true if a collision is found.
-	 */
-	public boolean checkCollision(int[] xCoords, int[] yCoords, Integer[] deltas) {
-
-		boolean collided = false;
-		// Check each wall in the chunk, if a wall chunk and colliding, return true;
-		for (PositionBlock[] block : blocks) {
-			for (int c = 0; c < blocks[0].length; c++) {
-				final PositionBlock temp = block[c];
-				if (temp instanceof Wall) {
-
-					// We get the hitbox coords of each wall using the position if we were to update
-					// it with deltas
-					final int[][] tempCoords = temp.getHitbox(xPosition - deltas[0], yPosition - deltas[1]);
-
-					collided = CollisionDetection.getCollision(tempCoords[0], tempCoords[1], xCoords, yCoords);
-
-					if (collided) {
-						return true;
-					}
-
-				}
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Gets all blocks in the chunk.
-	 *
-	 * @return The 2D array of blocks.
-	 */
-	public PositionBlock[][] getBlocks() {
-		return blocks;
-	}
-
-	/**
-	 * Gets the width of the chunk.
-	 *
-	 * @return chunkWidth.
-	 */
-	public int getChunkWidth() {
-		return chunkWidth;
-	}
-
-	/**
-	 * Gets the height of the chunk.
-	 *
-	 * @return chunkHeight.
-	 */
-	public int getChunkHeight() {
-		return chunkHeight;
-	}
-
-	/**
-	 * Converts chunk to string.
-	 *
-	 * @return String format of chunk.
-	 */
-	@Override
-	public String toString() {
-		String ret = "";
-		for (PositionBlock[] block : blocks) {
-			for (int x = 0; x < block.length; x++) {
-				ret += block[x].toString();
-			}
-			ret += "\n";
-		}
-		return ret;
-	}
-
 	/**
 	 * Main Method, used for testing.
 	 *
@@ -326,17 +102,17 @@ public class Chunk implements GameVariables {
 
 		VolatileImage vImage = null;
 
-		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice device = env.getDefaultScreenDevice();
-		GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
+		final GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		final GraphicsDevice device = env.getDefaultScreenDevice();
+		final GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
 
 		try {
 			vImage = graphicsConfig.createCompatibleVolatileImage(WALL_WIDTH, WALL_HEIGHT);
-			Graphics2D g = vImage.createGraphics();
+			final Graphics2D g = vImage.createGraphics();
 			final BufferedImage positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
 			g.drawImage(positionBlockImage, 0, 0, null);
 			g.dispose();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -439,9 +215,9 @@ public class Chunk implements GameVariables {
 		}
 
 		// Testing toString
-		String chunkStr = chunk.toString();
+		final String chunkStr = chunk.toString();
 
-		String[] chunkStrSplit = chunkStr.split("\n");
+		final String[] chunkStrSplit = chunkStr.split("\n");
 
 		String correctStr = "";
 
@@ -451,7 +227,7 @@ public class Chunk implements GameVariables {
 		}
 
 		// Each line should equal the correctStr
-		for (String s : chunkStrSplit) {
+		for (final String s : chunkStrSplit) {
 			if (!s.equals(correctStr)) {
 				System.err.println("toString failed!");
 				allPassed = false;
@@ -463,6 +239,230 @@ public class Chunk implements GameVariables {
 		} else {
 			System.err.println("At least 1 case failed!");
 		}
+	}
+
+	/** X position of the top left corner of the chunk. */
+	public int xPosition;
+
+	/** Y position of the top left corner of the chunk. */
+	public int yPosition;
+
+	/** The group of blocks the chunk keeps track of. */
+	private final PositionBlock[][] blocks;
+
+	/** Height of the chunk. */
+	private final int chunkHeight;
+
+	/** Width of the chunk. */
+	private final int chunkWidth;
+
+	/** If the chunk contains the end block. */
+	private boolean isEndChunk = false;
+
+	/** If the chunk contains the start block. */
+	private boolean isStartChunk = false;
+
+	/**
+	 * Constructs a new Chunk with given dimensions and coordinates.
+	 *
+	 * @param xDimension number of rows in chunk.
+	 * @param yDimension number of columns in chunk.
+	 * @param xPosition  the top left x of the chunk relative to all other chunks.
+	 * @param yPosition  the top left y of the chunk relative to all other chunks.
+	 */
+	public Chunk(int xDimension, int yDimension, int xPosition, int yPosition) {
+		blocks = new PositionBlock[yDimension][xDimension];
+		this.xPosition = WALL_WIDTH * xPosition * xDimension;
+		this.yPosition = WALL_HEIGHT * yPosition * yDimension;
+
+		this.chunkWidth = xDimension * WALL_WIDTH;
+		this.chunkHeight = yDimension * WALL_HEIGHT;
+	}
+
+	/**
+	 * Adds a position block to the chunk with position xPosition and yPosition.
+	 *
+	 * @param xPosition is the x position that the block appears in the chunk.
+	 * @param yPosition is the y position that the block appears in the chunk.
+	 * @param block     can be any of the PositionBlock types (EmptyBlock, EndBlock,
+	 *                  Wall, etc.).
+	 */
+	public void add(int xPosition, int yPosition, PositionBlock block) {
+		blocks[yPosition][xPosition] = block;
+
+		if (block instanceof StartingBlock) {
+			isStartChunk = true;
+		}
+		if (block instanceof EndBlock) {
+			isEndChunk = true;
+		}
+	}
+
+	/**
+	 * Checks for any collision between the given coordinates, and all walls in the
+	 * chunk. Deltas is used to displace the blocks if needed, to see if displacing
+	 * the blocks by those amounts would result in a collision.
+	 *
+	 * @param xCoords X coordinates to use.
+	 * @param yCoords Y coordinates to use.
+	 * @param deltas  Displacement of x and y.
+	 * @return true if a collision is found.
+	 */
+	public boolean checkCollision(int[] xCoords, int[] yCoords, Integer[] deltas) {
+
+		boolean collided = false;
+		// Check each wall in the chunk, if a wall chunk and colliding, return true;
+		for (final PositionBlock[] block : blocks) {
+			for (int c = 0; c < blocks[0].length; c++) {
+				final PositionBlock temp = block[c];
+				if (temp instanceof Wall) {
+
+					// We get the hitbox coords of each wall using the position if we were to update
+					// it with deltas
+					final int[][] tempCoords = temp.getHitbox(xPosition - deltas[0], yPosition - deltas[1]);
+
+					collided = CollisionDetection.getCollision(tempCoords[0], tempCoords[1], xCoords, yCoords);
+
+					if (collided) {
+						return true;
+					}
+
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Checks if the chunk contains the given coordinates.
+	 *
+	 * @param xCoords The y coordinates to use.
+	 * @param yCoords The x coordinates to use.
+	 * @return true if the chunk contains those points.
+	 */
+	public boolean containsPoints(int[] xCoords, int[] yCoords) {
+
+		final int[] chunkXCoords = new int[] { xPosition, xPosition + chunkWidth, xPosition + chunkWidth, xPosition };
+		final int[] chunkYCoords = new int[] { yPosition, yPosition, yPosition + chunkHeight, yPosition + chunkHeight };
+
+		return CollisionDetection.getCollision(xCoords, yCoords, chunkXCoords, chunkYCoords);
+	}
+
+	/**
+	 * Draw every PositionBlock in the chunk.
+	 *
+	 * @param g is the Graphics2D object that will be drawn with.
+	 */
+	public void draw(Graphics2D g) {
+		for (final PositionBlock[] block : blocks) {
+			for (final PositionBlock element : block) {
+				if (element != null) {
+					element.draw(g, xPosition, yPosition);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Gets all blocks in the chunk.
+	 *
+	 * @return The 2D array of blocks.
+	 */
+	public PositionBlock[][] getBlocks() {
+		return blocks;
+	}
+
+	/**
+	 * Gets the height of the chunk.
+	 *
+	 * @return chunkHeight.
+	 */
+	public int getChunkHeight() {
+		return chunkHeight;
+	}
+
+	/**
+	 * Gets the width of the chunk.
+	 *
+	 * @return chunkWidth.
+	 */
+	public int getChunkWidth() {
+		return chunkWidth;
+	}
+
+	/**
+	 * Gets the coordinates of each corner of the chunk.
+	 *
+	 * @return 2D array of integers, which represent each 'corner' of a chunk.
+	 */
+	public int[][] getCoords() {
+		return new int[][] { { xPosition, xPosition + chunkWidth, xPosition + chunkWidth, xPosition },
+				{ yPosition, yPosition, yPosition + chunkHeight, yPosition + chunkHeight } };
+	}
+
+	/**
+	 * Gets the current y position of the chunk.
+	 *
+	 * @return y position of chunk.
+	 */
+	public int getXPosition() {
+		return xPosition;
+	}
+
+	/**
+	 * Gets the current x position of the chunk.
+	 *
+	 * @return x position of chunk.
+	 */
+	public int getYPosition() {
+		return yPosition;
+	}
+
+	/**
+	 * Returns a boolean which represents if the chunk contains the end block.
+	 *
+	 * @return true if chunk is end chunk.
+	 */
+	public boolean isEndChunk() {
+		return isEndChunk;
+	}
+
+	/**
+	 * Returns a boolean which represents if the chunk contains the start block.
+	 *
+	 * @return true if chunk is start chunk.
+	 */
+	public boolean isStartChunk() {
+		return isStartChunk;
+	}
+
+	/**
+	 * Converts chunk to string.
+	 *
+	 * @return String format of chunk.
+	 */
+	@Override
+	public String toString() {
+		String ret = "";
+		for (final PositionBlock[] block : blocks) {
+			for (final PositionBlock element : block) {
+				ret += element.toString();
+			}
+			ret += "\n";
+		}
+		return ret;
+	}
+
+	/**
+	 * Update the coordinates of the chunk.
+	 *
+	 * @param dx is the change in the x direction to the position of the chunk.
+	 * @param dy is the change in the y direction to the position of the chunk.
+	 */
+	public void updateCoords(int dx, int dy) {
+		xPosition += dx;
+		yPosition += dy;
 	}
 
 }

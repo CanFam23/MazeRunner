@@ -11,6 +11,7 @@ import java.awt.geom.GeneralPath;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import gameTools.GameVariables;
 
@@ -37,62 +38,6 @@ public class Visibility implements GameVariables {
 	 */
 	private static Visibility single_instance = null;
 
-	/** Center x of the screen. */
-	private final int centerX = SCREEN_WIDTH / 2;
-
-	/** Center y of the screen. */
-	private final int centerY = SCREEN_HEIGHT / 2;
-
-	/** Starting radius of the circle. */
-	private final int startingRadius = 600;
-
-	/** Amount to decrease the radius by. */
-	private int decreaseAmount = 2;
-
-	/**
-	 * New 'blank' color that is transparent. Used to make the gradient go from
-	 * black to transparent.
-	 */
-	private final Color c = new Color(0, 0, 0, 0);
-
-	/**
-	 * New float[], used to determine the distribution of colors along the gradient.
-	 */
-	private final float[] dist = { 0.2f, 1.0f };
-
-	/** Array of colors to use in the gradient. */
-	private final Color[] colors = { c, Color.BLACK };
-
-	/** radius that will be updated and used to draw the circle. */
-	private int radius = startingRadius;
-
-	/**
-	 * Stores the right side of the visibility shape. They are split into two sides
-	 * so they are easier to draw. When they come together, they form a circle in
-	 * the middle.
-	 */
-	private GeneralPath rightSide = new GeneralPath();
-
-	/**
-	 * Stores the right side of the visibility shape. They are split into two sides
-	 * so they are easier to draw. When they come together, they form a circle in
-	 * the middle.
-	 */
-	private GeneralPath leftSide = new GeneralPath();
-
-	/**
-	 * Color used for drawing the visibility. It's a gradient that goes from black
-	 * to transparent.
-	 */
-	private RadialGradientPaint p;
-
-	/**
-	 * Constructs a new Visibility object.
-	 */
-	private Visibility() {
-		reset();
-	}
-
 	/**
 	 * Makes a new instance of Visibility. Visibility is a singleton, which means
 	 * only one instance of Visibility can exist at a time. Visibility is a
@@ -110,28 +55,143 @@ public class Visibility implements GameVariables {
 	}
 
 	/**
-	 * Decreases the radius by preset amount.
+	 * Main method, used for testing.
+	 *
+	 * @param args Arguments passed.
 	 */
-	public void updateRadius() {
-		if (radius-decreaseAmount > 0) {
-			if(decreaseAmount <= 6 && radius % 80 == 0) {
-				decreaseAmount+=2;
+	public static void main(String[] args) {
+		// Create a new JFrame
+		final JFrame frame = new JFrame("Visibility Test");
+		frame.setSize(GameVariables.SCREEN_WIDTH, GameVariables.SCREEN_HEIGHT);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+		// Create an instance of Visibility
+		final Visibility visibility = Visibility.getInstance();
+
+		// Create a JPanel to draw the visibility
+		final JPanel panel = new JPanel() {
+			private static final long serialVersionUID = -2350091849192585086L;
+
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				final Graphics2D g2d = (Graphics2D) g;
+				// Draw the visibility circle
+				visibility.drawVision(g2d);
+
+				// Draw text in the center of screen
+				final String text = "Press Spacebar to Decrease Visibility";
+				final FontMetrics metrics = g2d.getFontMetrics();
+				final int x = (getWidth() - metrics.stringWidth(text)) / 2;
+				final int y = (getHeight() - metrics.getHeight()) / 2 + metrics.getAscent();
+				g.setColor(Color.black);
+				g2d.drawString(text, x, y);
 			}
-			radius -= decreaseAmount;
-		}
-	}
-	
-	/**
-	 * Resets radius and decreaseAmount to default values.
-	 */
-	public void reset() {
-		radius = startingRadius;
-		decreaseAmount = 2;
+		};
+
+		// Add KeyListener to the JPanel
+		panel.setFocusable(true);
+		panel.requestFocusInWindow();
+		panel.addKeyListener(new KeyListener() {
+			/**
+			 * If space bar is pressed, update radius.
+			 *
+			 * @param e KeyEvent to use.
+			 */
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+					visibility.updateRadius();
+					visibility.createVis();
+					panel.repaint();
+				}
+			}
+
+			/**
+			 * Not used.
+			 *
+			 * @param e KeyEvent to use.
+			 */
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+
+			/**
+			 * Not used.
+			 *
+			 * @param e KeyEvent to use.
+			 */
+			@Override
+			public void keyTyped(KeyEvent e) {
+			}
+		});
+
+		frame.add(panel);
+
+		// Set up the JFrame
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 	}
 
 	/**
-	 * Updates radius of visibility to current value of radius.
-	 * Makes a new General path for each side.
+	 * New 'blank' color that is transparent. Used to make the gradient go from
+	 * black to transparent.
+	 */
+	private final Color c = new Color(0, 0, 0, 0);
+
+	/** Center x of the screen. */
+	private final int centerX = SCREEN_WIDTH / 2;
+
+	/** Center y of the screen. */
+	private final int centerY = SCREEN_HEIGHT / 2;
+
+	/** Array of colors to use in the gradient. */
+	private final Color[] colors = { c, Color.BLACK };
+
+	/** Amount to decrease the radius by. */
+	private int decreaseAmount = 2;
+
+	/**
+	 * New float[], used to determine the distribution of colors along the gradient.
+	 */
+	private final float[] dist = { 0.2f, 1.0f };
+
+	/**
+	 * Stores the right side of the visibility shape. They are split into two sides
+	 * so they are easier to draw. When they come together, they form a circle in
+	 * the middle.
+	 */
+	private GeneralPath leftSide = new GeneralPath();
+
+	/**
+	 * Color used for drawing the visibility. It's a gradient that goes from black
+	 * to transparent.
+	 */
+	private RadialGradientPaint p;
+	
+	/** Starting radius of the circle. */
+	private final int startingRadius = 600;
+
+	/** radius that will be updated and used to draw the circle. */
+	private int radius = startingRadius;
+
+	/**
+	 * Stores the right side of the visibility shape. They are split into two sides
+	 * so they are easier to draw. When they come together, they form a circle in
+	 * the middle.
+	 */
+	private GeneralPath rightSide = new GeneralPath();
+
+	/**
+	 * Constructs a new Visibility object.
+	 */
+	private Visibility() {
+		
+	}
+
+	/**
+	 * Updates radius of visibility to current value of radius. Makes a new General
+	 * path for each side.
 	 */
 	public void createVis() {
 		// Drawing the right side
@@ -208,81 +268,22 @@ public class Visibility implements GameVariables {
 	}
 
 	/**
-	 * Main method, used for testing.
-	 *
-	 * @param args Arguments passed.
+	 * Resets radius and decreaseAmount to default values.
 	 */
-	public static void main(String[] args) {
-		// Create a new JFrame
-		JFrame frame = new JFrame("Visibility Test");
-		frame.setSize(GameVariables.SCREEN_WIDTH, GameVariables.SCREEN_HEIGHT);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public void reset() {
+		radius = startingRadius;
+		decreaseAmount = 2;
+	}
 
-		// Create an instance of Visibility
-		Visibility visibility = Visibility.getInstance();
-
-		// Create a JPanel to draw the visibility
-		JPanel panel = new JPanel() {
-			private static final long serialVersionUID = -2350091849192585086L;
-
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				Graphics2D g2d = (Graphics2D) g;
-				// Draw the visibility circle
-				visibility.drawVision(g2d);
-
-				// Draw text in the center of screen
-				String text = "Press Spacebar to Decrease Visibility";
-				FontMetrics metrics = g2d.getFontMetrics();
-				int x = (getWidth() - metrics.stringWidth(text)) / 2;
-				int y = (getHeight() - metrics.getHeight()) / 2 + metrics.getAscent();
-				g.setColor(Color.black);
-				g2d.drawString(text, x, y);
+	/**
+	 * Decreases the radius by preset amount.
+	 */
+	public void updateRadius() {
+		if (radius - decreaseAmount > 0) {
+			if (decreaseAmount <= 6 && radius % 80 == 0) {
+				decreaseAmount += 2;
 			}
-		};
-
-		// Add KeyListener to the JPanel
-		panel.setFocusable(true);
-		panel.requestFocusInWindow();
-		panel.addKeyListener(new KeyListener() {
-			/**
-			 * Not used.
-			 *
-			 * @param e KeyEvent to use.
-			 */
-			@Override
-			public void keyTyped(KeyEvent e) {
-			}
-
-			/**
-			 * If space bar is pressed, update radius.
-			 *
-			 * @param e KeyEvent to use.
-			 */
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-					visibility.updateRadius();
-					visibility.createVis();
-					panel.repaint();
-				}
-			}
-
-			/**
-			 * Not used.
-			 *
-			 * @param e KeyEvent to use.
-			 */
-			@Override
-			public void keyReleased(KeyEvent e) {
-			}
-		});
-
-		frame.add(panel);
-
-		// Set up the JFrame
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
+			radius -= decreaseAmount;
+		}
 	}
 }
