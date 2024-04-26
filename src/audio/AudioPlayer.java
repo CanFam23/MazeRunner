@@ -17,7 +17,7 @@ public class AudioPlayer {
 	public static int LEVEL_2 = 2;
 
 	public static Clip DIE;
-	public static String JUMP = "jump.wav";
+	public static int JUMP = 1;
 	public static int GAMEOVER = 2;
 	public static int LVL_COMPLETED = 3;
 	public static int ATTACK_ONE = 4;
@@ -28,6 +28,9 @@ public class AudioPlayer {
 	private int currentSongId;
 	private boolean songMute, effectMute;
 	private Random rand = new Random();
+	
+    private Clip clip;
+
 	
     public AudioPlayer() {
         loadSongs();
@@ -80,48 +83,21 @@ public class AudioPlayer {
 //            playSong(LEVEL_2);
 //    }
 
-//    public void lvlCompleted() {
-//        stopSong();
-//        playEffect(LVL_COMPLETED);
-//    }
-//
-//    public void playAttackSound() {
-//        int start = 4;
-//        start += Math.random() * 3;
-//        playEffect(start);
-//    }
-
-//    public void playEffect(int effect) {
-//        effects[effect].setMicrosecondPosition(0);
-//        effects[effect].start();
-//        System.out.println("Playing effect: " + effect);
-//    }
-    private Clip loadEffect(String fileName) {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(fileName));
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            return clip;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public void lvlCompleted() {
+        stopSong();
+        playEffect(LVL_COMPLETED);
     }
-    
-    public void playEffect(String fileName) {
-        Clip clip = loadEffect(fileName);
-        if (clip != null) {
-            clip.setMicrosecondPosition(0);
-            clip.start();
-            System.out.println("Playing effect: " + fileName);
-        }
-        while (clip.isActive()) {
-            try {
-                Thread.sleep(100); // Sleep for a short duration
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+
+    public void playAttackSound() {
+        int start = 4;
+        start += Math.random() * 3;
+        playEffect(start);
+    }
+
+    public void playEffect(int effect) {
+        effects[effect].setMicrosecondPosition(0);
+        effects[effect].start();
+        System.out.println("Playing effect: " + effect);
     }
 
 //    public void playSong(int song) {
@@ -144,30 +120,44 @@ public class AudioPlayer {
     public void playSong(String fileName) {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(fileName));
-            Clip clip = AudioSystem.getClip();
+            clip = AudioSystem.getClip();
             clip.open(audioInputStream);
-
-            clip.start();
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
             System.out.println("Playing song: " + fileName);
-
-            // Block until the song finishes playing
-            while (clip.isActive()) {
-                try {
-                    Thread.sleep(100); // Sleep for a short duration
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            clip.close();
-            audioInputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    public void playSongOnce(String fileName) {
+	   try {
+	        if (clip != null && clip.isActive()) {
+	            clip.stop();  // Stop the currently playing clip
+	            clip.close();
+	        }
+
+	        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(fileName));
+	        clip = AudioSystem.getClip();
+	        clip.open(audioInputStream);
+	        clip.start(); // Play the clip once
+	        System.out.println("Playing song: " + fileName);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
+    
+    public void stop() {
+        if (clip != null) {
+            clip.stop();
+            clip.close();
+        }
+    }
 	
-   public static void main(String[] args) {
+   public static void main(String[] args) throws InterruptedException {
         AudioPlayer audioPlayer = new AudioPlayer();
-        audioPlayer.playEffect("die.wav");
+        audioPlayer.playSongOnce("attack1.wav");
+        Thread.sleep(10000); // Play for 10 seconds
+//        audioPlayer.stop();
+
    }
 }
