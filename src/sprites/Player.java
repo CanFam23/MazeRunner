@@ -415,17 +415,17 @@ public class Player implements GameVariables {
 		final BufferedImage myImage = images.get(currentState).get(currentFacing).get(0);
 		final int imageXAdjustment = (myImage.getWidth() * SIZE - PLAYER_WIDTH) / 2;
 		final int imageYAdjustment = (myImage.getHeight() * SIZE - PLAYER_HEIGHT) / 2;
-		final int displayPadding = 135;
+		final int displayPadding = 140;
 		if (currentState == State.Attack) {
 			attackCount += 1;
 		}
 		if (drawCount < FRAMESPERSWITCH - 1) { // For x ticks of the game loop, draw the same image.
-			g.drawImage(myImage, displayPadding - imageXAdjustment, displayPadding / 2 - imageYAdjustment,
+			g.drawImage(myImage, displayPadding - imageXAdjustment, displayPadding / 3 - imageYAdjustment,
 					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
 			drawCount++;
 		} else { // Then, switch the image to the next one in the sequence.
 			BufferedImage img = images.get(currentState).get(currentFacing).remove(0);
-			g.drawImage(img, displayPadding - imageXAdjustment, displayPadding / 2 - imageYAdjustment,
+			g.drawImage(img, displayPadding - imageXAdjustment, displayPadding / 3 - imageYAdjustment,
 					PLAYER_WIDTH + imageXAdjustment * 2, PLAYER_HEIGHT + imageYAdjustment * 2, null);
 			images.get(currentState).get(currentFacing).add(img);
 			drawCount = 0;
