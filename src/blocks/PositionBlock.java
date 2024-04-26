@@ -31,9 +31,15 @@ import gameTools.GameVariables;
  */
 public class PositionBlock implements GameVariables {
 
+	/** Height of the block. */
+	protected static int height;
+
+	/** Width of the block. */
+	protected static int width;
+
 	/**
 	 * Main method
-	 * 
+	 *
 	 * @param args arguments passed
 	 */
 	public static void main(String[] args) {
@@ -45,18 +51,18 @@ public class PositionBlock implements GameVariables {
 		VolatileImage vImage = null;
 
 		// Create utilities for Volatile Image loading
-		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice device = env.getDefaultScreenDevice();
-		GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
-
-		// TODO: For image testing, all block types would need to be loaded and set.
+		final GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		final GraphicsDevice device = env.getDefaultScreenDevice();
+		final GraphicsConfiguration graphicsConfig = device.getDefaultConfiguration();
+		
+		//Try loading images
 		try {
 			vImage = graphicsConfig.createCompatibleVolatileImage(WALL_WIDTH, WALL_HEIGHT);
-			Graphics2D g = vImage.createGraphics();
+			final Graphics2D g = vImage.createGraphics();
 			final BufferedImage positionBlockImage = ImageIO.read(new File("images/emptyBlock.png"));
 			g.drawImage(positionBlockImage, 0, 0, null);
 			g.dispose();
-		} catch (IOException e) { // Something went wrong loading our image
+		} catch (final IOException e) { // Something went wrong loading our image
 			e.printStackTrace();
 			System.err.println("Problem loading Volatile image");
 		}
@@ -66,12 +72,12 @@ public class PositionBlock implements GameVariables {
 		EndBlock.setImage(vImage);
 		Wall.setImage(vImage);
 		StartingBlock.setImage(vImage);
-		
+
 		PositionBlock.setBlockSize(WALL_WIDTH, WALL_HEIGHT);
 
 		// Testing a position block
 		PositionBlock pb = new PositionBlock(initialX, initialY);
-		
+
 		String blockType = "????";
 
 		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
@@ -80,7 +86,7 @@ public class PositionBlock implements GameVariables {
 
 		// Testing an empty block
 		pb = new EmptyBlock(initialX, initialY);
-		
+
 		blockType = "empt";
 
 		if (!pb.testMethods(initialX, initialY, WALL_WIDTH, WALL_HEIGHT, blockType)) {
@@ -120,15 +126,20 @@ public class PositionBlock implements GameVariables {
 			System.err.println("At least 1 case failed!");
 		}
 	}
-	
+
+	/**
+	 * Set the size for all PositionBlocks
+	 *
+	 * @param width  int width for all PositionBlocks in pixels.
+	 * @param height int height for all PositionBlocks in pixels.
+	 */
+	public static void setBlockSize(int width, int height) {
+		PositionBlock.width = width;
+		PositionBlock.height = height;
+	}
+
 	/** Block Image. PositionBlock should never directly be drawn */
-	private VolatileImage image = null;
-	
-	/** Width of the block. */
-	protected static int width;
-	
-	/** Height of the block. */
-	protected static int height;
+	private final VolatileImage image = null;
 
 	/** X coordinate of the block. */
 	protected int x;
@@ -139,25 +150,12 @@ public class PositionBlock implements GameVariables {
 	/**
 	 * Constructs a new StartingBlock based on the starting position.
 	 *
-	 * @param x      The x-coordinate relative to the top-left coordinate of the
-	 *               chunk.
-	 * @param y      The y-coordinate relative to the top-left coordinate of the
-	 *               chunk.
+	 * @param x The x-coordinate relative to the top-left coordinate of the chunk.
+	 * @param y The y-coordinate relative to the top-left coordinate of the chunk.
 	 */
 	public PositionBlock(int x, int y) {
 		this.x = x;
 		this.y = y;
-	}
-	
-	/**
-	 * Set the size for all PositionBlocks
-	 * 
-	 * @param width int width for all PositionBlocks in pixels.
-	 * @param height int height for all PositionBlocks in pixels.
-	 */
-	public static void setBlockSize(int width, int height) {
-		PositionBlock.width = width;
-		PositionBlock.height = height;
 	}
 
 	/**
@@ -169,6 +167,24 @@ public class PositionBlock implements GameVariables {
 	 */
 	public void draw(Graphics2D g, int chunkXPosition, int chunkYPosition) {
 		g.drawImage(image, x + chunkXPosition, y + chunkYPosition, width, height, null);
+	}
+
+	/**
+	 * Gets coordinates of block.
+	 *
+	 * @return the coordinates of the block.
+	 */
+	public int[] getCoords() {
+		return new int[] { x, y };
+	}
+
+	/**
+	 * Gets height of block.
+	 *
+	 * @return height of block.
+	 */
+	public int getHeight() {
+		return height;
 	}
 
 	/**
@@ -188,24 +204,6 @@ public class PositionBlock implements GameVariables {
 				newY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT, newY + WALL_HEIGHT + HITBOX_BUFFER_AMOUNT };
 
 		return new int[][] { wallXCoords, wallYCoords };
-	}
-
-	/**
-	 * Gets coordinates of block.
-	 *
-	 * @return the coordinates of the block.
-	 */
-	public int[] getCoords() {
-		return new int[] { x, y };
-	}
-
-	/**
-	 * Gets height of block.
-	 *
-	 * @return height of block.
-	 */
-	public int getHeight() {
-		return height;
 	}
 
 	/**
@@ -262,7 +260,7 @@ public class PositionBlock implements GameVariables {
 	private boolean testMethods(int initX, int initY, int width, int height, String blockStr) {
 		boolean allPassed = true;
 
-		int[] initialCoords = getCoords();
+		final int[] initialCoords = getCoords();
 
 		System.out.format("Testing PositionBlock of type %s.\n", toString());
 
@@ -289,13 +287,6 @@ public class PositionBlock implements GameVariables {
 			System.err.format("Height should be %d, not %d!\n", height, getHeight());
 			allPassed = false;
 		}
-		// Checking for correct image assignment
-		// TODO: Now that we are using a static VolatileImage, this image loading test
-		// would have to be different
-//		if (!this.image.equals(image)) {
-//			System.err.println("Image assignment failed!");
-//			allPassed = false;
-//		}
 
 		// Checking for correct toString conversion
 		if (!toString().equals(blockStr)) {

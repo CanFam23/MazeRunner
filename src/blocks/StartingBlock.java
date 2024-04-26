@@ -18,26 +18,29 @@ import java.awt.image.VolatileImage;
  * @since March 2, 2024
  */
 public class StartingBlock extends PositionBlock {
-
+	/**
+	 * Image for all starting blocks.
+	 */
 	private static VolatileImage image;
 
 	/**
+	 * Statically set the VolatileImage for all starting blocks.
+	 *
+	 * @param positionBlockImage VolatileImage that will be used for all starting
+	 *                           blocks.
+	 */
+	public static void setImage(VolatileImage positionBlockImage) {
+		image = positionBlockImage;
+	}
+
+	/**
 	 * Constructs a new StartingBlock based on the block's starting position.
-	 * 
+	 *
 	 * @param x int starting x position.
 	 * @param y int starting y position.
 	 */
 	public StartingBlock(int x, int y) {
 		super(x, y);
-	}
-
-	/**
-	 * Statically set the VolatileImage for all starting blocks.
-	 * 
-	 * @param positionBlockImage VolatileImage that will be used for all starting blocks.
-	 */
-	public static void setImage(VolatileImage positionBlockImage) {
-		image = positionBlockImage;
 	}
 
 	@Override
