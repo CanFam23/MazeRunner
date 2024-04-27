@@ -7,6 +7,8 @@ import java.util.Random;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -31,25 +33,10 @@ public class AudioPlayer {
 	
     private Clip clip;
 
+    private boolean isPlaying = false;
 	
     public AudioPlayer() {
-        loadSongs();
-        loadEffects();
-    }
 
-    private void loadSongs() {
-        String[] names = { "menu", "level1", "level2" };
-        songs = new Clip[names.length];
-        for (int i = 0; i < songs.length; i++)
-            songs[i] = getClip(names[i]);
-    }
-
-    private void loadEffects() {
-    	DIE = getClip("die");
-        String[] effectNames = { "die", "jump", "gameover", "lvlcompleted", "attack1", "attack2", "attack3" };
-        effects = new Clip[effectNames.length];
-        for (int i = 0; i < effects.length; i++)
-            effects[i] = getClip(effectNames[i]);
     }
 
     private Clip getClip(String name) {
@@ -71,93 +58,61 @@ public class AudioPlayer {
         return null;
     }
 
-    public void stopSong() {
-        if (songs[currentSongId].isActive())
-            songs[currentSongId].stop();
-    }
 
-//    public void setLevelSong(int lvlIndex) {
-//        if (lvlIndex % 2 == 0)
-//            playSong(LEVEL_1);
-//        else
-//            playSong(LEVEL_2);
-//    }
 
-    public void lvlCompleted() {
-        stopSong();
-        playEffect(LVL_COMPLETED);
-    }
-
-    public void playAttackSound() {
-        int start = 4;
-        start += Math.random() * 3;
-        playEffect(start);
-    }
-
-    public void playEffect(int effect) {
-        effects[effect].setMicrosecondPosition(0);
-        effects[effect].start();
-        System.out.println("Playing effect: " + effect);
-    }
-
-//    public void playSong(int song) {
-//        currentSongId = song;
-//        songs[currentSongId].stop();
-//        songs[currentSongId].setMicrosecondPosition(0);
-//        songs[currentSongId].loop(Clip.LOOP_CONTINUOUSLY);
-//        
-//        System.out.println("Playing song: " + song);
-//        // Block until the song finishes playing
-//        while (songs[currentSongId].isActive()) {
-//            try {
-//                Thread.sleep(100); // Sleep for a short duration
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-    
     public void playSong(String fileName) {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(fileName));
             clip = AudioSystem.getClip();
             clip.open(audioInputStream);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
+            clip.loop(Clip.LOOP_CONTINUOUSLY); // Loop the clip continuously
+            isPlaying = true;
             System.out.println("Playing song: " + fileName);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    
+    public boolean isActive() {
+        return isPlaying;
+    }
 
     public void playSongOnce(String fileName) {
-	   try {
-	        if (clip != null && clip.isActive()) {
-	            clip.stop();  // Stop the currently playing clip
-	            clip.close();
-	        }
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(fileName));
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start(); // Play the clip once
+            isPlaying = true;
+            System.out.println("Playing song: " + fileName);
+            clip.addLineListener(new LineListener() {
+                @Override
+                public void update(LineEvent event) {
+                    if (event.getType() == LineEvent.Type.STOP) {
+                        isPlaying = false;
+                        System.out.println("Song playback finished: " + fileName);
+                    }
+                }
+            });
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(fileName));
-	        clip = AudioSystem.getClip();
-	        clip.open(audioInputStream);
-	        clip.start(); // Play the clip once
-	        System.out.println("Playing song: " + fileName);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	}
-    
     public void stop() {
         if (clip != null) {
             clip.stop();
             clip.close();
+            isPlaying = false;
         }
     }
 	
    public static void main(String[] args) throws InterruptedException {
         AudioPlayer audioPlayer = new AudioPlayer();
-        audioPlayer.playSongOnce("attack1.wav");
-        Thread.sleep(10000); // Play for 10 seconds
-//        audioPlayer.stop();
+        audioPlayer.playSong("levelPlay.wav");
+        Thread.sleep(100000000); // Play for 10 seconds
+////        audioPlayer.stop();
 
    }
 }

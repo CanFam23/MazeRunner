@@ -872,7 +872,7 @@ public abstract class Enemy implements GameVariables {
 	 * Set player health back to 100
 	 */
 	public void resetHitCount() {
-		hitCount = 5;
+		hitCount = 3;
 	}
 
 	/**

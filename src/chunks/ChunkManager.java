@@ -17,6 +17,7 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import audio.AudioPlayer;
 import blocks.EmptyBlock;
 import blocks.EndBlock;
 import blocks.PositionBlock;
@@ -361,13 +362,16 @@ public class ChunkManager implements GameVariables {
 
 	/** Coordinates of start block. */
 	private int[] startCoords;
+	
+	private AudioPlayer gettingAttacked;
+
 
 	/**
 	 * Constructor for ChunkManager. This is private because ChunkManager is a
 	 * singleton, and only one instance of ChunkManager can exist at a time.
 	 */
 	private ChunkManager() {
-
+		gettingAttacked = new AudioPlayer();
 	}
 
 	/**
@@ -489,6 +493,11 @@ public class ChunkManager implements GameVariables {
 	 */
 	public void handlePlayerHit(Facing d, int damage) {
 		GamePanel.ourPlayer.subtractHealth(damage);
+		
+		if (gettingAttacked.isActive() == false) {
+			gettingAttacked.playSongOnce("playerHit.wav");
+		}
+
 		if (!knockback) {
 			knockback = true;
 			knockbackDir = d;
@@ -553,7 +562,7 @@ public class ChunkManager implements GameVariables {
 	 * @return true If level was loaded correctly.
 	 */
 	public boolean loadLevel(int levelNum, int levelVersionNumber) {
-		levelNum = 0;
+//		levelNum = 0;
 		levelName = "level_" + levelNum + "_v" + levelVersionNumber;
 		if (levelNum == 0) {
 			levelName = "level_0";
