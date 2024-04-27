@@ -382,6 +382,11 @@ public abstract class Screen extends JPanel {
 		return panel;
 	}
 
+	/**
+	 * Creates the stats panel, which displays the players stats.
+	 * 
+	 * @return The created stats panel.
+	 */
 	protected JPanel createStatsPanel() {
 		//font used
 		final Font f = new Font("Monospaced", Font.PLAIN, 17);

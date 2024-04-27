@@ -53,10 +53,6 @@ import sprites.Enemy;
 public class Main {
 
 	/**
-	 * Score is time_left Scoreboard for level 1,2, and total score
-	 */
-
-	/**
 	 * Keeps track if user has been added to leaderboard.
 	 */
 	public static boolean addedToLeaderboard = false;
