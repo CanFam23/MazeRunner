@@ -255,7 +255,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	private final int maxAddTime = 3 * 1000;
 
 	/** Number of levels in game. */
-	private final int NUM_LEVELS = 1;
+	private final int NUM_LEVELS = 3;
 
 	/** Padding from the top and right edges of the panel. */
 	private final int padding = 30;
