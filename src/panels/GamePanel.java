@@ -334,7 +334,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.loadLevel(1, levelVersionNumber);
 
 		// Create our player and load the images
-		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)
+//		ourPlayer.load_images(character_name); // Civilian1(black)
 
 	}
 
@@ -485,9 +485,17 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 * Initializes new thread and starts it
 	 */
 	public void startGameThread() {
-
 		gameThread = new Thread(this);
 		gameThread.start();
+	}
+	
+	/**
+	 * Load the images for our player based on a character name.
+	 * 
+	 * @param character_name the name of the player to be loaded.
+	 */
+	public void loadPlayer(String character_name) {
+		ourPlayer.load_images(character_name);
 	}
 
 	/**

@@ -13,10 +13,13 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
@@ -109,7 +112,10 @@ public class Main {
 
 	/** Timer object used for timing how long the player has. */
 	private static Timer timer;
-
+	
+	/** Default character name */
+	private static String characterName = "Civilian1";
+	
 	/**
 	 * Create a transparent cursor. Used when player is player the game, so the
 	 * cursor disappears from the screen.
@@ -419,8 +425,8 @@ public class Main {
 		 */
 		if (gamePanel != null) {
 			gamePanel.reset();
-
 		}
+		
 		// Creates window
 		gamePanel = new GamePanel(backgroundImage);
 		nextLevel = new GameOverWIN();
@@ -480,7 +486,7 @@ public class Main {
 				}
 			}
 		});
-
+		
 		// Make sure the panel can receive focus
 		gamePanel.setFocusable(true);
 		gamePanel.requestFocusInWindow();
@@ -509,6 +515,7 @@ public class Main {
 		window.setCursor(transparentCursor);
 
 		// starts game
+		gamePanel.loadPlayer(homePanel.get_display_player().get_character_name());
 		gamePanel.startGameThread();
 	}
 
