@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -239,7 +240,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	/** Reduce the height of the health bar. */
 	private final int healthBarHeight = 20;
 
-	// Health bar properties
 	/** Make the health bar width slightly smaller than the panel width. */
 	private final int healthBarWidth = 200;
 
@@ -260,35 +260,41 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	/** Padding from the top and right edges of the panel. */
 	private final int padding = 30;
 
-	/**
-	 * Random object, used for generating which level version to use.
-	 */
+	 /** Random object, used for generating which level version to use. */
 	private final Random random = new Random();
+	
 	/** Speed of player. */
 	private final int speed = 6;
 
 	/** Visibility object, used to change visibility as time goes on. */
 	private final Visibility v = Visibility.getInstance();
 
-	/** Visibility object, used to change visibility as time goes on. */
-	private AudioPlayer audio;
+	/** Audio player for when the player attacks */
+	private AudioPlayer attack;
 	
+	/** Audio player for the sound of the player walking*/
 	private AudioPlayer moving;
 	
+	/** Audio player for when the player hits and enemy */
 	private AudioPlayer hit;
 	
+	/** Audio player for when the player kills an enemy and get additional time */
 	private AudioPlayer moreTime;
-		
+	
+	/** Audio player for when the player dies */
 	private AudioPlayer death;
 	
+	/** Audio player for when the player completes a level*/
 	private AudioPlayer levelUp;
 
-
+	/** Tells us if the death audio has already played once*/
 	private boolean deathPlayedOnce = false;
 
-
+	/** Tells us if the moreTime audio has already played once */
 	private boolean playedOnce = false;
-
+	
+	/** Keeps track of loop times so we can add less health when the player reaches level 3 */
+	private float healthLoop = 0;
 	
 	/**
 	 * deltas holds the distance that would be moved in each direction based on the
@@ -320,7 +326,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		this.addKeyListener(keyH);
 		this.setFocusable(true);
 
-		audio = new AudioPlayer();
+		attack = new AudioPlayer();
 		moving = new AudioPlayer();
 		moreTime = new AudioPlayer();
 		hit = new AudioPlayer();
@@ -566,11 +572,10 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		
 		// If the user isn't attacking but there are enemies that have been hit, deal
 		// with them
-		if (ourPlayer.hitEnemies() && !ourPlayer.getState().equals("Attack") && ourPlayer.getHealth() >= 1) {
+		if (ourPlayer.hitEnemies() && !ourPlayer.getState().equals("Attack") && ourPlayer.getHealth() >= 1 && hit.isActive() == false) {
 			hit.playSongOnce("hitEnemy.wav");
 			ourPlayer.handleAttack();
 		}
-		
 		
 		// Our player is out of health (passed out, fainted, dead)
 		if (ourPlayer.getHealth() < 1) {
@@ -600,7 +605,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				deathPlayedOnce = true;
 				deathCount++;
 			}
-
 		}
 		
 
@@ -647,8 +651,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
 			}
 			if (keyH.spacePressed) {
-				if (audio.isActive() == false) {
-					audio.playSongOnce("attack2.wav");
+				if (attack.isActive() == false) {
+					attack.playSongOnce("attack2.wav");
 				}
 				if (ourPlayer.getState() != "Attack") {
 					// Set our player to be attacking
@@ -663,7 +667,19 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 		
 		if (ourPlayer.getHealth() < 10000 && !ourPlayer.isGettingAttacked() && !deathAnimation) {
-			ourPlayer.addHealth(1);
+			if (current_level == 1) {
+				ourPlayer.addHealth(2);
+			}
+			if (current_level == 2) {
+				ourPlayer.addHealth(1);
+
+			}
+			if (current_level == 3) {
+				healthLoop += 0.5;
+				if (healthLoop % 1 == 0) {
+					ourPlayer.addHealth(1);
+				}
+			}
 		}
 
 		cmanager.updateCoords(dx, dy);

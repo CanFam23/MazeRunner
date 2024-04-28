@@ -126,21 +126,22 @@ public class Main {
 	/** Window used to display the game. */
 	private static JFrame window;
 	
-	
-	
+	/** audio when the player runs out of time */
 	private static AudioPlayer gameOver;
 	
-	private static AudioPlayer levelPlay;
+	/** music that plays while player is in the game */
+	private static AudioPlayer levelUp;
 	
-	
+	/** audio that plays while the home screen is shown */
 	private static AudioPlayer homeScreen;
 	
+	/** audio that plays when the player has beat all three levels */
 	private static AudioPlayer wonGame;
 	
+	/** audio that plays while the player is in a level */
+	private static AudioPlayer gamePanelMusic;
 
 
-
-	
 
 	/**
 	 * Win screen.
@@ -207,6 +208,7 @@ public class Main {
 	 * @param show If game over screen should be displayed.
 	 */
 	public static void gameOverPanel(boolean show) {
+		gamePanelMusic.stop();
 		window.setCursor(defaultCursor);
 		gameOver.playSongOnce("gameover.wav");
 		final String formattedString = String.format("Failed to complete the level in 120 seconds");
@@ -264,9 +266,11 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		gameOver = new AudioPlayer();
-		levelPlay = new AudioPlayer();
+		levelUp = new AudioPlayer();
 		homeScreen = new AudioPlayer();
 		wonGame = new AudioPlayer();
+		gamePanelMusic = new AudioPlayer();
+
 
 		window = new JFrame();
 		window.setResizable(false);
@@ -375,9 +379,11 @@ public class Main {
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
 		gameOver = new AudioPlayer();
-		levelPlay = new AudioPlayer();
+		levelUp = new AudioPlayer();
 		homeScreen = new AudioPlayer();
 		wonGame = new AudioPlayer();
+		gamePanelMusic = new AudioPlayer();
+
 
 		gamePanel.resetLevel();
 		gamePanel.reset();
@@ -439,10 +445,6 @@ public class Main {
 		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		window.setTitle("Maze Runner - Use Arrows to start time");
 
-		// Creates new game panel object
-		timeOut.setVisible(false);
-		nextLevel.setVisible(false);
-		winner.setVisible(false);
 		window.getContentPane().add(gamePanel);
 
 		// Timer to track seconds
@@ -517,6 +519,8 @@ public class Main {
 		// starts game
 		gamePanel.loadPlayer(homePanel.get_display_player().get_character_name());
 		gamePanel.startGameThread();
+		gamePanelMusic.playSong("levelPlay2.wav");
+
 	}
 
 	/**
@@ -525,6 +529,8 @@ public class Main {
 	 * @param show If final win screen should be displayed.
 	 */
 	public static void showFinalWinScreen(boolean show) {
+		gamePanelMusic.stop();
+
 		window.setCursor(defaultCursor);
 		wonGame.playSong("winner.wav");
 		final String formattedString = String.format("YOU WIN");
@@ -550,6 +556,7 @@ public class Main {
 		window.setVisible(true);
 		timeOut.setVisible(false);
 		window.getContentPane().add(gamePanel);
+		gamePanelMusic.playSong("levelPlay2.wav");
 		gamePanel.setVisible(true);
 		gamePanel.setFocusable(true);
 		gamePanel.startGameThread();
@@ -565,14 +572,14 @@ public class Main {
 	 * @param show If next level screen should be displayed.
 	 */
 	public static void showNextLevelPanel(boolean show) {
+		gamePanelMusic.stop();
 		window.setCursor(defaultCursor);
-		levelPlay.playSongOnce("lvlcompleted.wav");
+		levelUp.playSongOnce("lvlcompleted.wav");
 
 		window.setVisible(true);
 		window.getContentPane().add(nextLevel);
 
 		nextLevel.updatePanel();
-
 		nextLevel.requestFocusInWindow();
 		nextLevel.setVisible(show);
 		nextLevel.setFocusable(show);
