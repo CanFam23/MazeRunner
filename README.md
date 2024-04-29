@@ -73,7 +73,7 @@ The following folders are needed to run the game:
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- Opportunities -->
-## Future Opportunities
+## Examples
 
 Could put an example on how to play/run game
 
@@ -82,12 +82,12 @@ Could put an example on how to play/run game
 
 
 <!-- ROADMAP -->
-## Opportunities
+## Future Opportunities
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+- [ ] Our collision methods could be more efficient, by using Java’s built in methods.
+- [ ] Find a efficient way to incorparate the effect of decreasing invisibility into the game. Right now it happens when the player dies, but we originally wanted the players visibility to decrease as time went on.
+- [ ] Implement more enemy sprites.
+- [ ] Improve enemy movement, they can get stuck on walls pretty often.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
