@@ -7,13 +7,14 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -23,9 +24,9 @@ import javax.swing.Timer;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -183,9 +184,6 @@ public class HomeScreen extends Screen {
 		// Create a JPanel to hold the player selection buttons and the player display
 		final JPanel SelectionPanel = new JPanel(new GridLayout(5, 1));
 		
-		// Create a JPanel for player selection
-		final JPanel playerFlowPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 50, 0));
-				
 		final JButton leftButton = new JButton(leftButtonDefault);
 		final JButton rightButton = new JButton(rightButtonDefault);
 		
@@ -197,7 +195,7 @@ public class HomeScreen extends Screen {
 		rightButton.setContentAreaFilled(false);
 		rightButton.setFocusPainted(false);
 		
-		List<Player> displayPlayerList = new LinkedList<Player>();
+		final List<Player> displayPlayerList = new LinkedList<Player>();
 		final Player Civilian1 = new Player();
 		Civilian1.load_display_images("Civilian1");
 		displayPlayerList.add(Civilian1);
@@ -250,17 +248,41 @@ public class HomeScreen extends Screen {
             	rightButton.setIcon(rightButtonClick);
             	displayPlayerList.add(displayPlayerList.remove(0));
             	displayPlayer = displayPlayerList.get(0);
-//            	playerNameList.add(playerNameList.remove(0));
-//            	displayPlayer.load_images(playerNameList.get(0));
             }
         });
 		
-		// Add selection buttons to the panel
-		playerFlowPanel.add(leftButton);
-		playerFlowPanel.add(rightButton);
+		//Panel that holds player select buttons and text
+		final JPanel playerPanel = new JPanel(new GridBagLayout());
 
+		// Create GridBagConstraints for positioning components
+        final GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; // Column 0
+        gbc.gridy = 1; // Row 0
+        gbc.gridwidth = 2; // Span two columns
+        gbc.anchor = GridBagConstraints.CENTER; // Center alignment
+        gbc.insets = new Insets(0, 60, 0, 0); // Padding (top, left, bottom, right)
+
+        // Create the player label
+        final JLabel playerSelectLbl = new JLabel("Select a character");
+        playerSelectLbl.setFont(new Font("Monospaced", Font.BOLD, 18));
+        playerSelectLbl.setForeground(Color.WHITE);
+
+        // Add the player label to playerPanel
+        playerPanel.add(playerSelectLbl, gbc);
+
+        // Reset gridwidth for components
+        gbc.gridwidth = 1;
+        
+        // Add button 1
+        gbc.gridy = 0; // Row 1
+        playerPanel.add(leftButton, gbc);
+
+        // Add button 2
+        gbc.gridx = 1; // Column 1
+        playerPanel.add(rightButton, gbc);
+        
 		// Make the panel see through
-		playerFlowPanel.setOpaque(false);
+		playerPanel.setOpaque(false);
 		
 		// Create Player display
  		initializeGUI();
@@ -270,7 +292,7 @@ public class HomeScreen extends Screen {
 		SelectionPanel.setOpaque(false);
 		
 		// Add panels to the main frame
-		
+		//Panels to restrict size of playerPanel
 		final JPanel sizingPanel = new JPanel();
 		sizingPanel.setBounds(0, 0, 100, 400);
 		sizingPanel.setOpaque(false);
@@ -285,7 +307,7 @@ public class HomeScreen extends Screen {
 		SelectionPanel.add(sizingPanel2);
 		SelectionPanel.add(sizingPanel3);
 		SelectionPanel.add(drawingPanel);
-		SelectionPanel.add(playerFlowPanel);
+		SelectionPanel.add(playerPanel);
 		
 		panel.add(SelectionPanel, BorderLayout.WEST);
         panel.add(buttonPanel, BorderLayout.SOUTH);
