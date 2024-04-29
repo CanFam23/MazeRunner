@@ -106,9 +106,6 @@ public class Main {
 	/** Timer object used for timing how long the player has. */
 	private static Timer timer;
 	
-	/** Default character name */
-	private static String characterName = "Civilian1";
-	
 	/**
 	 * Create a transparent cursor. Used when player is player the game, so the
 	 * cursor disappears from the screen.
