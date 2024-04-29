@@ -20,7 +20,13 @@ By '**Control Alt Elite**' - Andrew Denegar, Molly O'Connor, Nick Clouse
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#playing-the-game">Playing The Game</a></li>
+    <li>
+      <a href="#playing-the-game">Playing The Game</a>
+      <ul>
+        <li><a href="#controls">Controls</a></li>
+        <li><a href="#game-explanation">Game Explanation</a></li>
+      </ul>
+    </li>
     <li><a href="#future-opportunities">Future Opportunities</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -76,13 +82,13 @@ The following folders are needed to run the game:
 ## Playing the Game
 
 ### Controls
-* Up Arrow key: Move up
-* Down Arrow key: Move down
-* Right Arrow key: Move right
-* Left Arrow key: Move left
-* Spacebar: Attack
+* **Up Arrow key**: Move up
+* **Down Arrow key**: Move down
+* **Right Arrow key**: Move right
+* **Left Arrow key**: Move left
+* **Spacebar**: Attack
 
-### Game explanation
+### Game Explanation
 <p> The objective is to navigate through three challenging levels of mazes, find the exit, and escape before the time runs out.  </p>
 <p></p>Once a player starts the game, they are directed to level 1. Each category of level (1,2,3) has 5 versions. Each time a level is started the player will be loaded on the “start block” and have to navigate the maze until they find the “end block”. There are a total of 3 levels, with each level increasing in difficulty.  Level 1 has the square dimension of 20x20 blocks. Level 2 is 30x30, and the final level is 40x40 blocks big. As the player progresses through the game, the maze increases in size, and each level has more enemies than the last. </p>
 
