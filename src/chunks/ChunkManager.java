@@ -363,6 +363,7 @@ public class ChunkManager implements GameVariables {
 	/** Coordinates of start block. */
 	private int[] startCoords;
 	
+	/** Audio for when player is getting attacked */
 	private AudioPlayer gettingAttacked;
 
 
@@ -492,8 +493,7 @@ public class ChunkManager implements GameVariables {
 	 * @param damage how much health the player will lose from this hit.
 	 */
 	public void handlePlayerHit(Facing d, int damage) {
-		GamePanel.ourPlayer.subtractHealth(damage);
-		
+		GamePanel.ourPlayer.subtractHealth(damage);		
 		if (gettingAttacked.isActive() == false) {
 			gettingAttacked.playSongOnce("playerHit.wav");
 		}

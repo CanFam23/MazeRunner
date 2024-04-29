@@ -13,10 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
+import java.util.random.RandomGenerator;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
 import audio.AudioPlayer;
 import chunks.ChunkManager;
 import gameTools.GameVariables;
@@ -238,8 +237,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 	/** Reduce the height of the health bar. */
 	private final int healthBarHeight = 20;
-
-	// Health bar properties
+	
 	/** Make the health bar width slightly smaller than the panel width. */
 	private final int healthBarWidth = 200;
 
@@ -270,26 +268,33 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	/** Visibility object, used to change visibility as time goes on. */
 	private final Visibility v = Visibility.getInstance();
 
-	/** Visibility object, used to change visibility as time goes on. */
-	private AudioPlayer audio;
+	/** Audio player for when the player attacks */
+	private AudioPlayer attack;
 	
+	/** Audio player for the sound of the player walking*/
 	private AudioPlayer moving;
 	
+	/** Audio player for when the player hits and enemy */
 	private AudioPlayer hit;
 	
+	/** Audio player for when the player kills an enemy and get additional time */
 	private AudioPlayer moreTime;
-		
+	
+	/** Audio player for when the player dies */
 	private AudioPlayer death;
 	
+	/** Audio player for when the player completes a level*/
 	private AudioPlayer levelUp;
 
-
+	/** Tells us if the death audio has already played once*/
 	private boolean deathPlayedOnce = false;
 
-
+	/** Tells us if the moreTime audio has already played once */
 	private boolean playedOnce = false;
-
 	
+	/** Keeps track of loop times so we can add less health when the player reaches level 3 */
+	private float healthLoop = 0;
+
 	/**
 	 * deltas holds the distance that would be moved in each direction based on the
 	 * player's speed.
@@ -320,18 +325,17 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		this.addKeyListener(keyH);
 		this.setFocusable(true);
 
-		audio = new AudioPlayer();
+		attack = new AudioPlayer();
 		moving = new AudioPlayer();
 		moreTime = new AudioPlayer();
 		hit = new AudioPlayer();
 		death = new AudioPlayer();
 		levelUp = new AudioPlayer();
-
-
 		cmanager = ChunkManager.getInstance();
 		// Generate a random number between 1 and 5 (inclusive)
 		levelVersionNumber = random.nextInt(1, 5);
 		cmanager.loadLevel(1, levelVersionNumber);
+
 
 		// Create our player and load the images
 //		ourPlayer.load_images(character_name); // Civilian1(black)
@@ -518,6 +522,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		if (cmanager.endFound()) {
 			stopLoop();
 			// Disable player movements when end block is reached
+			ourPlayer.reset();
 			keyH.upPressed = false;
 			keyH.downPressed = false;
 			keyH.rightPressed = false;
@@ -526,8 +531,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			Main.addTime = false;
 			addingTime = false;
 			addTimeElapsed = 0;
-
-			ourPlayer.reset();
 			moving.stop();
 
 			if (levelUp.isActive() == false) {
@@ -566,14 +569,14 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		
 		// If the user isn't attacking but there are enemies that have been hit, deal
 		// with them
-		if (ourPlayer.hitEnemies() && !ourPlayer.getState().equals("Attack") && ourPlayer.getHealth() >= 1) {
+		if (ourPlayer.hitEnemies() && !ourPlayer.getState().equals("Attack") && ourPlayer.getHealth() >= 1 && hit.isActive() == false) {
 			hit.playSongOnce("hitEnemy.wav");
 			ourPlayer.handleAttack();
 		}
 		
-		
 		// Our player is out of health (passed out, fainted, dead)
 		if (ourPlayer.getHealth() < 1) {
+			Main.turnOffGamePanelMusic();
 			hit.stop();
 			moving.stop();
 			if (death.isActive() == false && deathPlayedOnce == false) {
@@ -590,19 +593,20 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			} else if (deathCount == DEATHANIMATIONTIME) {
 				deathAnimation = false;
 				deathPlayedOnce = false;
+
 				v.reset();
 				ourPlayer.unlockState();
 				ourPlayer.unlockFacing();
 				cmanager.restart();
 				cmanager.stopKnockback();
 				ourPlayer.reset();
+				Main.turnOnGamePanelMusic();
 			} else {
 				deathPlayedOnce = true;
 				deathCount++;
 			}
-
 		}
-		
+
 
 		// Move Player
 		int dx = 0;
@@ -611,7 +615,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		if (deathAnimation) {
 			return;
 		}
-		
+
 		if (cmanager.getKnockback()) {
 			cmanager.knockback();
 		} else {
@@ -643,12 +647,13 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				moving.stop();
 			}
 
+
 			if (!ourPlayer.isStateLocked()) {
 				ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
 			}
 			if (keyH.spacePressed) {
-				if (audio.isActive() == false) {
-					audio.playSongOnce("attack2.wav");
+				if (attack.isActive() == false) {
+					attack.playSongOnce("attack2.wav");
 				}
 				if (ourPlayer.getState() != "Attack") {
 					// Set our player to be attacking
@@ -663,12 +668,26 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		}
 		
 		if (ourPlayer.getHealth() < 10000 && !ourPlayer.isGettingAttacked() && !deathAnimation) {
-			ourPlayer.addHealth(1);
+			if (current_level == 1) {
+				ourPlayer.addHealth(2);
+			}
+			if (current_level == 2) {
+				ourPlayer.addHealth(1);
+
+			}
+			if (current_level == 3) {
+				healthLoop += 0.5;
+				if (healthLoop % 1 == 0) {
+					ourPlayer.addHealth(1);
+				}
+			}
 		}
 
 		cmanager.updateCoords(dx, dy);
 		cmanager.updateEnemies();
 		}
+
+
 
 	/**
 	 * Checks if the user completed the last level, and won the game.

@@ -7,38 +7,57 @@ import java.util.Random;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JPanel;
+
+import gameTools.GameVariables;
+
+/**
+ * <p>
+ * The AudioPlayer class provides functionality to play audio files.
+ * </p>
+ * @author Nick Clouse
+ * @author Andrew Denegar
+ * @author Molly O'Connor
+ * @author Kaarin Gaming: base code taken from Kaarin Gaming Youtube, Platform Turtorial episode 25
+ * 
+ *
+ * @since Apr 27, 2024
+ *
+ */
 
 public class AudioPlayer {
-	
-	public static int MENU_1 = 0;
-	public static int LEVEL_1 = 1;
-	public static int LEVEL_2 = 2;
+    /** Array of Clip objects for songs. */
+    private Clip[] songs;
 
-	public static Clip DIE;
-	public static int JUMP = 1;
-	public static int GAMEOVER = 2;
-	public static int LVL_COMPLETED = 3;
-	public static int ATTACK_ONE = 4;
-	public static int ATTACK_TWO = 5;
-	public static int ATTACK_THREE = 6;
-	
-	private Clip[] songs, effects;
-	private int currentSongId;
-	private boolean songMute, effectMute;
-	private Random rand = new Random();
-	
+    /** Array of Clip objects for sound effects. */
+    private Clip[] effects;
+
+    /** Random number generator. */
+    private Random rand = new Random();
+
+    /** The currently playing audio clip. */
     private Clip clip;
 
+    /** Indicates whether an audio clip is currently playing. */
     private boolean isPlaying = false;
-	
-    public AudioPlayer() {
 
+    /**
+     * Constructs a new AudioPlayer instance.
+     */
+    public AudioPlayer() {
+        // Initialize arrays for songs and effects
     }
 
+    /**
+     * Retrieves a Clip object for a given audio file name.
+     * @param name The name of the audio file.
+     * @return A Clip object representing the audio file.
+     */
     private Clip getClip(String name) {
         URL url = getClass().getResource(name + ".wav");
         AudioInputStream audio;
@@ -51,15 +70,16 @@ public class AudioPlayer {
             return c;
 
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-        	System.out.print("Couldn't load");
+            System.out.print("Couldn't load");
             e.printStackTrace();
         }
-
         return null;
     }
 
-
-
+    /**
+     * Plays a song continuously.
+     * @param fileName The name of the song file to play.
+     */
     public void playSong(String fileName) {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(fileName));
@@ -72,11 +92,19 @@ public class AudioPlayer {
             e.printStackTrace();
         }
     }
-    
+
+    /**
+     * Checks if an audio clip is currently active (playing).
+     * @return true if an audio clip is currently active, false otherwise.
+     */
     public boolean isActive() {
         return isPlaying;
     }
 
+    /**
+     * Plays a song once.
+     * @param fileName The name of the song file to play.
+     */
     public void playSongOnce(String fileName) {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(fileName));
@@ -84,22 +112,22 @@ public class AudioPlayer {
             clip.open(audioInputStream);
             clip.start(); // Play the clip once
             isPlaying = true;
-            System.out.println("Playing song: " + fileName);
             clip.addLineListener(new LineListener() {
                 @Override
                 public void update(LineEvent event) {
                     if (event.getType() == LineEvent.Type.STOP) {
                         isPlaying = false;
-                        System.out.println("Song playback finished: " + fileName);
                     }
                 }
             });
-            
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Stops the currently playing audio clip.
+     */
     public void stop() {
         if (clip != null) {
             clip.stop();
@@ -107,12 +135,83 @@ public class AudioPlayer {
             isPlaying = false;
         }
     }
+    
+    /**
+     * Sets the volume of the currently playing song.
+     * @param volumeValue The volume value to set (0.0f to 1.0f).
+     */
+    public void setVolume(float volumeValue) {
+        if (clip != null) {
+            try {
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float range = gainControl.getMaximum() - gainControl.getMinimum();
+                float gain = (range * volumeValue) + gainControl.getMinimum();
+                gainControl.setValue(gain);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 	
-   public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
+    	boolean allCasesPassed = true;
+        // Create an instance of AudioPlayer
         AudioPlayer audioPlayer = new AudioPlayer();
-        audioPlayer.playSong("levelPlay.wav");
-        Thread.sleep(100000000); // Play for 10 seconds
-////        audioPlayer.stop();
 
-   }
+        // Play a song continuously
+        audioPlayer.playSong("menu.wav");
+
+        // Check if the song is active
+        System.out.println("Is song active? " + audioPlayer.isActive());
+        if (audioPlayer.isActive() != true) {
+        	allCasesPassed = false;
+        }
+
+        // Wait for a while to observe song playing
+        try {
+            Thread.sleep(5000); // Wait for 5 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Stop the song
+        audioPlayer.stop();
+        
+        if (audioPlayer.isActive() != false) {
+        	allCasesPassed = false;
+        }
+
+        // Check if the song is active after stopping
+        System.out.println("Is song active after stopping? " + audioPlayer.isActive());
+
+        // Play a song once
+        audioPlayer.playSongOnce("winner.wav");
+        if (audioPlayer.isActive() != true) {
+        	allCasesPassed = false;
+        }
+
+        // Wait for a while to observe song playing
+        try {
+            Thread.sleep(5000); // Wait for 5 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Check if the song is active after playing once
+        System.out.println("Is song active when playing once? " + audioPlayer.isActive());
+
+        // Stop the song
+        audioPlayer.stop();
+        if (audioPlayer.isActive() != false) {
+        	allCasesPassed = false;
+        }
+
+        // Check if the song is active after stopping
+        System.out.println("Is song active after stopping? " + audioPlayer.isActive());
+        if (allCasesPassed == true) {
+        	System.out.println("All Cases Passed");
+        } else {
+        	System.out.println("At least one case failed");
+        }
+    }
 }
