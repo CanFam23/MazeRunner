@@ -20,8 +20,8 @@ By '**Control Alt Elite**' - Andrew Denegar, Molly O'Connor, Nick Clouse
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#Playing The Game">Playing The Game</a></li>
-    <li><a href="#Future Opportunities">Future Opportunities</a></li>
+    <li><a href="#playing-the-game">Playing The Game</a></li>
+    <li><a href="#future-opportunities">Future Opportunities</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
