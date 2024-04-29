@@ -13,13 +13,17 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
+import audio.AudioPlayer;
 import chunks.ChunkManager;
 import gameTools.Leaderboard;
 import panels.GameOverLOSE;
@@ -104,7 +108,10 @@ public class Main {
 
 	/** Timer object used for timing how long the player has. */
 	private static Timer timer;
-
+	
+	/** Default character name */
+	private static String characterName = "Civilian1";
+	
 	/**
 	 * Create a transparent cursor. Used when player is player the game, so the
 	 * cursor disappears from the screen.
@@ -114,6 +121,22 @@ public class Main {
 
 	/** Window used to display the game. */
 	private static JFrame window;
+	
+	
+	
+	private static AudioPlayer gameOver;
+	
+	private static AudioPlayer levelPlay;
+	
+	
+	private static AudioPlayer homeScreen;
+	
+	private static AudioPlayer wonGame;
+	
+
+
+
+	
 
 	/**
 	 * Win screen.
@@ -181,7 +204,7 @@ public class Main {
 	 */
 	public static void gameOverPanel(boolean show) {
 		window.setCursor(defaultCursor);
-
+		gameOver.playSongOnce("gameover.wav");
 		final String formattedString = String.format("Failed to complete the level in 120 seconds");
 		window.setTitle(formattedString);
 		window.setVisible(true);
@@ -236,6 +259,11 @@ public class Main {
 	 * @param args The arguments passed to the main method.
 	 */
 	public static void main(String[] args) {
+		gameOver = new AudioPlayer();
+		levelPlay = new AudioPlayer();
+		homeScreen = new AudioPlayer();
+		wonGame = new AudioPlayer();
+
 		window = new JFrame();
 		window.setResizable(false);
 		homePanel = new HomeScreen();
@@ -248,6 +276,7 @@ public class Main {
 		window.setVisible(true);
 
 		homePanel.setRunning(true);
+		homeScreen.playSong("menu.wav");
 		// Add action listener to the button in HomeScreen
 		homePanel.getStartButton().addActionListener(new ActionListener() {
 			@Override
@@ -261,6 +290,7 @@ public class Main {
 					playerName = name;
 					homePanel.setVisible(false);
 					homePanel.setRunning(false);
+					homeScreen.stop();
 					runMainCode();
 				}
 			}
@@ -316,6 +346,7 @@ public class Main {
 		if (window == null) {
 			return;
 		}
+		wonGame.stop();
 		seconds_left = timeAmount;
 		totalEnemiesKilled = 0;
 		totalTimePlayed = 0;
@@ -339,9 +370,14 @@ public class Main {
 		window.pack();
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
+		gameOver = new AudioPlayer();
+		levelPlay = new AudioPlayer();
+		homeScreen = new AudioPlayer();
+		wonGame = new AudioPlayer();
 
 		gamePanel.resetLevel();
 		gamePanel.reset();
+		homeScreen.playSong("menu.wav");
 
 		// Add action listener to the button in HomeScreen
 		homePanel.getStartButton().addActionListener(new ActionListener() {
@@ -360,6 +396,7 @@ public class Main {
 					homePanel.setRunning(false);
 					gamePanel.setVisible(true);
 					GamePanel.continueLoop();
+					homeScreen.stop();
 					runMainCode();
 				}
 			}
@@ -384,8 +421,8 @@ public class Main {
 		 */
 		if (gamePanel != null) {
 			gamePanel.reset();
-
 		}
+		
 		// Creates window
 		gamePanel = new GamePanel(backgroundImage);
 		nextLevel = new GameOverWIN();
@@ -418,6 +455,7 @@ public class Main {
 				final int currentLevel = GamePanel.getCurrentLevel();
 				window.setTitle("Maze Runner - Level: " + currentLevel);
 				if (seconds_left <= 0) {
+					gameOver.playSongOnce("timeUp.wav");
 					// player lost logic
 					GamePanel.stopLoop();
 					timer.stop();
@@ -444,7 +482,7 @@ public class Main {
 				}
 			}
 		});
-
+		
 		// Make sure the panel can receive focus
 		gamePanel.setFocusable(true);
 		gamePanel.requestFocusInWindow();
@@ -473,6 +511,7 @@ public class Main {
 		window.setCursor(transparentCursor);
 
 		// starts game
+		gamePanel.loadPlayer(homePanel.get_display_player().get_character_name());
 		gamePanel.startGameThread();
 	}
 
@@ -483,7 +522,7 @@ public class Main {
 	 */
 	public static void showFinalWinScreen(boolean show) {
 		window.setCursor(defaultCursor);
-
+		wonGame.playSong("winner.wav");
 		final String formattedString = String.format("YOU WIN");
 
 		// leaderboard.updateleaderboardFile();
@@ -504,7 +543,6 @@ public class Main {
 	 */
 	public static void showGamePanel() {
 		window.setCursor(transparentCursor);
-
 		window.setVisible(true);
 		timeOut.setVisible(false);
 		window.getContentPane().add(gamePanel);
@@ -524,6 +562,7 @@ public class Main {
 	 */
 	public static void showNextLevelPanel(boolean show) {
 		window.setCursor(defaultCursor);
+		levelPlay.playSongOnce("lvlcompleted.wav");
 
 		window.setVisible(true);
 		window.getContentPane().add(nextLevel);

@@ -17,6 +17,7 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import audio.AudioPlayer;
 import chunks.ChunkManager;
 import gameTools.GameVariables;
 import gameTools.KeyHandler;
@@ -269,6 +270,26 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	/** Visibility object, used to change visibility as time goes on. */
 	private final Visibility v = Visibility.getInstance();
 
+	/** Visibility object, used to change visibility as time goes on. */
+	private AudioPlayer audio;
+	
+	private AudioPlayer moving;
+	
+	private AudioPlayer hit;
+	
+	private AudioPlayer moreTime;
+		
+	private AudioPlayer death;
+	
+	private AudioPlayer levelUp;
+
+
+	private boolean deathPlayedOnce = false;
+
+
+	private boolean playedOnce = false;
+
+	
 	/**
 	 * deltas holds the distance that would be moved in each direction based on the
 	 * player's speed.
@@ -299,13 +320,21 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		this.addKeyListener(keyH);
 		this.setFocusable(true);
 
+		audio = new AudioPlayer();
+		moving = new AudioPlayer();
+		moreTime = new AudioPlayer();
+		hit = new AudioPlayer();
+		death = new AudioPlayer();
+		levelUp = new AudioPlayer();
+
+
 		cmanager = ChunkManager.getInstance();
 		// Generate a random number between 1 and 5 (inclusive)
 		levelVersionNumber = random.nextInt(1, 5);
-		cmanager.loadLevel(current_level, levelVersionNumber);
+		cmanager.loadLevel(1, levelVersionNumber);
 
 		// Create our player and load the images
-		ourPlayer.load_images("Civilian1(black)"); // Civilian1(black)
+//		ourPlayer.load_images(character_name); // Civilian1(black)
 
 	}
 
@@ -427,6 +456,10 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 					// If more time needs to be added, wait three seconds before doing so
 					if (Main.addTime && addTimeElapsed < maxAddTime) {
 						addingTime = true;
+						if (moreTime.isActive() == false && playedOnce == false) {
+							moreTime.playSongOnce("moreTime.wav");
+							playedOnce = true;
+						}
 						addTimeElapsed += 1000;
 
 						/*
@@ -437,6 +470,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 							addingTime = false;
 							Main.addTime = false;
 							addTimeElapsed = 0;
+							playedOnce = false;
 						}
 					}
 					fpsTracker.add(frames);
@@ -451,9 +485,17 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	 * Initializes new thread and starts it
 	 */
 	public void startGameThread() {
-
 		gameThread = new Thread(this);
 		gameThread.start();
+	}
+	
+	/**
+	 * Load the images for our player based on a character name.
+	 * 
+	 * @param character_name the name of the player to be loaded.
+	 */
+	public void loadPlayer(String character_name) {
+		ourPlayer.load_images(character_name);
 	}
 
 	/**
@@ -475,22 +517,27 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		// If the end is found, go to the next level
 		if (cmanager.endFound()) {
 			stopLoop();
+			// Disable player movements when end block is reached
+			keyH.upPressed = false;
+			keyH.downPressed = false;
+			keyH.rightPressed = false;
+			keyH.leftPressed = false;
 			Main.stopTime();
 			Main.addTime = false;
 			addingTime = false;
 			addTimeElapsed = 0;
 
 			ourPlayer.reset();
-			// Disable player movements when end block is reached
-			keyH.upPressed = false;
-			keyH.downPressed = false;
-			keyH.rightPressed = false;
-			keyH.leftPressed = false;
+			moving.stop();
+
+			if (levelUp.isActive() == false) {
+				levelUp.playSongOnce("levelUp.wav");
+			}
 			Main.updateTotalTimeAndEnemies();
 			Main.addScoreToLeader();
 			if (current_level == NUM_LEVELS) {
-
 				Main.showFinalWinScreen(true);
+				moving.stop();
 				// User won game
 				reset();
 				resetLevel();
@@ -511,9 +558,27 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				continueLoop();
 			}
 		}
-
+		
+		// If the player is attacking, check if they've hit anyone
+		if (ourPlayer.getState().equals("Attack")) {
+			ourPlayer.attacking();
+		}
+		
+		// If the user isn't attacking but there are enemies that have been hit, deal
+		// with them
+		if (ourPlayer.hitEnemies() && !ourPlayer.getState().equals("Attack") && ourPlayer.getHealth() >= 1) {
+			hit.playSongOnce("hitEnemy.wav");
+			ourPlayer.handleAttack();
+		}
+		
+		
 		// Our player is out of health (passed out, fainted, dead)
 		if (ourPlayer.getHealth() < 1) {
+			hit.stop();
+			moving.stop();
+			if (death.isActive() == false && deathPlayedOnce == false) {
+				death.playSongOnce("death.wav");
+			}
 			if (!deathAnimation) {
 				deathCount = 0;
 				deathAnimation = true;
@@ -524,6 +589,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				cmanager.stopKnockback();
 			} else if (deathCount == DEATHANIMATIONTIME) {
 				deathAnimation = false;
+				deathPlayedOnce = false;
 				v.reset();
 				ourPlayer.unlockState();
 				ourPlayer.unlockFacing();
@@ -531,9 +597,12 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				cmanager.stopKnockback();
 				ourPlayer.reset();
 			} else {
+				deathPlayedOnce = true;
 				deathCount++;
 			}
+
 		}
+		
 
 		// Move Player
 		int dx = 0;
@@ -542,6 +611,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		if (deathAnimation) {
 			return;
 		}
+		
 		if (cmanager.getKnockback()) {
 			cmanager.knockback();
 		} else {
@@ -566,11 +636,20 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			if (keyH.leftPressed && !leftCollided) {
 				dx += speed;
 			}
+			if ((keyH.upPressed || keyH.leftPressed || keyH.rightPressed || keyH.downPressed) && moving.isActive() == false) {
+				moving.playSongOnce("playerMove.wav");
+			} 
+			if (dy == 0 && dx ==0) {
+				moving.stop();
+			}
 
 			if (!ourPlayer.isStateLocked()) {
 				ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
 			}
 			if (keyH.spacePressed) {
+				if (audio.isActive() == false) {
+					audio.playSongOnce("attack2.wav");
+				}
 				if (ourPlayer.getState() != "Attack") {
 					// Set our player to be attacking
 					ourPlayer.setState(sprites.Player.State.Attack);
@@ -581,25 +660,15 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				ourPlayer.lockState();
 				ourPlayer.lockFacing();
 			}
-			// If the player is attacking, check if they've hit anyone
-			if (ourPlayer.getState().equals("Attack")) {
-				ourPlayer.attacking();
-			}
-
-			// If the user isn't attacking but there are enemies that have been hit, deal
-			// with them
-			if (ourPlayer.hitEnemies() && !ourPlayer.getState().equals("Attack")) {
-				ourPlayer.handleAttack();
-			}
 		}
+		
 		if (ourPlayer.getHealth() < 10000 && !ourPlayer.isGettingAttacked() && !deathAnimation) {
 			ourPlayer.addHealth(1);
 		}
 
 		cmanager.updateCoords(dx, dy);
 		cmanager.updateEnemies();
-
-	}
+		}
 
 	/**
 	 * Checks if the user completed the last level, and won the game.
