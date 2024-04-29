@@ -20,8 +20,8 @@ By '**Control Alt Elite**' - Andrew Denegar, Molly O'Connor, Nick Clouse
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#opportunities">Future Opportunities</a></li>
+    <li><a href="#Playing The Game">Playing The Game</a></li>
+    <li><a href="#Future Opportunities">Future Opportunities</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
@@ -72,16 +72,33 @@ The following folders are needed to run the game:
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- Opportunities -->
-## Examples
+<!-- Playing the Game -->
+## Playing the Game
 
-Could put an example on how to play/run game
+### Controls
+* Up Arrow key: Move up
+* Down Arrow key: Move down
+* Right Arrow key: Move right
+* Left Arrow key: Move left
+* Spacebar: Attack
+
+### Game explanation
+<p> The objective is to navigate through three challenging levels of mazes, find the exit, and escape before the time runs out.  </p>
+<p></p>Once a player starts the game, they are directed to level 1. Each category of level (1,2,3) has 5 versions. Each time a level is started the player will be loaded on the “start block” and have to navigate the maze until they find the “end block”. There are a total of 3 levels, with each level increasing in difficulty.  Level 1 has the square dimension of 20x20 blocks. Level 2 is 30x30, and the final level is 40x40 blocks big. As the player progresses through the game, the maze increases in size, and each level has more enemies than the last. </p>
+
+<p>For each level the player has 2 minutes to complete the maze. The time will not start until the player presses an arrow key and a player movement is detected. After the time starts the player can see there remaining time in the top left corner of the screen, as well as the number of enemies the user has killed. When the user kills an enemy, they get a extra 15 seconds to try and find the end of the maze.</p>
+
+<p>If the player makes it through three mazes without ever running out of time, they have won! After they reach the end of the final level, their time and the amount of enemies they kill will be calculated and turned into a final score. </p>
+
+<p>The users score is based off of how much time they have left when they find the end of each maze. Killing enemies adds time to the users time left to complete the maze, so killing more enemies will result in a higher score.</p> 
+<p> <b>Example: If the player completes level 1 in 60 seconds and kills two enemies along the way, their total time left would be 60 + 15 + 15, or 90 seconds. So, their score for level 1 would be 90.</b></p> 
+<p>The users scores from each level are added up if the user beats the game, and becomes their final score. If their final score is good enough, it will be added to the leaderboard! There is also has a leaderboard for level 1 and level 2 times!</p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
-<!-- ROADMAP -->
+<!-- Future Opportunities -->
 ## Future Opportunities
 
 - [ ] Our collision methods could be more efficient, by using Java’s built in methods.
