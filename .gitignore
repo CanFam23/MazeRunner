@@ -3,10 +3,5 @@
 .classpath
 *.bin
 bin/
-<<<<<<< HEAD
-.settings/
-=======
 .settings/
 Textures/
-
->>>>>>> main
