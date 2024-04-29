@@ -14,10 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.random.RandomGenerator;
-
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
 import audio.AudioPlayer;
 import chunks.ChunkManager;
 import gameTools.GameVariables;
@@ -239,7 +237,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 
 	/** Reduce the height of the health bar. */
 	private final int healthBarHeight = 20;
-
+	
 	/** Make the health bar width slightly smaller than the panel width. */
 	private final int healthBarWidth = 200;
 
@@ -260,9 +258,10 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	/** Padding from the top and right edges of the panel. */
 	private final int padding = 30;
 
-	 /** Random object, used for generating which level version to use. */
+	/**
+	 * Random object, used for generating which level version to use.
+	 */
 	private final Random random = new Random();
-	
 	/** Speed of player. */
 	private final int speed = 6;
 
@@ -295,7 +294,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 	
 	/** Keeps track of loop times so we can add less health when the player reaches level 3 */
 	private float healthLoop = 0;
-	
+
 	/**
 	 * deltas holds the distance that would be moved in each direction based on the
 	 * player's speed.
@@ -332,12 +331,11 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		hit = new AudioPlayer();
 		death = new AudioPlayer();
 		levelUp = new AudioPlayer();
-
-
 		cmanager = ChunkManager.getInstance();
 		// Generate a random number between 1 and 5 (inclusive)
 		levelVersionNumber = random.nextInt(1, 5);
 		cmanager.loadLevel(1, levelVersionNumber);
+
 
 		// Create our player and load the images
 //		ourPlayer.load_images(character_name); // Civilian1(black)
@@ -595,6 +593,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			} else if (deathCount == DEATHANIMATIONTIME) {
 				deathAnimation = false;
 				deathPlayedOnce = false;
+
 				v.reset();
 				ourPlayer.unlockState();
 				ourPlayer.unlockFacing();
@@ -607,7 +606,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				deathCount++;
 			}
 		}
-		
+
 
 		// Move Player
 		int dx = 0;
@@ -616,7 +615,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		if (deathAnimation) {
 			return;
 		}
-		
+
 		if (cmanager.getKnockback()) {
 			cmanager.knockback();
 		} else {
@@ -647,6 +646,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			if (dy == 0 && dx ==0) {
 				moving.stop();
 			}
+
 
 			if (!ourPlayer.isStateLocked()) {
 				ourPlayer.updateState(keyH.upPressed, keyH.downPressed, keyH.rightPressed, keyH.leftPressed);
@@ -686,6 +686,8 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		cmanager.updateCoords(dx, dy);
 		cmanager.updateEnemies();
 		}
+
+
 
 	/**
 	 * Checks if the user completed the last level, and won the game.

@@ -141,8 +141,6 @@ public class Main {
 	/** audio that plays while the player is in a level */
 	private static AudioPlayer gamePanelMusic;
 
-
-
 	/**
 	 * Win screen.
 	 */
@@ -270,8 +268,6 @@ public class Main {
 		homeScreen = new AudioPlayer();
 		wonGame = new AudioPlayer();
 		gamePanelMusic = new AudioPlayer();
-
-
 		window = new JFrame();
 		window.setResizable(false);
 		homePanel = new HomeScreen();
@@ -388,7 +384,6 @@ public class Main {
 		gamePanel.resetLevel();
 		gamePanel.reset();
 		homeScreen.playSong("menu.wav");
-		gamePanelMusic.setVolume(0.7f);
 
 		// Add action listener to the button in HomeScreen
 		homePanel.getStartButton().addActionListener(new ActionListener() {
@@ -516,7 +511,6 @@ public class Main {
 		});
 
 		window.setCursor(transparentCursor);
-
 		// starts game
 		gamePanel.loadPlayer(homePanel.get_display_player().get_character_name());
 		gamePanel.startGameThread();
@@ -579,7 +573,6 @@ public class Main {
 	public static void turnOnGamePanelMusic() {
 		gamePanelMusic.playSong("levelPlay2.wav");
 	}
-	
 	/**
 	 * Disables the other panels and displays the "Next Level" game panel
 	 *
