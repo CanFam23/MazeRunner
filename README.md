@@ -68,6 +68,7 @@ The following folders are needed to run the game:
    git clone https://github.com/CanFam23/MazeRunner.git
    ```
 3. In your IDE, all folders should be in a project called 'MazeRunner,' and the 'src' folder shold be the source folder.
+4. To play MazeRunner, run the [**main**](src/main/Main) file in the package [**Main**](src/Main) in the [**src**](src/) folder.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
