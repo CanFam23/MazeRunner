@@ -129,9 +129,6 @@ public class Main {
 	
 
 
-
-	
-
 	/**
 	 * Win screen.
 	 */
