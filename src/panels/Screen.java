@@ -240,44 +240,32 @@ public abstract class Screen extends JPanel {
 	    instructionsBoxPanel.setBorder(BorderFactory.createEmptyBorder(25, 50, 50, 50)); // Add padding
 
 		// Create label for instructions text
-//		final JLabel instructionsLabel = new JLabel(
-//				"<html>Welcome to MazeRunner!<br> <br> In this game, your objective is to navigate through three challenging levels of mazes, find the exit, and escape before the time runs out. Here are the rules and tips to help you succeed:<br>"
-//						+ "<br>- Use the arrow keys to move your player through the maze and the space bar to attack enemies."
-//						+ " <br><br>- You have a total of two minutes to complete each level. A timer will be displayed on the top of the screen to keep track of the remaining time. If the time runs out before you find the exit, you lose the game."
-//						+ "<br><br>- Each level has 5 different mazes. Each time you start the game, a random maze is picked for each level.<br><br>"
-//						+ "- Along the way, you may encounter enemies lurking in the maze. Your player has a health bar, which decreases if you collide with enemies. If your player's health reaches zero, you'll respawn at the beginning of the maze. However, fighting enemies also grants you an extra 15 seconds of time if you hit them 3 times. Use your health wisely to balance speed and safety."
-//						+ "<br><br>- Your score is based off the time taken to complete each level and the number of enemies you kill. The more enemies you killed and the faster you get through each maze, the better your score. Aim for the best time, kill as many enemies as you can, and challenge yourself to improve with each playthrough!");
-//		instructionsLabel.setForeground(Color.WHITE);
-//		instructionsLabel.setFont(new Font("Monospaced", Font.PLAIN, 17));
-//		instructionsLabel.setHorizontalAlignment(SwingConstants.CENTER);
-//		instructionsLabel.setVerticalAlignment(SwingConstants.TOP); // Align text to the top
-//		instructionsLabel.setPreferredSize(new Dimension(600, 0)); // Set preferred width, 0 for unlimited height
-//																	// (auto-wrap)
-	    // Load the image
-	    icon = new ImageIcon("images/keyboard.png"); // Change path_to_your_image.jpg to the actual path of your image
-	    Image scaledImage = icon.getImage().getScaledInstance(550, 500, Image.SCALE_SMOOTH); // Scale the image
-	    icon = new ImageIcon(scaledImage);
-	    JLabel imageLabel = new JLabel(icon);
-	    instructionsBoxPanel.add(imageLabel, BorderLayout.EAST); // Add image to the left side of the panel
-	    instructionsBoxPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 0)); // Add padding to the left side
+		final JLabel instructionsLabel = new JLabel(
+				"<html>Welcome to MazeRunner!<br> <br> Your objective is to navigate through three challenging levels of mazes, find the exit, and escape before the time runs out. Here are the rules and tips to help you succeed:<br>"
+						+ "<br>- Use the arrow keys to move your player through the maze and the space bar to attack enemies."
+						+ " <br><br>- You have a total of two minutes to complete each level. If the time runs out before you find the exit, you lose the game."
+						+ " <br><br>- Watch out for enemies roaming around each maze! If a enemy kills you, you get sent to the start of the maze!"
+						+ "<br><br>- Your score is based off the time taken to complete each level and the number of enemies you kill. The more enemies you kill and the faster you get through each maze, the better your score. Aim for the best time, kill as many enemies as you can, and challenge yourself to improve with each playthrough!");
 
-
-	    // Create label for instructions text
-	    final JLabel instructionsLabel = new JLabel(
-	            "<html>Welcome to MazeRunner!<br> <br> In this game, your objective is to navigate through three challenging levels of mazes, find the exit, and escape before the time runs out.<br>"
-	                    + " <br><br>- You have a total of two minutes to complete each level. If the time runs out before you find the exit, you lose the game."
-	                    + " Fight enemies and try to stay alive!!! Good luck.");
 	    instructionsLabel.setForeground(Color.WHITE);
 	    instructionsLabel.setFont(new Font("Monospaced", Font.PLAIN, 17));
 	    instructionsLabel.setHorizontalAlignment(SwingConstants.CENTER);
 	    instructionsLabel.setVerticalAlignment(SwingConstants.TOP); // Align text to the top
 	    instructionsLabel.setPreferredSize(new Dimension(600, 0)); // Set preferred width, 0 for unlimited height (auto-wrap)
+		
+	    // Load the image
+	    icon = new ImageIcon("images/keyboard.png");
+	    final Image scaledImage = icon.getImage().getScaledInstance(550, 500, Image.SCALE_SMOOTH); // Scale the image
+	    icon = new ImageIcon(scaledImage);
+	    final JLabel imageLabel = new JLabel(icon);
+	    instructionsBoxPanel.add(imageLabel, BorderLayout.EAST); // Add image to the left side of the panel
+	    instructionsBoxPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 0)); // Add padding to the left side
 
 	    // Add instructions label to the center of the instructions box panel
 	    instructionsBoxPanel.add(instructionsLabel, BorderLayout.CENTER);
 
 	    // Create exit button
-	    JButton backButton = createButton("BACK");
+	    final JButton backButton = createButton("BACK");
 
 	    backButton.addActionListener(e -> showMainPanel());
 
