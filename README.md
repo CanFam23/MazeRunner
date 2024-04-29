@@ -64,7 +64,6 @@ To get a local copy up and running follow these simple example steps.
 
 ### Installation
 The following folders are needed to run the game:
-  * [**Textures**](Textures/) - Textures for enemy sprites.
   * [**data**](data/) - Stores each level.
   * [**images**](images/) - Player sprite textures and screen backgrounds.
   * [**leaderboards**](leaderboards/) - Leaderboard data.
