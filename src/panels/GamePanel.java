@@ -524,6 +524,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		if (cmanager.endFound()) {
 			stopLoop();
 			// Disable player movements when end block is reached
+			ourPlayer.reset();
 			keyH.upPressed = false;
 			keyH.downPressed = false;
 			keyH.rightPressed = false;
@@ -532,8 +533,6 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 			Main.addTime = false;
 			addingTime = false;
 			addTimeElapsed = 0;
-
-			ourPlayer.reset();
 			moving.stop();
 
 			if (levelUp.isActive() == false) {
@@ -579,6 +578,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 		
 		// Our player is out of health (passed out, fainted, dead)
 		if (ourPlayer.getHealth() < 1) {
+			Main.turnOffGamePanelMusic();
 			hit.stop();
 			moving.stop();
 			if (death.isActive() == false && deathPlayedOnce == false) {
@@ -601,6 +601,7 @@ public class GamePanel extends JPanel implements Runnable, GameVariables {
 				cmanager.restart();
 				cmanager.stopKnockback();
 				ourPlayer.reset();
+				Main.turnOnGamePanelMusic();
 			} else {
 				deathPlayedOnce = true;
 				deathCount++;

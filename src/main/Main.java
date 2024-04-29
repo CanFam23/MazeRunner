@@ -388,6 +388,7 @@ public class Main {
 		gamePanel.resetLevel();
 		gamePanel.reset();
 		homeScreen.playSong("menu.wav");
+		gamePanelMusic.setVolume(0.7f);
 
 		// Add action listener to the button in HomeScreen
 		homePanel.getStartButton().addActionListener(new ActionListener() {
@@ -520,7 +521,7 @@ public class Main {
 		gamePanel.loadPlayer(homePanel.get_display_player().get_character_name());
 		gamePanel.startGameThread();
 		gamePanelMusic.playSong("levelPlay2.wav");
-
+		gamePanelMusic.setVolume(0.7f);
 	}
 
 	/**
@@ -563,9 +564,22 @@ public class Main {
 		nextLevel.setVisible(false);
 		homePanel.setVisible(false);
 		homePanel.setRunning(false);
-
 	}
-
+	
+	/**
+	 * Stops the game panel music (used for when the player dies) 
+	 */
+	public static void turnOffGamePanelMusic() {
+		gamePanelMusic.stop();
+	}
+	
+	/**
+	 * Starts the game panel music (used for after the player dies) 
+	 */
+	public static void turnOnGamePanelMusic() {
+		gamePanelMusic.playSong("levelPlay2.wav");
+	}
+	
 	/**
 	 * Disables the other panels and displays the "Next Level" game panel
 	 *

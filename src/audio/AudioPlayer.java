@@ -7,6 +7,7 @@ import java.util.Random;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
@@ -22,6 +23,8 @@ import gameTools.GameVariables;
  * @author Nick Clouse
  * @author Andrew Denegar
  * @author Molly O'Connor
+ * @author Kaarin Gaming: base code taken from Kaarin Gaming Youtube, Platform Turtorial episode 25
+ * 
  *
  * @since Apr 27, 2024
  *
@@ -130,6 +133,23 @@ public class AudioPlayer {
             clip.stop();
             clip.close();
             isPlaying = false;
+        }
+    }
+    
+    /**
+     * Sets the volume of the currently playing song.
+     * @param volumeValue The volume value to set (0.0f to 1.0f).
+     */
+    public void setVolume(float volumeValue) {
+        if (clip != null) {
+            try {
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float range = gainControl.getMaximum() - gainControl.getMinimum();
+                float gain = (range * volumeValue) + gainControl.getMinimum();
+                gainControl.setValue(gain);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 	
