@@ -68,6 +68,8 @@ The following folders are needed to run the game:
   * [**images**](images/) - Player sprite textures and screen backgrounds.
   * [**leaderboards**](leaderboards/) - Leaderboard data.
   * [**src**](src/) - 5 packages, which contain the java files.
+  * [**documents**](documents/) - Documents for our game, mostly JavaDoc.
+      * To read our JavaDoc, download this folder and open [**index.html**](documents/doc/index.html) in a web browser.
 1. Clone the repo
    ```sh
    git clone https://github.com/CanFam23/MazeRunner.git
