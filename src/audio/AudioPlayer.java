@@ -1,20 +1,11 @@
 package audio;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Random;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.JPanel;
-
-import gameTools.GameVariables;
 
 /**
  * <p>
@@ -29,16 +20,7 @@ import gameTools.GameVariables;
  * @since Apr 27, 2024
  *
  */
-
 public class AudioPlayer {
-    /** Array of Clip objects for songs. */
-    private Clip[] songs;
-
-    /** Array of Clip objects for sound effects. */
-    private Clip[] effects;
-
-    /** Random number generator. */
-    private Random rand = new Random();
 
     /** The currently playing audio clip. */
     private Clip clip;
@@ -54,29 +36,6 @@ public class AudioPlayer {
     }
 
     /**
-     * Retrieves a Clip object for a given audio file name.
-     * @param name The name of the audio file.
-     * @return A Clip object representing the audio file.
-     */
-    private Clip getClip(String name) {
-        URL url = getClass().getResource(name + ".wav");
-        AudioInputStream audio;
-
-        try {
-            audio = AudioSystem.getAudioInputStream(url);
-            Clip c = AudioSystem.getClip();
-
-            c.open(audio);
-            return c;
-
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            System.out.print("Couldn't load");
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
      * Plays a song continuously.
      * @param fileName The name of the song file to play.
      */
@@ -87,9 +46,8 @@ public class AudioPlayer {
             clip.open(audioInputStream);
             clip.loop(Clip.LOOP_CONTINUOUSLY); // Loop the clip continuously
             isPlaying = true;
-            System.out.println("Playing song: " + fileName);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Failed to load audio file " + fileName);
         }
     }
 
@@ -121,7 +79,7 @@ public class AudioPlayer {
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
+        	System.err.println("Failed to load audio file " + fileName);
         }
     }
 
@@ -148,11 +106,16 @@ public class AudioPlayer {
                 float gain = (range * volumeValue) + gainControl.getMinimum();
                 gainControl.setValue(gain);
             } catch (Exception e) {
-                e.printStackTrace();
+            	System.err.println("Failed to set volume! ");
             }
         }
     }
 	
+    /**
+     * Main method, used for testing.
+     * 
+     * @param args Aruguments passed.
+     */
     public static void main(String[] args) {
     	boolean allCasesPassed = true;
         // Create an instance of AudioPlayer

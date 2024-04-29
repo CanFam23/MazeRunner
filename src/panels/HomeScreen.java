@@ -348,6 +348,9 @@ public class HomeScreen extends Screen {
 		startImageTimer();
 		}
 	
+		/**
+		 * Repaints the character on homescreen every x milliseconds.
+		 */
 		private void startImageTimer() {
 	        timer = new Timer(100, new ActionListener() {
 	            @Override
