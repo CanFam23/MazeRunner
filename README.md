@@ -39,6 +39,8 @@ By '**Control Alt Elite**' - Andrew Denegar, Molly O'Connor, Nick Clouse
 MazeRunner is a gripping puzzle/action game for teens or young adults that blends simplicity and depth resulting in a suspenseful and strategic gaming experience. 
 The aim of the game is to escape all three levels of the maze as quickly as you can, while killing as many enemies as possible!
 
+To read our user and developer **manual**, click [**here**](documents/Manual.pdf) or navigate to documents/Manual.pdf.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
